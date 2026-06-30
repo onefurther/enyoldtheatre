@@ -1,0 +1,1793 @@
+<title>Harwick Arts Centre – Book Tickets Online</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --purple: #5B2D8E;
+    --purple-dark: #3d1f63;
+    --purple-light: #8B5CF6;
+    --lavender: #e8e2f0;
+    --lavender-mid: #d4b8f0;
+    --grey-body: #444;
+    --grey-mid: #888;
+    --grey-light: #f2f1ef;
+    --grey-border: #ddd;
+    --green: #2d8a4e;
+    --red: #c0392b;
+    --orange: #e67e22;
+    --yellow: #f39c12;
+    --white: #fdfcfb;
+  }
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--grey-light);
+    color: var(--grey-body);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  /* ── SCREENS ── */
+  .screen { display: none; min-height: 100vh; padding-top: 48px; }
+  .screen.active { display: block; }
+  #screen-white { background: #fff; min-height: 100vh; display: none; padding: 0; }
+  #screen-white.active { display: block; }
+
+  /* ── GLOBAL NAV ── */
+  .g-nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 400;
+    background: var(--purple-dark);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 24px; height: 48px;
+  }
+  .g-nav-logo { font-family: Georgia, serif; color: #fff; font-size: 1.05rem; letter-spacing: 0.03em; }
+  .g-nav-logo span { color: var(--lavender-mid); font-style: italic; }
+  .g-nav-links { display: flex; gap: 24px; }
+  .g-nav-links a { color: #c9bde0; font-size: 0.78rem; text-decoration: none; cursor: pointer; letter-spacing: 0.04em; text-transform: uppercase; }
+  .g-nav-links a:hover { color: #fff; }
+
+  /* ── TIMER BAR (replaces nav when active) ── */
+  #timer-bar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+    background: var(--purple); color: #fff;
+    display: none; align-items: center; justify-content: center;
+    gap: 12px; height: 48px; font-size: 0.82rem;
+  }
+  #timer-bar.active { display: flex; }
+  #timer-bar.t-yellow { background: var(--yellow); color: #333; }
+  #timer-bar.t-orange { background: var(--orange); }
+  #timer-bar.t-red { background: var(--red); }
+  #timer-bar.t-flash { animation: timerFlash 0.6s infinite; }
+  @keyframes timerFlash { 0%,100%{background:var(--red)} 50%{background:#8b1a1a} }
+  #timer-display { font-variant-numeric: tabular-nums; font-weight: bold; font-size: 1.05rem; }
+  #timer-viewers { opacity: 0.85; }
+
+  /* ── TOAST ── */
+  #toast {
+    position: fixed; top: 60px; right: 20px; z-index: 900;
+    padding: 10px 16px; border-radius: 4px; font-size: 0.83rem;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2); display: none;
+    max-width: 280px; line-height: 1.4;
+  }
+  #toast.visible { display: block; }
+  #toast.success { background: var(--green); color: #fff; }
+  #toast.info { background: var(--purple); color: #fff; }
+  #toast.warning { background: var(--orange); color: #fff; }
+
+  /* ── NEWSLETTER POPUP ── */
+  #newsletter-popup {
+    position: fixed; inset: 0; z-index: 950;
+    background: var(--purple-dark);
+    display: none; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; padding: 40px 24px;
+    color: #fff;
+  }
+  #newsletter-popup.visible { display: flex; }
+  #newsletter-popup h2 { font-family: Georgia, serif; font-size: 2.1rem; margin-bottom: 10px; text-wrap: balance; }
+  #newsletter-popup p { color: #c9bde0; margin-bottom: 28px; max-width: 380px; font-size: 0.92rem; line-height: 1.6; }
+  #newsletter-popup input[type=email] {
+    display: block; width: 100%; max-width: 360px;
+    padding: 12px 16px; font-size: 1rem; border-radius: 3px;
+    border: none; margin-bottom: 10px;
+    background: rgba(255,255,255,0.12); color: #fff;
+    outline: 1px solid rgba(255,255,255,0.3);
+  }
+  #newsletter-popup input::placeholder { color: rgba(255,255,255,0.45); }
+  #newsletter-popup .nl-submit {
+    background: var(--lavender-mid); color: var(--purple-dark);
+    border: none; padding: 12px 32px; font-size: 0.95rem;
+    font-weight: bold; border-radius: 3px; cursor: pointer; width: 100%; max-width: 360px;
+  }
+  #newsletter-popup .nl-close {
+    position: absolute; top: 14px; right: 18px;
+    background: none; border: none;
+    color: rgba(255,255,255,0.25); font-size: 0.68rem;
+    cursor: pointer; letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  #newsletter-popup .nl-close:hover { color: rgba(255,255,255,0.5); }
+  #nl-confetti-wrap { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+
+  /* ── COOKIE BANNER ── */
+  #cookie-banner {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 850;
+    background: #fff; border-top: 3px solid var(--purple);
+    padding: 16px 20px 16px;
+    box-shadow: 0 -2px 12px rgba(0,0,0,0.12);
+    display: none;
+  }
+  #cookie-banner.visible { display: block; }
+  #cookie-banner p { font-size: 0.8rem; color: #666; margin-bottom: 12px; line-height: 1.55; max-width: 800px; }
+  .cookie-btns { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .btn-accept-all { background: var(--purple); color: #fff; border: none; padding: 8px 20px; border-radius: 3px; cursor: pointer; font-size: 0.83rem; }
+  .btn-prefs { background: #fff; border: 1px solid #ccc; color: #555; padding: 8px 16px; border-radius: 3px; cursor: pointer; font-size: 0.83rem; }
+  .btn-reject-link { margin-left: auto; font-size: 0.68rem; color: #bbb; background: none; border: none; cursor: pointer; text-decoration: underline; }
+
+  /* ── COOKIE PREFS OVERLAY ── */
+  .overlay-bg {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+    z-index: 860; display: none; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .overlay-bg.visible { display: flex; }
+  .overlay-modal {
+    background: #fff; border-radius: 5px; padding: 28px 24px;
+    width: 100%; max-width: 480px; max-height: 85vh;
+    overflow-y: auto; position: relative;
+  }
+  .overlay-modal h3 { font-family: Georgia, serif; font-size: 1.15rem; margin-bottom: 16px; }
+  .overlay-close { position: absolute; top: 12px; right: 14px; background: none; border: none; font-size: 1.3rem; color: #aaa; cursor: pointer; line-height: 1; }
+  .cookie-section { border: 1px solid var(--grey-border); border-radius: 3px; margin-bottom: 8px; }
+  .cookie-section-hd {
+    padding: 10px 14px; cursor: pointer; display: flex;
+    justify-content: space-between; align-items: center;
+    font-size: 0.82rem; font-weight: bold; background: #fafafa;
+    user-select: none;
+  }
+  .cookie-section-hd .arrow { transition: transform 0.2s; }
+  .cookie-section-hd.open .arrow { transform: rotate(90deg); }
+  .cookie-section-body {
+    padding: 10px 14px; font-size: 0.78rem; color: #666;
+    display: none; border-top: 1px solid var(--grey-border); line-height: 1.6;
+  }
+  .cookie-section-body.visible { display: block; }
+  .cookie-toggle-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+  .cookie-toggle-row input { width: 16px; height: 16px; cursor: pointer; }
+  .cookie-toggle-row label { font-size: 0.8rem; font-weight: bold; cursor: pointer; }
+  #cookie-save-btn { width: 100%; background: var(--purple); color: #fff; border: none; padding: 10px; border-radius: 3px; cursor: pointer; font-size: 0.85rem; margin-top: 14px; }
+  #cookie-confirm-msg { display: none; font-size: 0.78rem; color: var(--green); margin-top: 8px; text-align: center; }
+
+  /* ── LIVE CHAT ── */
+  #live-chat {
+    position: fixed; bottom: 20px; right: 20px; z-index: 600;
+    width: 270px;
+  }
+  .chat-header {
+    background: var(--purple); color: #fff; padding: 10px 14px;
+    border-radius: 6px 6px 0 0; display: flex; justify-content: space-between;
+    align-items: center; cursor: pointer; font-size: 0.82rem;
+  }
+  .chat-header-title { display: flex; align-items: center; gap: 8px; }
+  .chat-dot { width: 8px; height: 8px; background: #4ade80; border-radius: 50%; }
+  .chat-body { background: #fff; border: 1px solid #ddd; border-top: none; border-radius: 0 0 6px 6px; padding: 14px; }
+  .chat-body.hidden { display: none; }
+  .chat-msg { background: #f0e8ff; border-radius: 4px; padding: 8px 10px; font-size: 0.78rem; line-height: 1.55; margin-bottom: 10px; }
+  .chat-input-row { display: flex; gap: 6px; }
+  .chat-input-row input { flex: 1; padding: 6px 8px; border: 1px solid #ddd; border-radius: 3px; font-size: 0.78rem; }
+  .chat-send { background: var(--purple); color: #fff; border: none; padding: 6px 10px; border-radius: 3px; cursor: pointer; font-size: 0.78rem; }
+  #a11y-widget {
+    position: fixed; bottom: 110px; right: 20px; z-index: 600;
+  }
+  .a11y-trigger { width: 50px; height: 50px; background: #222; border-radius: 50%; border: none; cursor: pointer; color: #fff; font-size: 1.4rem; box-shadow: 0 2px 8px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; }
+  .a11y-panel { display: none; position: absolute; bottom: 58px; right: 0; background: #fff; border: 1px solid #ddd; border-radius: 5px; padding: 14px; width: 210px; box-shadow: 0 3px 10px rgba(0,0,0,0.15); font-size: 0.78rem; }
+  .a11y-panel.open { display: block; }
+  .a11y-panel h4 { font-size: 0.82rem; margin-bottom: 10px; color: #333; }
+  .a11y-opt { padding: 5px 0; color: #666; border-bottom: 1px solid #f0f0f0; }
+
+  /* ── MODALS ── */
+  #modal-seat-taken .overlay-modal { text-align: center; }
+  #modal-seat-taken h3 { color: var(--red); }
+  #modal-still-there .overlay-modal { text-align: center; }
+  #modal-login .overlay-modal { max-width: 420px; }
+  #modal-areyousure .overlay-modal { max-width: 380px; text-align: center; }
+
+  /* ── PAGE LAYOUT ── */
+  .page-wrap { max-width: 980px; margin: 0 auto; padding: 32px 20px; }
+  .page-wrap.narrow { max-width: 640px; }
+  .page-title { font-family: Georgia, serif; font-size: 1.5rem; color: var(--purple-dark); margin-bottom: 6px; text-wrap: balance; }
+  .page-subtitle { font-size: 0.82rem; color: var(--grey-mid); margin-bottom: 28px; }
+
+  /* ── HOMEPAGE ── */
+  #screen-home { padding-top: 48px; }
+  .hero {
+    position: relative; height: 420px;
+    background: linear-gradient(160deg, var(--purple-dark) 0%, #7b3fa8 100%);
+    overflow: hidden;
+  }
+  .hero-overlay-video {
+    position: absolute; top: 0; right: 0; width: 55%; height: 100%;
+    background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;
+    color: rgba(255,255,255,0.2); font-size: 3rem;
+  }
+  .hero-img-placeholder {
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='420'%3E%3Crect fill='%233d1f63' width='800' height='420'/%3E%3Ccircle cx='400' cy='200' r='120' fill='%235B2D8E' opacity='0.4'/%3E%3C/svg%3E") center/cover;
+    filter: blur(14px);
+    transition: filter 14s ease;
+  }
+  .hero-img-placeholder.loaded { filter: blur(0); }
+  .hero-content {
+    position: absolute; left: 40px; bottom: 72px; color: #fff; max-width: 480px;
+  }
+  .hero-eyebrow { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--lavender-mid); margin-bottom: 8px; }
+  .hero-title { font-family: Georgia, serif; font-size: 2.1rem; line-height: 1.2; text-wrap: balance; text-shadow: 0 1px 4px rgba(0,0,0,0.4); }
+  .hero-sub { font-size: 0.88rem; color: rgba(255,255,255,0.7); margin-top: 8px; }
+  .hero-cta-zone {
+    position: absolute; bottom: 20px; left: 0; right: 0;
+    display: flex; align-items: center; justify-content: flex-end;
+    padding: 0 40px; gap: 12px;
+  }
+  .carousel-dots { display: flex; gap: 8px; }
+  .cdot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.35); border: none; cursor: pointer; padding: 0; }
+  .cdot.active { background: rgba(255,255,255,0.9); }
+  .btn-booknow {
+    background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.7);
+    border: 1px solid rgba(255,255,255,0.25); padding: 5px 11px;
+    font-size: 0.7rem; cursor: pointer; border-radius: 2px;
+    letter-spacing: 0.04em; position: relative; white-space: nowrap;
+  }
+  .btn-booknow:hover::after {
+    content: 'Clicking this button may take a moment';
+    position: absolute; bottom: 130%; right: 0; background: #fff; color: #333;
+    font-family: 'Comic Sans MS', 'Chalkboard SE', cursive; font-size: 0.72rem;
+    padding: 5px 9px; border: 1px solid #ccc; white-space: nowrap;
+    border-radius: 3px; box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    pointer-events: none;
+  }
+  .home-content { max-width: 980px; margin: 0 auto; padding: 36px 20px; }
+  .home-section-title { font-family: Georgia, serif; font-size: 1.2rem; color: var(--purple-dark); margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid var(--lavender); }
+  .home-events { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
+  .home-event-card {
+    background: #fff; border-radius: 4px; overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08); cursor: pointer;
+    transition: box-shadow 0.2s; border: 1px solid var(--grey-border);
+  }
+  .home-event-card:hover { box-shadow: 0 3px 10px rgba(0,0,0,0.13); }
+  .event-card-img { height: 100px; }
+  .event-card-img.c1 { background: linear-gradient(135deg, #4a1a7a, #9b3fc8); }
+  .event-card-img.c2 { background: linear-gradient(135deg, #1a3a7a, #3f7ac8); }
+  .event-card-img.c3 { background: linear-gradient(135deg, #1a5a3a, #3fa878); }
+  .event-card-body { padding: 12px 14px; }
+  .event-card-title { font-family: Georgia, serif; font-size: 0.9rem; color: #222; margin-bottom: 3px; }
+  .event-card-date { font-size: 0.72rem; color: var(--grey-mid); }
+  .event-card-price { font-size: 0.78rem; color: var(--purple); margin-top: 6px; }
+
+  /* ── EVENTS LISTING ── */
+  .filters-bar { background: #fff; border: 1px solid var(--grey-border); border-radius: 4px; padding: 14px 16px; display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 24px; }
+  .filter-group { display: flex; flex-direction: column; gap: 4px; }
+  .filter-group label { font-size: 0.72rem; color: var(--grey-mid); letter-spacing: 0.04em; text-transform: uppercase; }
+  .filter-group select { padding: 6px 10px; border: 1px solid #ccc; border-radius: 3px; font-size: 0.83rem; min-width: 140px; }
+  .btn-filter { background: var(--purple); color: #fff; border: none; padding: 8px 18px; border-radius: 3px; cursor: pointer; font-size: 0.83rem; margin-top: 16px; }
+  .events-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .event-listing-card {
+    background: #fff; border-radius: 4px; border: 1px solid var(--grey-border);
+    overflow: hidden; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    transition: box-shadow 0.2s;
+  }
+  .event-listing-card:hover { box-shadow: 0 3px 10px rgba(0,0,0,0.12); }
+  .elc-img { height: 90px; }
+  .elc-body { padding: 12px; }
+  .elc-title { font-family: Georgia, serif; font-size: 0.88rem; color: #222; margin-bottom: 4px; }
+  .elc-date { font-size: 0.7rem; color: #bbb; }
+  .elc-price { font-size: 0.78rem; color: var(--purple); margin-top: 6px; font-weight: bold; }
+  .pagination { display: flex; justify-content: center; gap: 5px; margin-top: 28px; }
+  .pg-dot { width: 9px; height: 9px; border-radius: 50%; background: #ccc; cursor: pointer; border: none; padding: 0; }
+  .pg-dot.active { background: var(--purple); }
+
+  /* ── CALENDAR ── */
+  .event-intro-card { background: #fff; border-radius: 5px; padding: 20px 24px; margin-bottom: 20px; border: 1px solid var(--grey-border); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .event-intro-card h2 { font-family: Georgia, serif; font-size: 1.2rem; color: #222; margin-bottom: 6px; }
+  .event-intro-card p { font-size: 0.82rem; color: var(--grey-mid); line-height: 1.6; }
+  .calendar-card { background: #fff; border-radius: 5px; padding: 20px 24px; border: 1px solid var(--grey-border); box-shadow: 0 1px 3px rgba(0,0,0,0.06); margin-bottom: 20px; }
+  .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .cal-nav { background: #fff; border: 1px solid #ccc; padding: 4px 12px; cursor: pointer; border-radius: 3px; font-size: 0.9rem; }
+  .cal-month { font-family: Georgia, serif; font-size: 1.05rem; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+  .cal-day-label { text-align: center; font-size: 0.68rem; color: var(--grey-mid); padding: 4px 0; letter-spacing: 0.04em; text-transform: uppercase; }
+  .cal-day {
+    text-align: center; padding: 7px 2px; font-size: 0.8rem;
+    border-radius: 3px; cursor: pointer; position: relative;
+  }
+  .cal-day.empty { cursor: default; }
+  .cal-day.avail { background: #edf7ee; color: #2a6b2a; }
+  .cal-day.avail:hover { background: #d4ecd5; }
+  .cal-day.limited { background: #fffbea; color: #8a6400; }
+  .cal-day.limited:hover { background: #fff3c0; }
+  .cal-day.soldout { background: #f5f5f5; color: #ccc; }
+  .cal-day.selected { background: var(--purple) !important; color: #fff !important; }
+  .avail-badge { font-size: 0.5rem; display: block; color: var(--red); font-weight: bold; letter-spacing: 0.03em; text-transform: uppercase; }
+  .viewers-notice { background: #fff5f5; border: 1px solid #fecaca; border-radius: 4px; padding: 8px 14px; font-size: 0.8rem; color: var(--red); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .viewers-dot { width: 8px; height: 8px; background: var(--red); border-radius: 50%; animation: pulse 1.5s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  .time-select-card { background: #fff; border-radius: 5px; padding: 20px 24px; border: 1px solid var(--grey-border); box-shadow: 0 1px 3px rgba(0,0,0,0.06); display: none; }
+  .time-select-card.visible { display: block; }
+  .time-options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  .time-opt {
+    border: 1px solid var(--grey-border); border-radius: 4px; padding: 10px 14px;
+    cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+    font-size: 0.85rem; background: #fff;
+  }
+  .time-opt:hover { border-color: var(--purple); background: var(--lavender); }
+  .time-opt.selected { border-color: var(--purple); background: var(--lavender); }
+  .time-avail-badge { font-size: 0.7rem; color: var(--red); font-weight: bold; }
+
+  /* ── SEAT MAP ── */
+  .seatmap-card { background: #fff; border-radius: 5px; padding: 20px 24px; border: 1px solid var(--grey-border); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .seatmap-controls { display: flex; gap: 8px; align-items: center; margin-bottom: 14px; }
+  .seatmap-controls span { font-size: 0.78rem; color: var(--grey-mid); }
+  .zoom-btn { width: 28px; height: 28px; background: #eee; border: 1px solid #ccc; border-radius: 3px; cursor: pointer; font-size: 1rem; display: flex; align-items: center; justify-content: center; }
+  .zoom-btn:active { background: #eee; } /* same — doesn't work */
+  .seat-area { overflow-x: auto; }
+  .seat-grid { display: flex; flex-direction: column; gap: 4px; padding-bottom: 4px; }
+  .seat-row { display: flex; gap: 3px; align-items: center; }
+  .seat-row-label { font-size: 0.62rem; color: #bbb; width: 14px; text-align: right; flex-shrink: 0; margin-right: 4px; }
+  .seat {
+    width: 14px; height: 12px; border-radius: 2px; cursor: pointer; border: none;
+    font-size: 0; flex-shrink: 0;
+    transition: outline 0.1s;
+  }
+  .seat.s-a { background: #c0392b; }
+  .seat.s-b { background: #e74c3c; }
+  .seat.s-c { background: #d35400; }
+  .seat.s-d { background: #922b21; }
+  .seat.s-e { background: #c0566c; }
+  .seat.presel { outline: 3px solid #f1c40f; outline-offset: 1px; }
+  .seat.selected { outline: 3px solid #27ae60; outline-offset: 1px; }
+  .seatmap-note { font-size: 0.68rem; color: #bbb; margin-top: 10px; font-style: italic; }
+  .selected-seat-info { margin-top: 14px; font-size: 0.85rem; color: var(--grey-body); min-height: 24px; }
+  .selected-seat-info strong { color: var(--purple); }
+
+  /* ── FORM ── */
+  .progress-strip { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+  .progress-track { flex: 1; height: 5px; background: #e0d8eb; border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--purple); border-radius: 3px; transition: width 0.4s; }
+  .progress-label { font-size: 0.72rem; color: var(--grey-mid); white-space: nowrap; }
+  .breadcrumbs { font-size: 0.72rem; color: #bbb; margin-bottom: 18px; letter-spacing: 0.02em; }
+  .breadcrumbs span { cursor: default; }
+  .breadcrumbs span:hover { color: #bbb; }
+  .form-card { background: #fff; border-radius: 5px; padding: 24px; border: 1px solid var(--grey-border); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .form-row { margin-bottom: 14px; }
+  .form-row label { display: block; font-size: 0.8rem; color: #555; margin-bottom: 4px; }
+  .form-row input, .form-row select, .form-row textarea {
+    width: 100%; padding: 8px 10px; border: 1px solid var(--grey-border);
+    border-radius: 3px; font-size: 0.88rem; background: #fff;
+    font-family: inherit;
+  }
+  .form-row input:focus, .form-row select:focus { outline: 2px solid var(--purple-light); border-color: var(--purple-light); }
+  .postcode-row { display: flex; gap: 8px; }
+  .postcode-row input { flex: 1; }
+  .btn-postcode { background: #f0f0f0; border: 1px solid #ccc; padding: 8px 12px; cursor: pointer; border-radius: 3px; font-size: 0.8rem; white-space: nowrap; }
+  .error-box { background: #fef2f2; border: 1px solid #fca5a5; border-radius: 4px; padding: 14px 16px; margin-bottom: 18px; font-size: 0.82rem; color: #7f1d1d; display: none; }
+  .error-box.visible { display: block; }
+  .error-box ul { padding-left: 18px; margin-top: 6px; line-height: 2; }
+  .mktg-row { display: flex; align-items: flex-start; gap: 10px; background: #fafafa; border: 1px solid #eee; border-radius: 3px; padding: 9px 12px; margin-bottom: 6px; }
+  .mktg-row input[type=checkbox] { width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px; cursor: pointer; }
+  .mktg-row label { font-size: 0.78rem; color: #555; cursor: pointer; }
+  .captcha-box { border: 1px solid var(--grey-border); border-radius: 4px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; background: #f9fafb; margin: 14px 0; }
+  .captcha-check { width: 24px; height: 24px; border: 2px solid #ccc; border-radius: 3px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.1rem; }
+  .captcha-check.done { background: var(--green); border-color: var(--green); color: #fff; }
+  .captcha-label { font-size: 0.83rem; color: #555; }
+  .captcha-brand { margin-left: auto; text-align: center; font-size: 0.58rem; color: #bbb; }
+  .section-divider { border: none; border-top: 1px solid #eee; margin: 20px 0; }
+  .tc-box { font-size: 0.72rem; color: #aaa; line-height: 1.7; background: #fafafa; border: 1px solid #eee; padding: 12px; border-radius: 3px; max-height: 90px; overflow-y: auto; margin-bottom: 14px; }
+  .pass-rules { font-size: 0.72rem; color: var(--red); margin-top: 4px; display: none; }
+  .pass-rules.visible { display: block; }
+  .wall-of-text { font-size: 0.75rem; color: #999; line-height: 1.75; margin-bottom: 14px; }
+
+  /* ── BUTTONS ── */
+  .btn { display: inline-block; padding: 10px 26px; border: none; border-radius: 3px; cursor: pointer; font-size: 0.88rem; font-family: inherit; transition: opacity 0.15s; }
+  .btn-primary { background: var(--purple); color: #fff; }
+  .btn-primary:hover { background: var(--purple-dark); }
+  .btn-cancel { background: #eee; color: #555; }
+  .btn-cancel:hover { background: #e0e0e0; }
+  .btn-danger { background: var(--red); color: #fff; }
+  .no-thanks { background: none; border: none; color: #c0b4cc; font-size: 0.72rem; cursor: pointer; text-decoration: underline; display: block; text-align: center; margin-top: 14px; padding: 4px; }
+  .no-thanks:hover { color: #888; }
+  .btn-row { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+  .btn-row.reversed { flex-direction: row-reverse; }
+
+  /* ── UPSELLS ── */
+  .upsell-card { background: #fff; border-radius: 5px; padding: 36px 28px; text-align: center; border: 1px solid var(--grey-border); box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .upsell-step-label { font-size: 0.7rem; color: #bbb; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 16px; }
+  .upsell-icon { font-size: 2.8rem; margin-bottom: 14px; }
+  .upsell-title { font-family: Georgia, serif; font-size: 1.35rem; color: #222; margin-bottom: 8px; }
+  .upsell-desc { font-size: 0.85rem; color: #666; line-height: 1.7; margin-bottom: 18px; max-width: 420px; margin-left: auto; margin-right: auto; }
+  .upsell-price { font-size: 1.2rem; color: var(--purple); font-weight: bold; margin-bottom: 18px; }
+  .upsell-check-row { display: flex; align-items: center; gap: 12px; background: var(--lavender); border: 1px solid var(--lavender-mid); border-radius: 4px; padding: 12px 16px; margin-bottom: 20px; text-align: left; }
+  .upsell-check-row input[type=checkbox] { width: 20px; height: 20px; flex-shrink: 0; }
+  .upsell-check-row label { font-size: 0.85rem; font-weight: bold; cursor: pointer; }
+
+  /* ── SURVEY ── */
+  .survey-card { background: #fff; border-radius: 5px; padding: 28px; border: 1px solid var(--grey-border); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .survey-q { margin-bottom: 22px; }
+  .survey-q p { font-size: 0.88rem; font-weight: bold; margin-bottom: 10px; color: #333; }
+  .star-row { display: flex; gap: 8px; }
+  .star { font-size: 1.4rem; cursor: pointer; color: #ddd; line-height: 1; }
+  .star.lit { color: var(--yellow); }
+  .survey-radio-row { display: flex; gap: 6px; flex-wrap: wrap; }
+  .survey-radio-row label { border: 1px solid #ddd; border-radius: 3px; padding: 5px 12px; cursor: pointer; font-size: 0.8rem; color: #555; }
+  .survey-radio-row input { display: none; }
+  .survey-radio-row input:checked + label { background: var(--lavender); border-color: var(--purple); color: var(--purple); }
+
+  /* ── PAYMENT ── */
+  .payment-card { background: #fff; border-radius: 5px; padding: 24px; border: 1px solid var(--grey-border); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .order-summary { background: #fafafa; border: 1px solid #eee; border-radius: 4px; padding: 16px; margin-bottom: 20px; }
+  .order-row { display: flex; justify-content: space-between; font-size: 0.82rem; padding: 3px 0; }
+  .order-row.total { font-weight: bold; border-top: 1px solid #eee; margin-top: 8px; padding-top: 8px; font-size: 0.9rem; }
+  .card-icons { display: flex; gap: 8px; margin-bottom: 16px; }
+  .card-icon { width: 38px; height: 24px; background: #eee; border: 1px solid #ddd; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 0.55rem; color: #aaa; }
+  .secure-note { display: flex; align-items: center; gap: 6px; font-size: 0.72rem; color: var(--grey-mid); margin-top: 14px; }
+
+  /* ── PROCESSING ── */
+  .processing-wrap { text-align: center; padding: 80px 20px; }
+  .proc-spinner { width: 44px; height: 44px; border: 4px solid #e8e2f0; border-top-color: var(--purple); border-radius: 50%; animation: spin 0.9s linear infinite; margin: 0 auto 24px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .proc-label { font-size: 0.85rem; color: var(--grey-mid); margin-bottom: 20px; }
+  .proc-bar-track { height: 5px; background: #eee; border-radius: 3px; max-width: 280px; margin: 0 auto; overflow: hidden; }
+  .proc-bar-fill { height: 100%; background: var(--purple); border-radius: 3px; width: 0; transition: width 0.8s linear; }
+  .proc-warning { font-size: 0.75rem; color: var(--red); margin-top: 16px; display: none; }
+
+  /* ── CONFIRMATION ── */
+  .confirm-card { background: #fff; border-radius: 5px; padding: 36px 28px; border: 1px solid var(--grey-border); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+  .confirm-err-header { border-bottom: none; }
+  .confirm-err-header h2 { font-family: Georgia, serif; font-size: 1.4rem; color: var(--red); margin-bottom: 8px; }
+  .confirm-success-header h2 { font-family: Georgia, serif; font-size: 1.5rem; color: var(--green); margin-bottom: 8px; }
+  .ref-code { font-family: monospace; font-size: 0.88rem; background: #f9f9f9; padding: 8px 14px; border-radius: 3px; display: inline-block; margin: 10px 0; border: 1px solid #eee; }
+  .confirm-detail { font-size: 0.82rem; color: var(--grey-mid); line-height: 1.7; margin-top: 12px; }
+
+  /* ── CONFETTI ── */
+  .confetti-bit { position: fixed; top: -12px; border-radius: 2px; z-index: 1000; pointer-events: none; animation: confettiFall linear forwards; }
+  @keyframes confettiFall { to { transform: translateY(110vh) rotate(720deg); opacity: 0; } }
+
+  /* ── MISC ── */
+  .spinner-inline { display: inline-block; width: 14px; height: 14px; border: 2px solid #e0d8eb; border-top-color: var(--purple); border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; }
+  .all-caps-warning { font-size: 0.72rem; font-weight: bold; letter-spacing: 0.08em; color: var(--red); text-transform: uppercase; }
+  .tiny-grey { font-size: 0.68rem; color: #c0b8cc; }
+  .login-prompt-card { background: #fff8ff; border: 1px solid var(--lavender-mid); border-radius: 5px; padding: 24px; }
+  .login-prompt-card h3 { font-family: Georgia, serif; font-size: 1.1rem; margin-bottom: 10px; }
+  .guest-link-wrap { margin-top: 10px; font-size: 0.78rem; color: var(--grey-mid); }
+  .guest-link-wrap a { color: #999; font-size: 0.7rem; cursor: pointer; text-decoration: underline; }
+  .guest-tiny { display: none; font-size: 0.68rem; color: #bbb; margin-top: 4px; cursor: pointer; text-decoration: underline; }
+
+  @media (max-width: 640px) {
+    .home-events, .events-grid { grid-template-columns: 1fr; }
+    .hero { height: 280px; }
+    .hero-title { font-size: 1.4rem; }
+    .hero-content { left: 20px; }
+    .filters-bar { flex-direction: column; }
+    .seat { width: 10px; height: 9px; }
+    .page-wrap { padding: 20px 12px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .confetti-bit, .proc-spinner, .spinner-inline, .viewers-dot { animation: none; }
+  }
+</style>
+
+<!-- ════════════════════════════════════════════
+     GLOBAL FIXED UI
+     ════════════════════════════════════════════ -->
+<nav class="g-nav" id="g-nav">
+  <div class="g-nav-logo">Harwick <span>Arts Centre</span></div>
+  <div class="g-nav-links">
+    <a onclick="navTo('screen-events')">What's On</a>
+    <a>Visit</a>
+    <a>About</a>
+    <a>Support Us</a>
+  </div>
+</nav>
+
+<div id="timer-bar">
+  <span>⏱ Your tickets are reserved for</span>
+  <span id="timer-display">5:00</span>
+  <span id="timer-viewers"> · <span id="viewer-count">12</span> people currently viewing</span>
+</div>
+
+<div id="toast"></div>
+
+<!-- Newsletter Popup -->
+<div id="newsletter-popup">
+  <button class="nl-close" onclick="closeNewsletter()">Close ✕</button>
+  <div id="nl-confetti-wrap"></div>
+  <h2>Don't miss a thing.</h2>
+  <p>Join our mailing list and be the first to hear about upcoming performances, exclusive offers, and news from Harwick Arts Centre.</p>
+  <input type="email" placeholder="Your email address" id="nl-email">
+  <button class="nl-submit" onclick="submitNewsletter()">Subscribe to our newsletter</button>
+</div>
+
+<!-- Cookie Banner -->
+<div id="cookie-banner">
+  <p>We and our 847 trusted partners use cookies to improve your experience, personalise content and advertising, and to analyse our traffic. By clicking "Accept all", you consent to our use of cookies. You can manage your preferences or read our full Cookie Policy at any time. Note that some features may not function correctly if you choose to limit cookies. This notice applies to all visitors to harwickartscentre.co.uk and its affiliated booking platform operated by TicketHouse Ltd (a wholly owned subsidiary of EventStream Group PLC, registered in England and Wales no. 09284571).</p>
+  <div class="cookie-btns">
+    <button class="btn-accept-all" onclick="acceptCookies()">Accept all</button>
+    <button class="btn-prefs" onclick="openCookiePrefs()">Manage preferences</button>
+    <button class="btn-reject-link" onclick="acceptCookies()">Reject non-essential</button>
+  </div>
+</div>
+
+<!-- Cookie Prefs Overlay -->
+<div class="overlay-bg" id="cookie-prefs-overlay">
+  <div class="overlay-modal">
+    <button class="overlay-close" onclick="closeCookiePrefs()">×</button>
+    <h3>Cookie Preferences</h3>
+    <p style="font-size:0.78rem;color:#888;margin-bottom:14px;">Please expand each category and set your preferences individually. All categories are enabled by default to ensure the best possible experience.</p>
+    <div id="cookie-sections">
+      <!-- generated by JS -->
+    </div>
+    <button id="cookie-save-btn" onclick="saveCookiePrefs()">Save preferences</button>
+    <p id="cookie-confirm-msg">✓ Preferences saved. Please also confirm your choices on the previous screen.</p>
+  </div>
+</div>
+
+<!-- Live Chat -->
+<div id="live-chat">
+  <div class="chat-header" onclick="toggleChat()">
+    <div class="chat-header-title"><div class="chat-dot"></div> Live Chat Support</div>
+    <span id="chat-toggle-icon">−</span>
+  </div>
+  <div class="chat-body" id="chat-body">
+    <div class="chat-msg">👋 Hi there! I'm Harriet from the Harwick box office team. How can I help you today?</div>
+    <div class="chat-input-row">
+      <input type="text" placeholder="Type a message..." id="chat-input" onkeydown="if(event.key==='Enter')sendChat()">
+      <button class="chat-send" onclick="sendChat()">Send</button>
+    </div>
+  </div>
+</div>
+
+<!-- Accessibility Widget -->
+<div id="a11y-widget">
+  <button class="a11y-trigger" onclick="toggleA11y()" title="Accessibility options">♿</button>
+  <div class="a11y-panel" id="a11y-panel">
+    <h4>Accessibility options</h4>
+    <div class="a11y-opt">🔡 Text size</div>
+    <div class="a11y-opt">🎨 Contrast</div>
+    <div class="a11y-opt">🖱 Cursor size</div>
+    <div class="a11y-opt">🔤 Dyslexia font</div>
+    <div class="a11y-opt">⚡ Reduce motion</div>
+    <div style="margin-top:10px;font-size:0.7rem;color:#bbb;">You must dismiss this panel three times before it closes permanently.</div>
+  </div>
+</div>
+
+<!-- Seat Taken Modal -->
+<div class="overlay-bg" id="modal-seat-taken">
+  <div class="overlay-modal" style="text-align:center;max-width:380px;">
+    <h3 style="color:var(--red);margin-bottom:10px;">😔 Sorry!</h3>
+    <p style="font-size:0.88rem;color:#555;margin-bottom:20px;line-height:1.6;">This seat is no longer available. Another customer may have selected it at the same time. Please choose a different seat.</p>
+    <button class="btn btn-primary" onclick="closeSeatModal()">Choose another seat</button>
+  </div>
+</div>
+
+<!-- Are You Still There Modal -->
+<div class="overlay-bg" id="modal-still-there">
+  <div class="overlay-modal" style="text-align:center;max-width:340px;">
+    <h3 style="margin-bottom:10px;">Are you still there?</h3>
+    <p style="font-size:0.85rem;color:#666;margin-bottom:20px;">Your session is about to expire due to inactivity. Would you like to continue?</p>
+    <div class="btn-row" style="justify-content:center;">
+      <button class="btn btn-primary" onclick="closeStillThere()">Yes, continue</button>
+      <button class="btn btn-cancel" onclick="closeStillThere()">No</button>
+    </div>
+  </div>
+</div>
+
+<!-- Login Interrupt Modal -->
+<div class="overlay-bg" id="modal-login">
+  <div class="overlay-modal">
+    <h3>Create an account to continue</h3>
+    <p style="font-size:0.82rem;color:#666;margin-bottom:16px;line-height:1.6;">To save your booking and access your tickets, please create a free Harwick account or log in.</p>
+    <div class="form-row"><label>Email address</label><input type="email" placeholder="you@example.com"></div>
+    <div class="form-row">
+      <label>Password</label>
+      <input type="password" id="modal-password" placeholder="Create a password" oninput="checkModalPass()">
+      <div class="pass-rules" id="modal-pass-rules">Password must be at least 12 characters, contain one uppercase letter, one number, one special character (!@#$%^&*), must not contain spaces, and must not match any of your previous 8 passwords.</div>
+    </div>
+    <button class="btn btn-primary" style="width:100%;margin-top:8px;" onclick="dismissLoginInterrupt()">Create account &amp; continue</button>
+    <div class="guest-link-wrap">
+      Already have an account? <a onclick="document.getElementById('modal-login-signin').style.display='block'">Sign in</a>
+      <div id="modal-login-signin" style="display:none;margin-top:6px;">
+        <input type="password" placeholder="Your password" style="width:100%;padding:6px 10px;border:1px solid #ddd;border-radius:3px;font-size:0.82rem;margin-bottom:6px;">
+        <div class="guest-tiny" style="display:block;" onclick="dismissLoginInterrupt()">Or, continue as guest</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Are You Sure Modal -->
+<div class="overlay-bg" id="modal-sure">
+  <div class="overlay-modal" style="max-width:360px;text-align:center;">
+    <h3 id="modal-sure-title" style="margin-bottom:12px;">Are you sure?</h3>
+    <p id="modal-sure-body" style="font-size:0.85rem;color:#666;margin-bottom:20px;line-height:1.6;"></p>
+    <div class="btn-row" style="justify-content:center;">
+      <button class="btn btn-primary" id="modal-sure-ok" onclick="advanceAreYouSure()">Yes, continue</button>
+      <button class="btn btn-cancel" onclick="document.getElementById('modal-sure').classList.remove('visible')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════
+     SCREEN: HOME
+     ════════════════════════════════════════════ -->
+<div class="screen active" id="screen-home">
+  <div class="hero">
+    <div class="hero-img-placeholder" id="hero-img"></div>
+    <div class="hero-overlay-video">▶</div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">Now booking</div>
+      <h1 class="hero-title">An Evening of<br>Something Wonderful</h1>
+      <p class="hero-sub">Main House · Various Dates · Tickets from £14</p>
+    </div>
+    <div class="hero-cta-zone">
+      <div class="carousel-dots">
+        <button class="cdot active" onclick=""></button>
+        <button class="cdot" onclick=""></button>
+        <button class="cdot" onclick=""></button>
+        <button class="cdot" onclick=""></button>
+      </div>
+      <button class="btn-booknow" onclick="navTo('screen-events')">Book now</button>
+    </div>
+  </div>
+
+  <div class="home-content">
+    <h2 class="home-section-title">Featured Events</h2>
+    <div class="home-events">
+      <div class="home-event-card" onclick="navTo('screen-events')">
+        <div class="event-card-img c1"></div>
+        <div class="event-card-body">
+          <div class="event-card-title">Performance (Main House)</div>
+          <div class="event-card-date">Sat 14th Jun</div>
+          <div class="event-card-price">From £18</div>
+        </div>
+      </div>
+      <div class="home-event-card" onclick="navTo('screen-events')">
+        <div class="event-card-img c2"></div>
+        <div class="event-card-body">
+          <div class="event-card-title">An Evening of Music</div>
+          <div class="event-card-date">06/21/2025</div>
+          <div class="event-card-price">From £22</div>
+        </div>
+      </div>
+      <div class="home-event-card" onclick="navTo('screen-events')">
+        <div class="event-card-img c3"></div>
+        <div class="event-card-body">
+          <div class="event-card-title">Theatre – see website</div>
+          <div class="event-card-date">Next Saturday</div>
+          <div class="event-card-price">From £12</div>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:24px;">
+      <button class="btn btn-primary" onclick="navTo('screen-events')">Browse all events</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════
+     SCREEN: EVENTS LISTING
+     ════════════════════════════════════════════ -->
+<div class="screen" id="screen-events">
+  <div class="page-wrap">
+    <h1 class="page-title">What's On</h1>
+    <p class="page-subtitle">Showing 1–9 of 47 events</p>
+
+    <div class="filters-bar">
+      <div class="filter-group">
+        <label>Genre</label>
+        <select id="f-genre"><option>All genres</option><option>Theatre</option><option>Music</option><option>Dance</option><option>Comedy</option></select>
+      </div>
+      <div class="filter-group">
+        <label>Date</label>
+        <select id="f-date"><option>Any date</option><option>This week</option><option>This month</option><option>Next month</option></select>
+      </div>
+      <div class="filter-group">
+        <label>Price</label>
+        <select id="f-price"><option>Any price</option><option>Under £15</option><option>£15–£30</option><option>Over £30</option></select>
+      </div>
+      <div class="filter-group">
+        <label>Venue</label>
+        <select id="f-venue"><option>All spaces</option><option>Main House</option><option>Studio</option><option>Courtyard</option></select>
+      </div>
+      <button class="btn-filter" id="filter-btn" onclick="applyFilters()">Apply filters</button>
+    </div>
+
+    <div class="events-grid" id="events-grid">
+      <!-- populated by JS -->
+    </div>
+
+    <div class="pagination" id="pagination">
+      <button class="pg-dot active"></button>
+      <button class="pg-dot"></button>
+      <button class="pg-dot"></button>
+      <button class="pg-dot"></button>
+      <button class="pg-dot"></button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════
+     SCREEN: CALENDAR / DATE SELECTION
+     ════════════════════════════════════════════ -->
+<div class="screen" id="screen-calendar">
+  <div class="page-wrap narrow">
+    <p class="breadcrumbs"><span>Home</span> / <span>What's On</span> / <span>An Evening of Music &amp; Things</span></p>
+
+    <div class="event-intro-card">
+      <h2>An Evening of Music &amp; Things</h2>
+      <p>Main House · Running time: approx. 1hr 45min (no interval) · Age guidance: 14+<br>
+      <span class="all-caps-warning">IMPORTANT NOTICE: LATECOMERS WILL NOT BE ADMITTED AFTER THE PERFORMANCE HAS COMMENCED.</span></p>
+    </div>
+
+    <div class="viewers-notice">
+      <div class="viewers-dot"></div>
+      <span><strong id="cal-viewers">12</strong> people are currently viewing this event</span>
+    </div>
+
+    <div class="calendar-card">
+      <div class="cal-header">
+        <button class="cal-nav" onclick="calPrev()">‹</button>
+        <div class="cal-month" id="cal-month-label">June 2025</div>
+        <button class="cal-nav" onclick="calNext()">›</button>
+      </div>
+      <div class="cal-grid" id="cal-grid">
+        <!-- generated by JS -->
+      </div>
+    </div>
+
+    <div class="time-select-card" id="time-select-card">
+      <h3 style="font-family:Georgia,serif;font-size:1rem;margin-bottom:14px;">Select a time for <span id="selected-date-label">Saturday 14 June</span></h3>
+      <div class="time-options">
+        <div class="time-opt" onclick="selectTime(this)">
+          <span>2:30pm</span><span class="time-avail-badge">LIMITED AVAILABILITY</span>
+        </div>
+        <div class="time-opt" onclick="selectTime(this)">
+          <span>7:30pm</span><span class="time-avail-badge">LIMITED AVAILABILITY</span>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="btn-continue-time" onclick="navTo('screen-seatmap')" style="display:none;">Continue to seat selection</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════
+     SCREEN: SEAT MAP
+     ════════════════════════════════════════════ -->
+<div class="screen" id="screen-seatmap">
+  <div class="page-wrap narrow">
+    <p class="breadcrumbs"><span>Home</span> / <span>An Evening of Music &amp; Things</span> / <span>Seat selection</span></p>
+    <h1 class="page-title">Choose your seats</h1>
+
+    <div style="margin-bottom:14px;">
+      <div class="progress-strip">
+        <div class="progress-track"><div class="progress-fill" style="width:33%"></div></div>
+        <div class="progress-label">Step 2 of 3</div>
+      </div>
+    </div>
+
+    <div class="seatmap-card">
+      <div class="seatmap-controls">
+        <span>Zoom:</span>
+        <button class="zoom-btn" onclick="fakeZoom()" title="Zoom in">+</button>
+        <button class="zoom-btn" onclick="fakeZoom()" title="Zoom out">−</button>
+        <button class="zoom-btn" onclick="fakeZoom()" title="Reset">↺</button>
+        <span style="margin-left:8px;font-size:0.72rem;color:#bbb;">(scroll to zoom)</span>
+      </div>
+      <div class="seat-area">
+        <div class="seat-grid" id="seat-grid">
+          <!-- generated by JS -->
+        </div>
+      </div>
+      <p class="seatmap-note">Tap a seat to select it. Please note that seat positions are approximate.</p>
+      <div class="selected-seat-info" id="selected-seat-info">No seat selected.</div>
+    </div>
+
+    <div class="btn-row" style="margin-top:20px;">
+      <button class="btn btn-primary" id="btn-continue-seat" onclick="continueSeat()" disabled style="opacity:0.4;cursor:not-allowed;">Continue</button>
+      <button class="btn btn-cancel" onclick="navTo('screen-calendar')">Back</button>
+    </div>
+    <p class="tiny-grey" style="margin-top:10px;">Seat availability updates in real time and cannot be guaranteed until payment is complete.</p>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════
+     SCREEN: BOOKING FORM
+     ════════════════════════════════════════════ -->
+<div class="screen" id="screen-form">
+  <div class="page-wrap narrow">
+    <div class="progress-strip">
+      <div class="progress-track"><div class="progress-fill" style="width:66%"></div></div>
+      <div class="progress-label">Step 2 of 3</div>
+    </div>
+    <p class="breadcrumbs"><span>Summary</span> / <span>Your details</span> / <span>Payment</span></p>
+
+    <h1 class="page-title" style="margin-bottom:20px;">Your details</h1>
+
+    <div class="error-box" id="form-error-box">
+      <strong>Please correct the following errors before continuing:</strong>
+      <ul id="form-error-list"></ul>
+    </div>
+
+    <div class="form-card">
+      <div class="wall-of-text">
+        IMPORTANT: Please read the following before completing your booking. Tickets are non-refundable except in circumstances permitted by the Harwick Arts Centre Terms and Conditions of Sale (available on request or at the box office during normal opening hours). By proceeding with this booking you agree to be bound by these terms. The personal data you provide will be processed in accordance with our Privacy Policy. All prices include VAT where applicable. Booking fees are non-refundable. In the event of a cancelled performance a credit note will be issued in lieu of a refund at the discretion of the management.
+      </div>
+
+      <h3 style="font-size:0.9rem;margin-bottom:14px;color:var(--purple-dark);">Personal information</h3>
+      <div class="form-row"><label>Title</label><select><option>Mr</option><option>Mrs</option><option>Ms</option><option>Dr</option><option>Prof</option><option>Mx</option><option>Rev</option><option>Lt Col</option><option>Other (specify below)</option></select></div>
+      <div class="form-row"><label>First name</label><input type="text" id="f-firstname" placeholder=""></div>
+      <div class="form-row"><label>Last name</label><input type="text" id="f-lastname" placeholder=""></div>
+      <div class="form-row"><label>Date of birth</label><input type="text" placeholder="DD/MM/YYYY"></div>
+      <div class="form-row"><label>Email address</label><input type="email" id="f-email" placeholder=""></div>
+      <div class="form-row"><label>Confirm email address</label><input type="email" placeholder=""></div>
+      <div class="form-row"><label>Telephone number</label><input type="tel" placeholder=""></div>
+
+      <hr class="section-divider">
+      <h3 style="font-size:0.9rem;margin-bottom:14px;color:var(--purple-dark);">Billing address</h3>
+      <div class="form-row">
+        <label>Postcode</label>
+        <div class="postcode-row">
+          <input type="text" id="f-postcode" placeholder="e.g. SW1A 1AA">
+          <button class="btn-postcode" onclick="fakePostcodeLookup()">Find address</button>
+        </div>
+        <div id="postcode-error" style="font-size:0.75rem;color:var(--red);margin-top:4px;display:none;">Sorry, we couldn't find that postcode. Please enter your address manually.</div>
+      </div>
+      <div class="form-row"><label>Address line 1</label><input type="text" placeholder=""></div>
+      <div class="form-row"><label>Address line 2</label><input type="text" placeholder=""></div>
+      <div class="form-row"><label>Town / city</label><input type="text" placeholder=""></div>
+      <div class="form-row"><label>County</label><input type="text" placeholder=""></div>
+
+      <hr class="section-divider">
+      <h3 style="font-size:0.9rem;margin-bottom:6px;color:var(--purple-dark);">Emergency contact</h3>
+      <p style="font-size:0.75rem;color:#aaa;margin-bottom:12px;">Required for all bookings.</p>
+      <div class="form-row"><label>Emergency contact name</label><input type="text" placeholder=""></div>
+      <div class="form-row"><label>Emergency contact telephone</label><input type="tel" placeholder=""></div>
+      <div class="form-row"><label>Your relationship to this person</label><input type="text" placeholder="e.g. partner, parent"></div>
+
+      <hr class="section-divider">
+      <h3 style="font-size:0.9rem;margin-bottom:10px;color:var(--purple-dark);">Create your account password</h3>
+      <div class="form-row">
+        <label>Password</label>
+        <input type="password" id="f-password" placeholder="Create a password" oninput="showPassHint()">
+        <div class="pass-rules" id="pass-rules">Password must be at least 12 characters and contain at least one uppercase letter, one number, and one special character (!@#$%^&amp;*). Spaces are not permitted. Your password must not match any of your previous 8 passwords.</div>
+      </div>
+
+      <hr class="section-divider">
+      <h3 style="font-size:0.9rem;margin-bottom:6px;color:var(--purple-dark);">Marketing preferences</h3>
+      <p style="font-size:0.75rem;color:#aaa;margin-bottom:12px;">We'd love to keep you informed. Please indicate how you'd like to hear from us. All options are selected by default.</p>
+      <div class="mktg-row"><input type="checkbox" checked id="mkt-email"><label for="mkt-email">I am happy to receive marketing communications from Harwick Arts Centre by email, including event announcements, special offers, and news</label></div>
+      <div class="mktg-row"><input type="checkbox" checked id="mkt-post"><label for="mkt-post">I am happy to be contacted by post with brochures, programmes, and promotional materials</label></div>
+      <div class="mktg-row"><input type="checkbox" checked id="mkt-sms"><label for="mkt-sms">I am happy to receive SMS messages about upcoming events and special offers (standard message rates may apply)</label></div>
+      <div class="mktg-row"><input type="checkbox" checked id="mkt-phone"><label for="mkt-phone">I am happy to be contacted by telephone for research purposes and to hear about events that may be of interest</label></div>
+      <div class="mktg-row"><input type="checkbox" checked><label>I am happy for my data to be shared with carefully selected third parties for marketing purposes</label></div>
+
+      <hr class="section-divider">
+      <div class="tc-box">
+        TERMS AND CONDITIONS OF SALE: These terms and conditions ("Terms") govern the purchase of tickets ("Tickets") from Harwick Arts Centre ("we", "us", "our"). By purchasing Tickets you agree to be bound by these Terms. 1. All Tickets are subject to availability. 2. Tickets may not be resold or transferred without our prior written consent. 3. We reserve the right to refuse admission. 4. Latecomers may not be admitted or may only be admitted at a suitable break in the performance. 5. No refunds will be given except in accordance with our Refund Policy. 6. The management reserves the right to alter the programme without notice. 7. Ticket holders attend at their own risk. 8. Photography, video, and audio recording are strictly prohibited. 9. Ticket fraud is a criminal offence. 10. These Terms are governed by the laws of England and Wales.
+      </div>
+
+      <div class="captcha-box" id="captcha1-box">
+        <div class="captcha-check" id="captcha1" onclick="tickCaptcha(1)"></div>
+        <div class="captcha-label">I'm not a robot</div>
+        <div class="captcha-brand">reCAPTCHA<br><span style="font-size:0.5rem;color:#ccc;">Privacy · Terms</span></div>
+      </div>
+      <div class="captcha-box" id="captcha2-box" style="display:none;">
+        <div class="captcha-check" id="captcha2" onclick="tickCaptcha(2)"></div>
+        <div class="captcha-label">Please confirm you are human</div>
+        <div class="captcha-brand">reCAPTCHA<br><span style="font-size:0.5rem;color:#ccc;">Privacy · Terms</span></div>
+      </div>
+    </div>
+
+    <div class="btn-row" style="margin-top:20px;" id="form-btn-row">
+      <button class="btn btn-primary" onclick="submitForm()">Continue</button>
+    </div>
+    <p class="tiny-grey" style="margin-top:8px;">All fields are required.</p>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════
+     SCREEN: UPSELL
+     ════════════════════════════════════════════ -->
+<div class="screen" id="screen-upsell">
+  <div class="page-wrap narrow">
+    <div class="upsell-card">
+      <div class="upsell-step-label" id="upsell-step-label">One moment...</div>
+      <div class="upsell-icon" id="upsell-icon">🎭</div>
+      <h2 class="upsell-title" id="upsell-title">Loading...</h2>
+      <p class="upsell-desc" id="upsell-desc"></p>
+      <div class="upsell-price" id="upsell-price"></div>
+      <div class="upsell-check-row">
+        <input type="checkbox" checked id="upsell-check">
+        <label for="upsell-check" id="upsell-check-label">Yes, add this to my booking</label>
+      </div>
+      <button class="btn btn-primary" onclick="nextUpsell()" id="upsell-continue-btn">Continue</button>
+      <button class="no-thanks" onclick="nextUpsell()">No thanks</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════
+     SCREEN: SURVEY
+     ════════════════════════════════════════════ -->
+<div class="screen" id="screen-survey">
+  <div class="page-wrap narrow">
+    <div class="survey-card">
+      <p style="font-size:0.75rem;color:var(--grey-mid);margin-bottom:16px;">Just a few quick questions while your booking is being prepared. This should take less than 30 seconds.</p>
+      <h2 class="page-title" style="margin-bottom:20px;">Tell us about yourself</h2>
+
+      <div class="survey-q">
+        <p>How would you rate your experience so far?</p>
+        <div class="star-row">
+          <span class="star" onclick="rateStar(this,1)">★</span>
+          <span class="star" onclick="rateStar(this,2)">★</span>
+          <span class="star" onclick="rateStar(this,3)">★</span>
+          <span class="star" onclick="rateStar(this,4)">★</span>
+          <span class="star" onclick="rateStar(this,5)">★</span>
+        </div>
+      </div>
+      <div class="survey-q">
+        <p>How did you hear about this event?</p>
+        <div class="survey-radio-row">
+          <input type="radio" name="q2" id="q2a"><label for="q2a">Email</label>
+          <input type="radio" name="q2" id="q2b"><label for="q2b">Social media</label>
+          <input type="radio" name="q2" id="q2c"><label for="q2c">Friend</label>
+          <input type="radio" name="q2" id="q2d"><label for="q2d">Poster</label>
+          <input type="radio" name="q2" id="q2e"><label for="q2e">Other</label>
+        </div>
+      </div>
+      <div class="survey-q">
+        <p>How often do you attend events at Harwick Arts Centre?</p>
+        <div class="survey-radio-row">
+          <input type="radio" name="q3" id="q3a"><label for="q3a">First time</label>
+          <input type="radio" name="q3" id="q3b"><label for="q3b">Occasionally</label>
+          <input type="radio" name="q3" id="q3c"><label for="q3c">Regularly</label>
+          <input type="radio" name="q3" id="q3d"><label for="q3d">Member</label>
+        </div>
+      </div>
+      <div class="survey-q">
+        <p>What is your approximate household income?</p>
+        <select style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:3px;font-size:0.85rem;">
+          <option>Please select</option>
+          <option>Under £20,000</option>
+          <option>£20,000–£40,000</option>
+          <option>£40,000–£60,000</option>
+          <option>£60,000–£80,000</option>
+          <option>Over £80,000</option>
+          <option>Prefer not to say</option>
+        </select>
+      </div>
+      <div class="survey-q">
+        <p>Any other comments about tonight's booking experience?</p>
+        <textarea rows="3" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:3px;font-size:0.85rem;font-family:inherit;" placeholder="Your feedback helps us improve"></textarea>
+      </div>
+      <button class="btn btn-primary" onclick="navTo('screen-newsletter2')">Submit and continue</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════
+     SCREEN: NEWSLETTER RE-SIGNUP
+     ════════════════════════════════════════════ -->
+<div class="screen" id="screen-newsletter2">
+  <div class="page-wrap narrow">
+    <div class="upsell-card">
+      <div class="upsell-step-label">Nearly there!</div>
+      <div class="upsell-icon">✉️</div>
+      <h2 class="upsell-title">Stay in the loop</h2>
+      <p class="upsell-desc">Don't miss out on future events, exclusive member offers, and news from Harwick Arts Centre. Join our mailing list today.</p>
+      <div class="upsell-check-row">
+        <input type="checkbox" checked id="nl2-check">
+        <label for="nl2-check">Yes, sign me up for the Harwick newsletter</label>
+      </div>
+      <div class="form-row" style="margin-bottom:16px;">
+        <label style="font-size:0.78rem;color:#888;">Email address</label>
+        <input type="email" value="your.email@example.com" style="font-size:0.85rem;">
+      </div>
+      <button class="btn btn-primary" onclick="navTo('screen-payment')">Continue to payment</button>
+      <button class="no-thanks" onclick="navTo('screen-payment')">No thanks, skip this step</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════
+     SCREEN: PAYMENT
+     ════════════════════════════════════════════ -->
+<div class="screen" id="screen-payment">
+  <div class="page-wrap narrow">
+    <div class="progress-strip">
+      <div class="progress-track"><div class="progress-fill" style="width:100%"></div></div>
+      <div class="progress-label">Step 3 of 3</div>
+    </div>
+    <p class="breadcrumbs"><span>Summary</span> / <span>Your details</span> / <span>Payment</span></p>
+
+    <h1 class="page-title" style="margin-bottom:20px;">Payment</h1>
+
+    <div class="payment-card">
+      <div class="order-summary">
+        <div class="order-row"><span>An Evening of Music &amp; Things × 1</span><span>£28.00</span></div>
+        <div class="order-row"><span>Booking fee</span><span>£3.50</span></div>
+        <div class="order-row"><span>Delivery (e-ticket)</span><span>£1.25</span></div>
+        <div class="order-row"><span>Harwick Membership</span><span>£4.99/mo</span></div>
+        <div class="order-row"><span>Donation</span><span>£5.00</span></div>
+        <div class="order-row"><span>Programme</span><span>£4.50</span></div>
+        <div class="order-row"><span>Booking insurance</span><span>£4.95</span></div>
+        <div class="order-row"><span>Parking</span><span>£12.00</span></div>
+        <div class="order-row total"><span>Total due today</span><span>£64.19</span></div>
+      </div>
+
+      <div class="card-icons">
+        <div class="card-icon">VISA</div>
+        <div class="card-icon">MC</div>
+        <div class="card-icon">AMEX</div>
+        <div class="card-icon">DISC</div>
+      </div>
+
+      <div class="form-row"><label>Name on card</label><input type="text" id="p-name" placeholder="As it appears on your card"></div>
+      <div class="form-row"><label>Card number</label><input type="text" id="p-card" placeholder="0000 0000 0000 0000" maxlength="19"></div>
+      <div style="display:flex;gap:12px;">
+        <div class="form-row" style="flex:1;"><label>Expiry date</label><input type="text" placeholder="MM / YY" maxlength="7"></div>
+        <div class="form-row" style="flex:1;"><label>Security code</label><input type="text" id="p-cvv" placeholder="CVV"></div>
+      </div>
+      <p class="tiny-grey" style="margin-bottom:14px;">What is my security code?</p>
+
+      <div class="all-caps-warning" style="margin-bottom:14px;">DO NOT REFRESH THIS PAGE DURING PAYMENT.</div>
+
+      <div class="secure-note">
+        🔒 Your payment is secured by 256-bit SSL encryption. By paying, you agree to our Terms of Sale, Refund Policy, Cookie Policy, Privacy Policy, and the policies of TicketHouse Ltd, EventStream Group PLC, and their appointed payment processor, SecurePay Technologies GmbH (Germany), a subsidiary of GlobalPay Holdings.
+      </div>
+
+      <div class="btn-row" id="pay-btn-row" style="margin-top:20px;">
+        <button class="btn btn-primary" id="btn-pay" onclick="startPayment()">Pay £64.19</button>
+        <button class="btn btn-cancel" id="btn-cancel-pay" onclick="navTo('screen-form')">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════
+     SCREEN: PROCESSING
+     ════════════════════════════════════════════ -->
+<div class="screen" id="screen-processing">
+  <div class="processing-wrap">
+    <div class="proc-spinner"></div>
+    <p style="font-family:Georgia,serif;font-size:1.1rem;margin-bottom:8px;">Processing your payment…</p>
+    <p class="proc-label">Please do not close this window or press the back button.</p>
+    <div class="proc-bar-track">
+      <div class="proc-bar-fill" id="proc-fill"></div>
+    </div>
+    <p class="proc-label" id="proc-stage" style="margin-top:12px;">Contacting payment provider…</p>
+    <p class="proc-warning" id="proc-warning">This is taking longer than expected. Please wait — <strong>do not refresh.</strong></p>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════
+     SCREEN: WHITE PAUSE
+     ════════════════════════════════════════════ -->
+<div id="screen-white"></div>
+
+
+<!-- ════════════════════════════════════════════
+     SCREEN: ERROR-STYLED CONFIRMATION
+     ════════════════════════════════════════════ -->
+<div class="screen" id="screen-confirm-err">
+  <div class="page-wrap narrow" style="padding-top:48px;">
+    <div class="confirm-card" style="border-top:5px solid var(--red);">
+      <div class="confirm-err-header">
+        <div style="font-size:2.5rem;margin-bottom:12px;">⚠️</div>
+        <h2 style="font-family:Georgia,serif;font-size:1.3rem;color:var(--red);margin-bottom:10px;">Something went wrong</h2>
+        <p style="font-size:0.85rem;color:#666;line-height:1.7;margin-bottom:14px;">We encountered an unexpected error while processing your request. Please check your email for a confirmation. If you have not received a confirmation email within 24 hours, please contact the box office.</p>
+        <p style="font-family:monospace;font-size:0.72rem;color:#bbb;">Error code: TKTHSE_5504 · Session: 8f3a2c91 · Time: 19:43:22</p>
+        <hr class="section-divider">
+        <p class="tiny-grey" style="margin-bottom:4px;text-align:center;">Booking reference HAW-2025-49182</p>
+        <p class="tiny-grey" style="text-align:center;">Your booking was successful.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════
+     SCREEN: SUCCESS CONFIRMATION
+     ════════════════════════════════════════════ -->
+<div class="screen" id="screen-confirm">
+  <div class="page-wrap narrow" style="padding-top:48px;">
+    <div class="confirm-card" style="text-align:center;border-top:5px solid var(--green);">
+      <div style="font-size:3rem;margin-bottom:14px;">🎉</div>
+      <h2 style="font-family:Georgia,serif;font-size:1.5rem;color:var(--green);margin-bottom:10px;">Booking confirmed!</h2>
+      <p style="font-size:0.9rem;color:#555;margin-bottom:6px;">Your booking reference is</p>
+      <div class="ref-code">HAW-2025-49182</div>
+      <p class="confirm-detail">
+        An Evening of Music &amp; Things<br>
+        Saturday 14 June 2025 · 7:30pm<br>
+        Harwick Arts Centre, Main House<br>
+        Seat: Row E, Seat 11<br><br>
+        A confirmation email has been sent.<br>
+        Your e-tickets will arrive within 3–5 working days.
+      </p>
+      <hr class="section-divider">
+      <p class="tiny-grey">Please note: tickets may be subject to a digital processing delay. If your tickets do not arrive within 5 working days, please allow a further 5 working days before contacting the box office.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════
+     JAVASCRIPT
+     ════════════════════════════════════════════ -->
+<script>
+// ── STATE ──────────────────────────────────────
+const S = {
+  navCount: 0,
+  seatAttempts: 0,
+  upsellIndex: 0,
+  timerSeconds: 300,
+  timerInterval: null,
+  timerStarted: false,
+  formFirstSubmit: true,
+  captcha1Done: false,
+  captcha2Done: false,
+  captcha2Shown: false,
+  loginShown: false,
+  selectedSeat: null,
+  preselectedSeat: null,
+  viewerCount: 12,
+  cookieSections: [false,false,false,false,false],
+  cookieSavedStep: 0,
+  sureStep: 0,
+  a11yDismissCount: 0,
+  swapPayBtns: Math.random() < 0.25,
+  stillThereTimer: null,
+  sessionResetDone: false,
+};
+
+// ── EVENTS DATA ────────────────────────────────
+const EVENTS = [
+  {title:'An Evening of Music & Things',   date:'Sat 14th Jun',    price:'From £18', c:'c1'},
+  {title:'Performance (Main House)',        date:'06/21/2025',      price:'From £22', c:'c2'},
+  {title:'Theatre – see website',           date:'Next Saturday',   price:'From £12', c:'c3'},
+  {title:'Dance',                           date:'June 28',         price:'From £24', c:'c1'},
+  {title:'An Evening of Something',         date:'Sat 5 Jul',       price:'From £16', c:'c2'},
+  {title:'Music (evening)',                 date:'2025-07-12',      price:'From £20', c:'c3'},
+  {title:'A Production',                    date:'Thursday, 17th',  price:'From £28', c:'c1'},
+  {title:'Comedy Night (TBC)',              date:'Late July',       price:'TBC',      c:'c2'},
+  {title:'Community Event – see leaflet',   date:'August',         price:'Various',  c:'c3'},
+];
+
+const UPSELLS = [
+  {icon:'🎭', title:'Become a Harwick Member', desc:'Enjoy priority booking, exclusive discounts, and free entry to selected events. Join today and cancel anytime. Your first month free, then £4.99/month.', price:'£4.99 / month', check:'Yes, start my membership today', step:'Step 1 of 6'},
+  {icon:'💛', title:'Support Harwick Arts', desc:'Our artists and staff depend on your generosity. A suggested donation of £5 helps us maintain programming for the whole community. Every contribution makes a difference.', price:'£5.00 suggested', check:'Yes, add my donation of £5', step:'Step 2 of 6'},
+  {icon:'📖', title:'Add a Programme', desc:'Take home a beautifully produced souvenir programme featuring artist interviews, production notes, and full cast and crew details.', price:'£4.50', check:'Yes, add a printed programme', step:'Step 3 of 6'},
+  {icon:'🛡️', title:'Protect your booking', desc:'Booking insurance covers you if you are unable to attend due to illness, travel disruption, or other circumstances beyond your control. Terms apply. Provided by SafeBook Ltd.', price:'£4.95', check:'Yes, add booking protection', step:'Step 4 of 6'},
+  {icon:'🚗', title:'Add parking', desc:'Reserve a parking space at our partner facility. Please note: this is located 12 minutes\' walk from the venue. Spaces are limited. Not operated by Harwick Arts Centre.', price:'£12.00', check:'Yes, reserve my parking space', step:'Step 5 of 6'},
+  {icon:'🌱', title:'Offset your carbon', desc:'Your journey to tonight\'s event is estimated to produce 47 kg of CO₂. Help neutralise your footprint by contributing to our verified carbon offset programme.', price:'£3.80 suggested', check:'Yes, offset my carbon footprint', step:'Step 6 of 6'},
+];
+
+// ── NAVIGATION ─────────────────────────────────
+function navTo(screenId) {
+  S.navCount++;
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const t = document.getElementById(screenId);
+  if (t) { t.classList.add('active'); window.scrollTo(0,0); }
+
+  // Cookie banner every 3rd navigation
+  if (S.navCount > 0 && S.navCount % 3 === 0) {
+    setTimeout(() => showCookieBanner(), 400);
+  }
+
+  if (screenId === 'screen-seatmap') onEnterSeatmap();
+  if (screenId === 'screen-form') onEnterForm();
+  if (screenId === 'screen-upsell') showUpsell();
+  if (screenId === 'screen-payment') onEnterPayment();
+  if (screenId === 'screen-processing') startProcessing();
+}
+
+// ── HOME ───────────────────────────────────────
+window.addEventListener('load', () => {
+  // Slow hero load
+  setTimeout(() => document.getElementById('hero-img')?.classList.add('loaded'), 200);
+
+  // Newsletter popup delay
+  setTimeout(() => {
+    document.getElementById('newsletter-popup').classList.add('visible');
+  }, 600);
+
+  // Show cookie banner after newsletter dismissal opportunity
+  setTimeout(() => showCookieBanner(), 1800);
+
+  // Carousel auto-advance
+  let ci = 0;
+  setInterval(() => {
+    document.querySelectorAll('.cdot').forEach((d,i) => d.classList.toggle('active', i===ci));
+    ci = (ci + 1) % 4;
+  }, 3000);
+
+  // Build events grid
+  buildEventsGrid();
+
+  // Build cookie sections
+  buildCookieSections();
+
+  // Build calendar
+  buildCalendar();
+
+  // Build seat map
+  buildSeatMap();
+
+  // Viewer count fluctuation
+  setInterval(fluctuateViewers, 4000);
+});
+
+// ── NEWSLETTER ─────────────────────────────────
+function closeNewsletter() {
+  document.getElementById('newsletter-popup').classList.remove('visible');
+}
+
+function submitNewsletter() {
+  fireNlConfetti();
+  setTimeout(() => {
+    closeNewsletter();
+    showToast('You\'ve successfully joined our mailing list!', 'success');
+  }, 1400);
+}
+
+function fireNlConfetti() {
+  const wrap = document.getElementById('nl-confetti-wrap');
+  const colours = ['#f1c40f','#e74c3c','#9b59b6','#3498db','#2ecc71','#e67e22'];
+  for (let i=0;i<60;i++) {
+    const b = document.createElement('div');
+    b.className = 'confetti-bit';
+    b.style.cssText = `left:${Math.random()*100}%;width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;background:${colours[Math.floor(Math.random()*colours.length)]};animation-duration:${1.5+Math.random()*1.5}s;animation-delay:${Math.random()*0.5}s;`;
+    wrap.appendChild(b);
+    setTimeout(() => b.remove(), 3000);
+  }
+}
+
+function fireConfetti() {
+  const colours = ['#f1c40f','#e74c3c','#9b59b6','#3498db','#2ecc71','#e67e22','#ff69b4'];
+  for (let i=0;i<100;i++) {
+    const b = document.createElement('div');
+    b.className = 'confetti-bit';
+    b.style.cssText = `left:${Math.random()*100}%;width:${7+Math.random()*9}px;height:${7+Math.random()*9}px;background:${colours[Math.floor(Math.random()*colours.length)]};animation-duration:${2+Math.random()*2}s;animation-delay:${Math.random()*0.8}s;`;
+    document.body.appendChild(b);
+    setTimeout(() => b.remove(), 4500);
+  }
+}
+
+// ── COOKIES ────────────────────────────────────
+function showCookieBanner() {
+  document.getElementById('cookie-banner').classList.add('visible');
+}
+
+function acceptCookies() {
+  document.getElementById('cookie-banner').classList.remove('visible');
+  document.getElementById('cookie-prefs-overlay').classList.remove('visible');
+}
+
+function buildCookieSections() {
+  const defs = [
+    {title:'Strictly necessary cookies', body:'These cookies are required for the website to function and cannot be disabled. They include session management, security, and form submission.'},
+    {title:'Performance & analytics cookies', body:'These cookies help us understand how visitors use our website so we can improve the experience. This includes cookies from third-party analytics providers such as Google Analytics, Hotjar, and Adobe Analytics.'},
+    {title:'Functional cookies', body:'These cookies enable enhanced functionality such as live chat, video playback, and personalisation. Disabling them may affect the quality of your experience.'},
+    {title:'Targeting & advertising cookies', body:'These cookies are used to build a profile of your interests and serve relevant advertising across other websites. They are set by our advertising partners, which may include Google, Meta, and over 200 other networks.'},
+    {title:'Social media cookies', body:'These cookies are set by social media platforms to allow you to share content and engage with social networks. They may track you across other websites if you are logged in to those platforms.'},
+  ];
+  const cont = document.getElementById('cookie-sections');
+  cont.innerHTML = defs.map((d,i) => `
+    <div class="cookie-section">
+      <div class="cookie-section-hd" onclick="toggleCookieSection(${i})" id="csh-${i}">
+        <span>${d.title}</span><span class="arrow">›</span>
+      </div>
+      <div class="cookie-section-body" id="csb-${i}">
+        <p>${d.body}</p>
+        <div class="cookie-toggle-row">
+          <input type="checkbox" id="ct-${i}" ${i===0?'disabled checked':''}>
+          <label for="ct-${i}">${i===0?'Always active':'Enable these cookies'}</label>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleCookieSection(i) {
+  const hd = document.getElementById(`csh-${i}`);
+  const bd = document.getElementById(`csb-${i}`);
+  const open = bd.classList.contains('visible');
+  bd.classList.toggle('visible', !open);
+  hd.classList.toggle('open', !open);
+  S.cookieSections[i] = !open;
+}
+
+function openCookiePrefs() {
+  document.getElementById('cookie-prefs-overlay').classList.add('visible');
+}
+
+function closeCookiePrefs() {
+  document.getElementById('cookie-prefs-overlay').classList.remove('visible');
+}
+
+function saveCookiePrefs() {
+  S.cookieSavedStep++;
+  const msg = document.getElementById('cookie-confirm-msg');
+  if (S.cookieSavedStep === 1) {
+    msg.style.display = 'block';
+    msg.textContent = '✓ Preferences saved. Please also confirm your choices on the previous screen.';
+    document.getElementById('cookie-save-btn').textContent = 'Confirm and close';
+  } else {
+    closeCookiePrefs();
+    acceptCookies();
+    S.cookieSavedStep = 0;
+    document.getElementById('cookie-save-btn').textContent = 'Save preferences';
+    msg.style.display = 'none';
+  }
+}
+
+// ── CHAT ───────────────────────────────────────
+function toggleChat() {
+  const body = document.getElementById('chat-body');
+  const icon = document.getElementById('chat-toggle-icon');
+  const hidden = body.classList.toggle('hidden');
+  icon.textContent = hidden ? '+' : '−';
+}
+
+function sendChat() {
+  const inp = document.getElementById('chat-input');
+  if (!inp.value.trim()) return;
+  inp.value = '';
+  setTimeout(() => {
+    const body = document.getElementById('chat-body');
+    const msg = document.createElement('div');
+    msg.className = 'chat-msg';
+    msg.textContent = 'Thanks for your message! Our team typically responds within 2–3 business days. For urgent queries please call the box office on 01234 567890 (open Mon–Fri, 10am–4pm).';
+    body.insertBefore(msg, body.querySelector('.chat-input-row'));
+  }, 800);
+}
+
+// ── ACCESSIBILITY WIDGET ───────────────────────
+function toggleA11y() {
+  const panel = document.getElementById('a11y-panel');
+  const open = panel.classList.toggle('open');
+  if (!open) {
+    S.a11yDismissCount++;
+    if (S.a11yDismissCount < 3) {
+      setTimeout(() => panel.classList.add('open'), 200);
+    }
+  }
+}
+
+// ── EVENTS GRID ────────────────────────────────
+function buildEventsGrid() {
+  const grid = document.getElementById('events-grid');
+  if (!grid) return;
+  const colours = ['c1','c2','c3'];
+  grid.innerHTML = EVENTS.map((e,i) => `
+    <div class="event-listing-card" onclick="navTo('screen-calendar')">
+      <div class="elc-img ${e.c}"></div>
+      <div class="elc-body">
+        <div class="elc-title">${e.title}</div>
+        <div class="elc-date">${e.date}</div>
+        <div class="elc-price">${e.price}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function applyFilters() {
+  const btn = document.getElementById('filter-btn');
+  btn.innerHTML = '<span class="spinner-inline"></span> Applying…';
+  btn.disabled = true;
+  setTimeout(() => {
+    // Reset all filters
+    document.getElementById('f-genre').selectedIndex = 0;
+    document.getElementById('f-date').selectedIndex = 0;
+    document.getElementById('f-price').selectedIndex = 0;
+    document.getElementById('f-venue').selectedIndex = 0;
+    btn.innerHTML = 'Apply filters';
+    btn.disabled = false;
+  }, 1200);
+}
+
+// ── CALENDAR ───────────────────────────────────
+function buildCalendar() {
+  const grid = document.getElementById('cal-grid');
+  if (!grid) return;
+  const days = ['Mo','Tu','We','Th','Fr','Sa','Su'];
+  let html = days.map(d=>`<div class="cal-day-label">${d}</div>`).join('');
+  // June 2025: starts Monday (day 0 offset = 0)
+  // Actually June 1 2025 is a Sunday. In Mon-first grid, that's offset 6.
+  const offset = 6;
+  const daysInMonth = 30;
+  for (let i=0;i<offset;i++) html += `<div class="cal-day empty"></div>`;
+  for (let d=1;d<=daysInMonth;d++) {
+    const dow = (offset + d - 1) % 7; // 0=Mon, 6=Sun
+    const isSat = dow === 5;
+    const isSun = dow === 6;
+    const isPast = d < 14;
+    const isSoldOut = [14,20,22].includes(d);
+    let cls = 'limited';
+    let badge = '<span class="avail-badge">LIMITED</span>';
+    if (isPast) { cls = 'soldout'; badge = ''; }
+    else if (isSoldOut) { cls = 'soldout'; badge = '<span class="avail-badge">SOLD OUT</span>'; }
+    html += `<div class="cal-day ${cls}" onclick="selectCalDay(this, ${d})">${d}${badge}</div>`;
+  }
+  grid.innerHTML = html;
+}
+
+function calPrev() {
+  // Jump back to current display month (cruel)
+  document.getElementById('cal-month-label').textContent = 'June 2025';
+  showToast('Calendar reset to current month.', 'info');
+}
+function calNext() {
+  // Jump back
+  document.getElementById('cal-month-label').textContent = 'June 2025';
+  showToast('Calendar reset to current month.', 'info');
+}
+
+function selectCalDay(el, day) {
+  document.querySelectorAll('.cal-day').forEach(d => d.classList.remove('selected'));
+  el.classList.add('selected');
+  const label = `Saturday ${day} June`;
+  document.getElementById('selected-date-label').textContent = label;
+  const card = document.getElementById('time-select-card');
+  card.classList.add('visible');
+  document.querySelector('.time-opt.selected')?.classList.remove('selected');
+  document.getElementById('btn-continue-time').style.display = 'none';
+}
+
+function selectTime(el) {
+  document.querySelectorAll('.time-opt').forEach(t => t.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('btn-continue-time').style.display = 'inline-block';
+}
+
+function fluctuateViewers() {
+  const delta = Math.floor(Math.random()*3) - 1;
+  S.viewerCount = Math.max(8, Math.min(19, S.viewerCount + delta));
+  const el = document.getElementById('cal-viewers');
+  if (el) el.textContent = S.viewerCount;
+  const vEl = document.getElementById('viewer-count');
+  if (vEl) vEl.textContent = S.viewerCount;
+}
+
+// ── SEAT MAP ───────────────────────────────────
+function onEnterSeatmap() {
+  startTimer();
+  showToast('You\'ve successfully joined our mailing list!', 'success');
+}
+
+function buildSeatMap() {
+  const grid = document.getElementById('seat-grid');
+  if (!grid) return;
+  const rows = ['A','B','C','D','E','F','G','H'];
+  const seatsPerRow = 18;
+  const colours = ['s-a','s-b','s-c','s-d','s-e'];
+  // Pick a random pre-selected seat
+  const preRow = 3; const preCol = 8;
+  S.preselectedSeat = `${rows[preRow]}-${preCol}`;
+
+  let html = '';
+  rows.forEach((r, ri) => {
+    html += `<div class="seat-row"><div class="seat-row-label">${r}</div>`;
+    for (let c=1;c<=seatsPerRow;c++) {
+      const id = `${r}-${c}`;
+      const isPre = id === S.preselectedSeat;
+      const col = colours[Math.floor(Math.random()*colours.length)];
+      html += `<button class="seat ${col}${isPre?' presel':''}" id="seat-${id}" onclick="clickSeat('${id}')" title="Row ${r}, Seat ${c}"></button>`;
+    }
+    if (ri === 2) html += `<div style="width:20px;"></div>`; // aisle gap
+    html += `</div>`;
+  });
+  grid.innerHTML = html;
+}
+
+function clickSeat(id) {
+  if (S.seatAttempts === 0) {
+    S.seatAttempts++;
+    document.getElementById('modal-seat-taken').classList.add('visible');
+    return;
+  }
+  // Deselect previous
+  if (S.selectedSeat) {
+    const prev = document.getElementById(`seat-${S.selectedSeat}`);
+    if (prev) prev.classList.remove('selected');
+  }
+  S.selectedSeat = id;
+  const el = document.getElementById(`seat-${id}`);
+  if (el) el.classList.add('selected');
+  const parts = id.split('-');
+  document.getElementById('selected-seat-info').innerHTML = `Selected: <strong>Row ${parts[0]}, Seat ${parts[1]}</strong>`;
+  const btn = document.getElementById('btn-continue-seat');
+  btn.disabled = false;
+  btn.style.opacity = '1';
+  btn.style.cursor = 'pointer';
+}
+
+function closeSeatModal() {
+  document.getElementById('modal-seat-taken').classList.remove('visible');
+}
+
+function continueSeat() {
+  if (!S.selectedSeat) return;
+  navTo('screen-form');
+}
+
+function fakeZoom() {
+  showToast('Zoom is not available on this device.', 'info');
+}
+
+// ── TIMER ──────────────────────────────────────
+function startTimer() {
+  if (S.timerStarted) return;
+  S.timerStarted = true;
+  S.timerSeconds = 300;
+  const bar = document.getElementById('timer-bar');
+  const gNav = document.getElementById('g-nav');
+  bar.classList.add('active');
+  gNav.style.display = 'none';
+  S.timerInterval = setInterval(tickTimer, 1000);
+}
+
+function tickTimer() {
+  S.timerSeconds--;
+  if (S.timerSeconds <= 0) {
+    clearInterval(S.timerInterval);
+    showToast('Your session has expired. Please start again.', 'warning');
+    return;
+  }
+  updateTimerDisplay();
+
+  // Session extension mid-form
+  if (S.timerSeconds === 180 && !S.sessionResetDone && document.getElementById('screen-form')?.classList.contains('active')) {
+    S.sessionResetDone = true;
+    S.timerSeconds = 240;
+    showToast('Your session has been extended.', 'info');
+  }
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(S.timerSeconds / 60);
+  const s = S.timerSeconds % 60;
+  document.getElementById('timer-display').textContent = `${m}:${s.toString().padStart(2,'0')}`;
+  const bar = document.getElementById('timer-bar');
+  bar.classList.remove('t-yellow','t-orange','t-red','t-flash');
+  if (S.timerSeconds < 30) bar.classList.add('t-flash');
+  else if (S.timerSeconds < 60) bar.classList.add('t-red');
+  else if (S.timerSeconds < 120) bar.classList.add('t-orange');
+  else if (S.timerSeconds < 180) bar.classList.add('t-yellow');
+}
+
+// ── FORM ───────────────────────────────────────
+function onEnterForm() {
+  // Show "are you still there?" after 18s
+  if (S.stillThereTimer) clearTimeout(S.stillThereTimer);
+  S.stillThereTimer = setTimeout(() => {
+    if (document.getElementById('screen-form')?.classList.contains('active')) {
+      document.getElementById('modal-still-there').classList.add('visible');
+    }
+  }, 18000);
+}
+
+function closeStillThere() {
+  document.getElementById('modal-still-there').classList.remove('visible');
+}
+
+function showPassHint() {
+  document.getElementById('pass-rules').classList.add('visible');
+}
+
+function fakePostcodeLookup() {
+  const el = document.getElementById('postcode-error');
+  el.style.display = 'block';
+  setTimeout(() => { el.style.display = 'none'; }, 4000);
+}
+
+function tickCaptcha(n) {
+  if (n===1 && !S.captcha1Done) {
+    S.captcha1Done = true;
+    const el = document.getElementById('captcha1');
+    el.classList.add('done');
+    el.textContent = '✓';
+    if (!S.captcha2Shown) {
+      S.captcha2Shown = true;
+      setTimeout(() => {
+        document.getElementById('captcha2-box').style.display = 'flex';
+        window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});
+      }, 1200);
+    }
+  }
+  if (n===2 && !S.captcha2Done) {
+    S.captcha2Done = true;
+    const el = document.getElementById('captcha2');
+    el.classList.add('done');
+    el.textContent = '✓';
+  }
+}
+
+function submitForm() {
+  if (S.formFirstSubmit) {
+    S.formFirstSubmit = false;
+    // Scroll to top, show errors
+    window.scrollTo({top:0, behavior:'smooth'});
+    const errBox = document.getElementById('form-error-box');
+    const errList = document.getElementById('form-error-list');
+    errList.innerHTML = [
+      '<li>First name is required</li>',
+      '<li>Last name is required</li>',
+      '<li>Email address is required</li>',
+      '<li>Please confirm your email address</li>',
+      '<li>Password does not meet requirements</li>',
+      '<li>Please complete the address fields</li>',
+      '<li>Emergency contact name is required</li>',
+      '<li>Please confirm your marketing preferences</li>',
+      '<li>Please complete the security check</li>',
+    ].join('');
+    errBox.classList.add('visible');
+    return;
+  }
+  if (!S.captcha2Done) {
+    showToast('Please complete the security check.', 'warning');
+    return;
+  }
+  // Login interrupt
+  if (!S.loginShown) {
+    S.loginShown = true;
+    document.getElementById('modal-login').classList.add('visible');
+    return;
+  }
+  navTo('screen-upsell');
+}
+
+function dismissLoginInterrupt() {
+  document.getElementById('modal-login').classList.remove('visible');
+  navTo('screen-upsell');
+}
+
+function checkModalPass() {
+  const val = document.getElementById('modal-password').value;
+  if (val.length > 0) document.getElementById('modal-pass-rules').classList.add('visible');
+}
+
+// ── UPSELLS ────────────────────────────────────
+function showUpsell() {
+  const u = UPSELLS[S.upsellIndex];
+  if (!u) { navTo('screen-survey'); return; }
+  document.getElementById('upsell-step-label').textContent = u.step;
+  document.getElementById('upsell-icon').textContent = u.icon;
+  document.getElementById('upsell-title').textContent = u.title;
+  document.getElementById('upsell-desc').textContent = u.desc;
+  document.getElementById('upsell-price').textContent = u.price;
+  document.getElementById('upsell-check-label').textContent = u.check;
+  document.getElementById('upsell-check').checked = true;
+}
+
+function nextUpsell() {
+  S.upsellIndex++;
+  if (S.upsellIndex >= UPSELLS.length) {
+    navTo('screen-survey');
+  } else {
+    showUpsell();
+    window.scrollTo(0,0);
+  }
+}
+
+// ── SURVEY ─────────────────────────────────────
+function rateStar(el, n) {
+  const stars = el.parentElement.querySelectorAll('.star');
+  stars.forEach((s,i) => s.classList.toggle('lit', i < n));
+}
+
+// ── PAYMENT ────────────────────────────────────
+function onEnterPayment() {
+  if (S.swapPayBtns) {
+    document.getElementById('pay-btn-row').classList.add('reversed');
+  }
+}
+
+let sureStep = 0;
+function startPayment() {
+  sureStep = 0;
+  const modal = document.getElementById('modal-sure');
+  document.getElementById('modal-sure-title').textContent = 'Are you sure?';
+  document.getElementById('modal-sure-body').textContent = 'You are about to be charged £64.19. This action cannot be undone. Please confirm you wish to proceed.';
+  modal.classList.add('visible');
+}
+
+function advanceAreYouSure() {
+  sureStep++;
+  if (sureStep === 1) {
+    document.getElementById('modal-sure-title').textContent = 'Are you absolutely sure?';
+    document.getElementById('modal-sure-body').textContent = 'Just to confirm — you are happy to pay £64.19 in full today, including all add-ons, insurance, and the Harwick Membership subscription at £4.99/month?';
+  } else {
+    document.getElementById('modal-sure').classList.remove('visible');
+    navTo('screen-processing');
+  }
+}
+
+// ── PROCESSING ─────────────────────────────────
+function startProcessing() {
+  const fill = document.getElementById('proc-fill');
+  const stage = document.getElementById('proc-stage');
+  const warning = document.getElementById('proc-warning');
+  let pct = 0;
+  const stages = [
+    [0,   'Contacting payment provider…'],
+    [20,  'Verifying card details…'],
+    [40,  'Awaiting bank authorisation…'],
+    [65,  'Confirming reservation…'],
+    [85,  'Finalising booking…'],
+  ];
+  let si = 0;
+  const interval = setInterval(() => {
+    if (pct < 90) pct += (Math.random() * 3);
+    fill.style.width = Math.min(pct, 90) + '%';
+    if (si < stages.length && pct >= stages[si][0]) {
+      stage.textContent = stages[si][1];
+      si++;
+    }
+  }, 300);
+
+  setTimeout(() => warning.style.display = 'block', 5000);
+
+  setTimeout(() => {
+    clearInterval(interval);
+    // White screen
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    const white = document.getElementById('screen-white');
+    white.style.display = 'block';
+    S.navCount++; // count as nav for cookie check
+    // After 4s show error-styled confirm
+    setTimeout(() => {
+      white.style.display = 'none';
+      navTo('screen-confirm-err');
+      // After 3s auto-advance to real success
+      setTimeout(() => {
+        navTo('screen-confirm');
+        fireConfetti();
+      }, 3500);
+    }, 4000);
+  }, 7500);
+}
+
+// ── TOAST ──────────────────────────────────────
+let toastTimer = null;
+function showToast(msg, type='info') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `visible ${type}`;
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.className = '', 3500);
+}
+
+// ── KEYBOARD TRAP ──────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    // Close accessibility panel instead of newsletter popup
+    const a11y = document.getElementById('a11y-panel');
+    if (a11y.classList.contains('open')) {
+      toggleA11y(); return;
+    }
+    // Close wrong modal
+    const stillThere = document.getElementById('modal-still-there');
+    if (stillThere.classList.contains('visible')) {
+      stillThere.classList.remove('visible'); return;
+    }
+    // Do NOT close newsletter popup
+  }
+});
+</script>
