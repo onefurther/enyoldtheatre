@@ -109,19 +109,42 @@
   #nl-confetti-wrap { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
 
   /* ── COOKIE BANNER ── */
+  #cookie-backdrop {
+    position: fixed; inset: 0; z-index: 849;
+    background: rgba(0,0,0,0.5);
+    display: none;
+  }
+  #cookie-backdrop.visible { display: block; }
   #cookie-banner {
-    position: fixed; bottom: 0; left: 0; right: 0; z-index: 850;
-    background: #fff; border-top: 3px solid var(--purple);
-    padding: 16px 20px 16px;
-    box-shadow: 0 -2px 12px rgba(0,0,0,0.12);
+    position: fixed; z-index: 850;
+    background: #fff;
     display: none;
   }
   #cookie-banner.visible { display: block; }
-  #cookie-banner p { font-size: 0.8rem; color: #666; margin-bottom: 12px; line-height: 1.55; max-width: 800px; }
+  @media (min-width: 641px) {
+    #cookie-banner {
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 560px; max-width: calc(100vw - 40px);
+      border-radius: 6px; border: 1px solid var(--grey-border);
+      padding: 28px 24px;
+      box-shadow: 0 12px 48px rgba(0,0,0,0.25);
+    }
+  }
+  @media (max-width: 640px) {
+    #cookie-banner {
+      bottom: 0; left: 0; right: 0;
+      border-top: 3px solid var(--purple);
+      padding: 16px 20px;
+      box-shadow: 0 -2px 12px rgba(0,0,0,0.12);
+    }
+  }
+  #cookie-banner h4 { font-family: Georgia, serif; font-size: 1rem; margin-bottom: 10px; color: var(--purple-dark); }
+  #cookie-banner p { font-size: 0.8rem; color: #666; margin-bottom: 16px; line-height: 1.55; }
   .cookie-btns { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-  .btn-accept-all { background: var(--purple); color: #fff; border: none; padding: 8px 20px; border-radius: 3px; cursor: pointer; font-size: 0.83rem; }
+  .btn-reject-link { font-size: 0.83rem; color: #555; background: #fff; border: 1px solid #ccc; padding: 8px 16px; border-radius: 3px; cursor: pointer; }
+  .btn-reject-link:hover { background: #f5f5f5; }
   .btn-prefs { background: #fff; border: 1px solid #ccc; color: #555; padding: 8px 16px; border-radius: 3px; cursor: pointer; font-size: 0.83rem; }
-  .btn-reject-link { margin-left: auto; font-size: 0.68rem; color: #bbb; background: none; border: none; cursor: pointer; text-decoration: underline; }
+  .btn-accept-all { background: var(--purple); color: #fff; border: none; padding: 8px 20px; border-radius: 3px; cursor: pointer; font-size: 0.83rem; margin-left: auto; }
 
   /* ── COOKIE PREFS OVERLAY ── */
   .overlay-bg {
@@ -341,6 +364,8 @@
   .seat.s-c { background: #d35400; }
   .seat.s-d { background: #922b21; }
   .seat.s-e { background: #c0566c; }
+  .seat.s-taken { background: #111; cursor: not-allowed; }
+  .seat.s-taken:hover { background: #111; }
   .seat.presel { outline: 3px solid #f1c40f; outline-offset: 1px; }
   .seat.selected { outline: 3px solid #27ae60; outline-offset: 1px; }
   .seatmap-note { font-size: 0.68rem; color: #bbb; margin-top: 10px; font-style: italic; }
@@ -479,10 +504,10 @@
 <nav class="g-nav" id="g-nav">
   <div class="g-nav-logo">Harwick <span>Arts Centre</span></div>
   <div class="g-nav-links">
-    <a onclick="navTo('screen-events')">What's On</a>
+    <a>About Us</a>
+    <a onclick="navTo('screen-events')">Discover</a>
     <a>Visit</a>
-    <a>About</a>
-    <a>Support Us</a>
+    <a>Support</a>
   </div>
 </nav>
 
@@ -504,13 +529,17 @@
   <button class="nl-submit" onclick="submitNewsletter()">Subscribe to our newsletter</button>
 </div>
 
+<!-- Cookie Backdrop -->
+<div id="cookie-backdrop"></div>
+
 <!-- Cookie Banner -->
 <div id="cookie-banner">
+  <h4>We value your privacy</h4>
   <p>We and our 847 trusted partners use cookies to improve your experience, personalise content and advertising, and to analyse our traffic. By clicking "Accept all", you consent to our use of cookies. You can manage your preferences or read our full Cookie Policy at any time. Note that some features may not function correctly if you choose to limit cookies. This notice applies to all visitors to harwickartscentre.co.uk and its affiliated booking platform operated by TicketHouse Ltd (a wholly owned subsidiary of EventStream Group PLC, registered in England and Wales no. 09284571).</p>
   <div class="cookie-btns">
-    <button class="btn-accept-all" onclick="acceptCookies()">Accept all</button>
-    <button class="btn-prefs" onclick="openCookiePrefs()">Manage preferences</button>
     <button class="btn-reject-link" onclick="acceptCookies()">Reject non-essential</button>
+    <button class="btn-prefs" onclick="openCookiePrefs()">Manage preferences</button>
+    <button class="btn-accept-all" onclick="acceptCookies()">Accept all</button>
   </div>
 </div>
 
@@ -600,6 +629,15 @@
   </div>
 </div>
 
+<!-- Seat Isolation Modal -->
+<div class="overlay-bg" id="modal-isolation">
+  <div class="overlay-modal" style="text-align:center;max-width:380px;">
+    <h3 style="color:var(--orange);margin-bottom:10px;">Unable to select this seat</h3>
+    <p style="font-size:0.88rem;color:#555;margin-bottom:20px;line-height:1.6;">Selecting this seat would leave a single seat isolated in the row, which cannot be sold. Please choose a different seat.</p>
+    <button class="btn btn-primary" onclick="document.getElementById('modal-isolation').classList.remove('visible')">OK</button>
+  </div>
+</div>
+
 <!-- Are You Sure Modal -->
 <div class="overlay-bg" id="modal-sure">
   <div class="overlay-modal" style="max-width:360px;text-align:center;">
@@ -637,6 +675,16 @@
   </div>
 
   <div class="home-content">
+    <div style="background:#fff;border:1px solid var(--grey-border);border-radius:5px;padding:28px 32px;margin-bottom:36px;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
+      <h2 style="font-family:Georgia,serif;font-size:1.15rem;color:var(--purple-dark);margin-bottom:18px;padding-bottom:10px;border-bottom:2px solid var(--lavender);">A Welcome from our Artistic Director</h2>
+      <p style="font-size:0.88rem;line-height:1.85;color:#444;margin-bottom:14px;">It is with an immense sense of privilege, and indeed humility, that I take this opportunity to welcome you — each and every one of you — to what promises to be yet another extraordinary season here at Harwick Arts Centre. As an institution, we have always believed — and I think this is something that sets us apart — that the arts are not merely a luxury, nor simply an entertainment, but rather a fundamental and irreducible component of a truly flourishing civic life. That is the animating conviction behind everything we do here.</p>
+      <p style="font-size:0.88rem;line-height:1.85;color:#444;margin-bottom:14px;">This season, more than any other, we are delighted to be presenting a programme that reflects the full breadth and diversity of what it means to live, to feel, and to experience the world in all its complexity. From the intimate and the personal to the epic and the transformational, our stages will once again play host to work that challenges, that moves, that provokes, and — yes — that sometimes simply delights. Because delight, too, has its place in the artistic canon.</p>
+      <p style="font-size:0.88rem;line-height:1.85;color:#444;margin-bottom:14px;">I am particularly excited — and I say this with full awareness of how often artistic directors claim to be excited about things — to introduce a cohort of new voices and emerging practitioners alongside our established relationships with makers of genuine and lasting significance. The dialogue between the new and the known is, I believe, one of the most generative tensions available to a producing house such as ours, and this season we lean into it with, I hope, some courage.</p>
+      <p style="font-size:0.88rem;line-height:1.85;color:#444;margin-bottom:14px;">I want also to take this moment to thank you personally. Your continued support — whether you are joining us for the first time or returning for the twentieth consecutive season — is quite literally what makes all of this possible. The arts do not exist in a vacuum. They exist because people choose to show up, to be present, to give their attention. And your attention — in an age so aggressively competing for it — is genuinely the most generous gift you can give.</p>
+      <p style="font-size:0.88rem;line-height:1.85;color:#444;margin-bottom:0;">I look forward enormously to welcoming you into our spaces over the coming months. Do feel free to share your thoughts and reflections with us — we are, as ever, listening. Until then, I hope this season brings you something you were not expecting. That is, after all, what the best art always does.</p>
+      <p style="margin-top:20px;font-size:0.82rem;color:var(--grey-mid);font-style:italic;">— Rosalind Hatherley-Vane, Artistic Director, Harwick Arts Centre</p>
+    </div>
+
     <h2 class="home-section-title">Featured Events</h2>
     <div class="home-events">
       <div class="home-event-card" onclick="navTo('screen-events')">
@@ -677,7 +725,7 @@
 <div class="screen" id="screen-events">
   <div class="page-wrap">
     <h1 class="page-title">What's On</h1>
-    <p class="page-subtitle">Showing 1–9 of 47 events</p>
+    <p class="page-subtitle">Showing 1–4 of 4 events</p>
 
     <div class="filters-bar">
       <div class="filter-group">
@@ -697,6 +745,12 @@
         <select id="f-venue"><option>All spaces</option><option>Main House</option><option>Studio</option><option>Courtyard</option></select>
       </div>
       <button class="btn-filter" id="filter-btn" onclick="applyFilters()">Apply filters</button>
+    </div>
+
+    <div id="no-results-msg" style="display:none;text-align:center;padding:60px 20px;color:var(--grey-mid);">
+      <div style="font-size:2rem;margin-bottom:14px;">🔍</div>
+      <p style="font-size:0.95rem;font-weight:bold;color:#555;margin-bottom:8px;">No results were returned for your search.</p>
+      <p style="font-size:0.82rem;">Please try adjusting your filters.</p>
     </div>
 
     <div class="events-grid" id="events-grid">
@@ -827,7 +881,7 @@
       <div class="form-row"><label>Title</label><select><option>Mr</option><option>Mrs</option><option>Ms</option><option>Dr</option><option>Prof</option><option>Mx</option><option>Rev</option><option>Lt Col</option><option>Other (specify below)</option></select></div>
       <div class="form-row"><label>First name</label><input type="text" id="f-firstname" placeholder=""></div>
       <div class="form-row"><label>Last name</label><input type="text" id="f-lastname" placeholder=""></div>
-      <div class="form-row"><label>Date of birth</label><input type="text" placeholder="DD/MM/YYYY"></div>
+      <div class="form-row"><label>Date of birth</label><input type="text" placeholder="YYYY/MM/DD"></div>
       <div class="form-row"><label>Email address</label><input type="email" id="f-email" placeholder=""></div>
       <div class="form-row"><label>Confirm email address</label><input type="email" placeholder=""></div>
       <div class="form-row"><label>Telephone number</label><input type="tel" placeholder=""></div>
@@ -969,7 +1023,7 @@
         </select>
       </div>
       <div class="survey-q">
-        <p>Any other comments about tonight's booking experience?</p>
+        <p>Any other comments about your booking experience?</p>
         <textarea rows="3" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:3px;font-size:0.85rem;font-family:inherit;" placeholder="Your feedback helps us improve"></textarea>
       </div>
       <button class="btn btn-primary" onclick="navTo('screen-newsletter2')">Submit and continue</button>
@@ -1107,21 +1161,102 @@
      ════════════════════════════════════════════ -->
 <div class="screen" id="screen-confirm">
   <div class="page-wrap narrow" style="padding-top:48px;">
-    <div class="confirm-card" style="text-align:center;border-top:5px solid var(--green);">
-      <div style="font-size:3rem;margin-bottom:14px;">🎉</div>
-      <h2 style="font-family:Georgia,serif;font-size:1.5rem;color:var(--green);margin-bottom:10px;">Booking confirmed!</h2>
-      <p style="font-size:0.9rem;color:#555;margin-bottom:6px;">Your booking reference is</p>
-      <div class="ref-code">HAW-2025-49182</div>
-      <p class="confirm-detail">
-        An Evening of Music &amp; Things<br>
-        Saturday 14 June 2025 · 7:30pm<br>
-        Harwick Arts Centre, Main House<br>
-        Seat: Row E, Seat 11<br><br>
-        A confirmation email has been sent.<br>
-        Your e-tickets will arrive within 3–5 working days.
-      </p>
+    <div class="confirm-card">
+      <h2 style="font-family:Georgia,serif;font-size:1.3rem;color:#333;margin-bottom:16px;">Transaction complete.</h2>
+      <p style="font-size:0.88rem;color:#555;line-height:1.7;margin-bottom:12px;">Your e-tickets will arrive within 3–5 working days.</p>
       <hr class="section-divider">
-      <p class="tiny-grey">Please note: tickets may be subject to a digital processing delay. If your tickets do not arrive within 5 working days, please allow a further 5 working days before contacting the box office.</p>
+      <p class="tiny-grey">Please note: tickets may be subject to a digital processing delay. If your tickets do not arrive within 5 working days, please allow a further 5 working days before contacting the box office. Harwick Arts Centre accepts no responsibility for tickets lost, delayed, or redirected in transit. For queries contact the box office during normal opening hours (Mon–Fri, 10am–4pm, excluding bank holidays). Booking reference HAW-2025-49182.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════
+     SCREEN: PRODUCTION 1 — AN EVENING OF MUSIC & THINGS
+     ════════════════════════════════════════════ -->
+<div class="screen" id="screen-prod-1">
+  <div class="page-wrap narrow">
+    <p class="breadcrumbs"><span>Home</span> / <span>What's On</span> / <span>An Evening of Music &amp; Things</span></p>
+    <div class="event-intro-card">
+      <h1 style="font-family:Georgia,serif;font-size:1.5rem;color:var(--purple-dark);margin-bottom:8px;">An Evening of Music &amp; Things</h1>
+      <p style="font-size:0.78rem;color:var(--grey-mid);margin-bottom:16px;">Main House · Saturdays · From £18</p>
+      <p style="font-size:0.88rem;line-height:1.8;margin-bottom:14px;">We are delighted to present what promises to be one of the most memorable evenings in Harwick's recent programmatic history. This remarkable programme brings together a constellation of talent that, we feel, truly needs no introduction — and yet we shall provide one, in the interests of completeness.</p>
+      <p style="font-size:0.88rem;line-height:1.8;margin-bottom:14px;">The evening will comprise a carefully curated selection of musical works, interspersed with other things. The precise nature of these things has not yet been entirely confirmed at time of going to print, however audiences can expect to be moved, challenged, and on occasion surprised.</p>
+      <p style="font-family:'Times New Roman',Times,serif;font-size:0.9rem;line-height:1.8;color:#333;margin-bottom:14px;background:#fffef8;border:1px solid #eee;padding:12px 14px;border-radius:3px;">Drawing on a rich tapestry of influences that span the full breadth of the Western cannon, this evenings performances will demonstrate once again why Harwick remains at the vanguard of accessible yet uncompromising arts presentaion. We are honoured to welcome back several artists whose relationship with this building goes back many years, alongside exciting new collaboraters who bring fresh perspectives to familar forms.</p>
+      <p style="font-size:0.88rem;line-height:1.8;margin-bottom:14px;">Tickets are available at multiple price points. A booking fee applies. Latecomers will not be admitted after the performance has commenced. Please arrive early and allow time for security.</p>
+
+      <p style="font-size:0.88rem;line-height:1.8;margin-bottom:14px;">Running time: approx. 1hr 45min (no interval). Age guidance: 14+. Some performances may contain strong language, strobe lighting, and themes that some audience members may find challenging. Please consult the box office for further information.</p>
+      <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--grey-border);">
+        <button class="btn btn-primary" onclick="navTo('screen-calendar')">Book tickets</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════
+     SCREEN: PRODUCTION 2 — PERFORMANCE (MAIN HOUSE)
+     ════════════════════════════════════════════ -->
+<div class="screen" id="screen-prod-2">
+  <div class="page-wrap narrow">
+    <p class="breadcrumbs"><span>Home</span> / <span>What's On</span> / <span>Performance (Main House)</span></p>
+    <div class="event-intro-card">
+      <h1 style="font-family:Georgia,serif;font-size:1.5rem;color:var(--purple-dark);margin-bottom:8px;">Performance (Main House)</h1>
+      <p style="font-size:0.78rem;color:var(--grey-mid);margin-bottom:16px;">Main House · Various dates · From £22</p>
+      <p style="font-size:0.88rem;line-height:1.8;margin-bottom:14px;">A new work. This Performance (working title) explores themes of presence, absence, and the relationship between performer and audience in a contemporary context.</p>
+      <p style="font-family:'Times New Roman',Times,serif;font-size:0.9rem;line-height:1.8;color:#333;margin-bottom:14px;background:#fffef8;border:1px solid #eee;padding:12px 14px;border-radius:3px;">The company have been in residency at Harwick for several weeks now, developing material in response to the building and its history. What emerges is a peice that resists easy categorization — part installation, part durational performance, part something else entirely. Audiences are encouraged to move freely throught the space, although this is not mandatory.</p>
+      <p style="font-size:0.88rem;line-height:1.8;margin-bottom:14px;">Content information: this work contains extended periods of silence. It also contains sound. There may be audience participation, depending on the night.
+
+Running time is variable. On some nights the performance may end before the advertised time. On others it may continue somewhat beyond it. There are no refunds in either eventuality.</p>
+      <p style="font-size:0.88rem;line-height:1.8;margin-bottom:14px;">This production is supported by Arts Council England, Harwick Borough Council, and an anonymous donor who wishes to remain anonymous.</p>
+      <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--grey-border);">
+        <button class="btn btn-primary" onclick="navTo('screen-calendar')">Book tickets</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════
+     SCREEN: PRODUCTION 3 — THEATRE
+     ════════════════════════════════════════════ -->
+<div class="screen" id="screen-prod-3">
+  <div class="page-wrap narrow">
+    <p class="breadcrumbs"><span>Home</span> / <span>What's On</span> / <span>Theatre – see website</span></p>
+    <div class="event-intro-card">
+      <h1 style="font-family:Georgia,serif;font-size:1.5rem;color:var(--purple-dark);margin-bottom:8px;">Theatre – see website</h1>
+      <p style="font-size:0.78rem;color:var(--grey-mid);margin-bottom:16px;">Studio · Next Saturday · From £12</p>
+      <p style="font-size:0.88rem;line-height:1.8;margin-bottom:14px;">Further information about this production is available on the Harwick Arts Centre website. Please see the website for details.</p>
+      <p style="font-family:'Times New Roman',Times,serif;font-size:0.9rem;line-height:1.8;color:#333;margin-bottom:14px;background:#fffef8;border:1px solid #eee;padding:12px 14px;border-radius:3px;">This show has been described as "a visceral and uncompromising examination of modern life" by someone who saw it at a previous venue. We understand it is quite short. It may or may not feature a set. The director has asked us not to reveal the ending, or indeed very much else about it, as they feel that the less the audience knows in advance the better.</p>
+      <p style="font-size:0.88rem;line-height:1.8;margin-bottom:14px;">Suitable for ages 16 and over. Contains adult themes. Some audience members at previous performances have found it unexpectedly upsetting.
+
+We ask that audience members refrain from using mobile phones during the performance. We also ask that you do not eat hot food in the auditoreum. Cold food is permitted in some areas — please ask at the box office.</p>
+      <p style="font-size:0.88rem;line-height:1.8;margin-bottom:14px;">This is a studio production. Seating is raked and the seats are quite close together.</p>
+      <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--grey-border);">
+        <button class="btn btn-primary" onclick="navTo('screen-calendar')">Book tickets</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════
+     SCREEN: PRODUCTION 4 — DANCE
+     ════════════════════════════════════════════ -->
+<div class="screen" id="screen-prod-4">
+  <div class="page-wrap narrow">
+    <p class="breadcrumbs"><span>Home</span> / <span>What's On</span> / <span>Dance</span></p>
+    <div class="event-intro-card">
+      <h1 style="font-family:Georgia,serif;font-size:1.5rem;color:var(--purple-dark);margin-bottom:8px;">Dance</h1>
+      <p style="font-size:0.78rem;color:var(--grey-mid);margin-bottom:16px;">Main House · June 28 · From £24</p>
+      <p style="font-size:0.88rem;line-height:1.8;margin-bottom:14px;">A dance production. This work brings together an ensemble of performers to explore movement, space, and — above all — the deeply human imperative to move one's body in time with, or occasionally against, music.</p>
+      <p style="font-family:'Times New Roman',Times,serif;font-size:0.9rem;line-height:1.8;color:#333;margin-bottom:14px;background:#fffef8;border:1px solid #eee;padding:12px 14px;border-radius:3px;">The choreography in this piece has been described by the choreografer themselves as "intentional". It draws on traditions of contemporary dance while simultaneously questioning those very traditions — a tension that manifests most powerfully, perhaps, in the work's extraordinary second section, during which nothing happens for approximately eleven minutes. This has divided audiences. Some have found it profound. Others have asked for a refund. Both responses, the company feel, are valid.</p>
+      <p style="font-size:0.88rem;line-height:1.8;margin-bottom:14px;">Running time: 1hr 10min approximately (no interval). Please note: there is no interval.
+
+Age guidance: suitable for all ages, though children under 5 may find certain sections difficult to follow, as indeed may some adults. The production contains strobe lighting and a section of extremely loud noise that has been described as music.</p>
+      <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--grey-border);">
+        <button class="btn btn-primary" onclick="navTo('screen-calendar')">Book tickets</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1158,15 +1293,10 @@ const S = {
 
 // ── EVENTS DATA ────────────────────────────────
 const EVENTS = [
-  {title:'An Evening of Music & Things',   date:'Sat 14th Jun',    price:'From £18', c:'c1'},
-  {title:'Performance (Main House)',        date:'06/21/2025',      price:'From £22', c:'c2'},
-  {title:'Theatre – see website',           date:'Next Saturday',   price:'From £12', c:'c3'},
-  {title:'Dance',                           date:'June 28',         price:'From £24', c:'c1'},
-  {title:'An Evening of Something',         date:'Sat 5 Jul',       price:'From £16', c:'c2'},
-  {title:'Music (evening)',                 date:'2025-07-12',      price:'From £20', c:'c3'},
-  {title:'A Production',                    date:'Thursday, 17th',  price:'From £28', c:'c1'},
-  {title:'Comedy Night (TBC)',              date:'Late July',       price:'TBC',      c:'c2'},
-  {title:'Community Event – see leaflet',   date:'August',         price:'Various',  c:'c3'},
+  {title:'An Evening of Music & Things',   date:'Sat 14th Jun',    price:'From £18', c:'c1', prod:'screen-prod-1'},
+  {title:'Performance (Main House)',        date:'06/21/2025',      price:'From £22', c:'c2', prod:'screen-prod-2'},
+  {title:'Theatre – see website',           date:'Next Saturday',   price:'From £12', c:'c3', prod:'screen-prod-3'},
+  {title:'Dance',                           date:'June 28',         price:'From £24', c:'c1', prod:'screen-prod-4'},
 ];
 
 const UPSELLS = [
@@ -1185,11 +1315,6 @@ function navTo(screenId) {
   const t = document.getElementById(screenId);
   if (t) { t.classList.add('active'); window.scrollTo(0,0); }
 
-  // Cookie banner every 3rd navigation
-  if (S.navCount > 0 && S.navCount % 3 === 0) {
-    setTimeout(() => showCookieBanner(), 400);
-  }
-
   if (screenId === 'screen-seatmap') onEnterSeatmap();
   if (screenId === 'screen-form') onEnterForm();
   if (screenId === 'screen-upsell') showUpsell();
@@ -1205,7 +1330,7 @@ window.addEventListener('load', () => {
   // Newsletter popup delay
   setTimeout(() => {
     document.getElementById('newsletter-popup').classList.add('visible');
-  }, 600);
+  }, 5000);
 
   // Show cookie banner after newsletter dismissal opportunity
   setTimeout(() => showCookieBanner(), 1800);
@@ -1223,7 +1348,8 @@ window.addEventListener('load', () => {
   // Build cookie sections
   buildCookieSections();
 
-  // Build calendar
+  // Build calendar (start in previous month)
+  initCalendar();
   buildCalendar();
 
   // Build seat map
@@ -1272,10 +1398,12 @@ function fireConfetti() {
 // ── COOKIES ────────────────────────────────────
 function showCookieBanner() {
   document.getElementById('cookie-banner').classList.add('visible');
+  document.getElementById('cookie-backdrop').classList.add('visible');
 }
 
 function acceptCookies() {
   document.getElementById('cookie-banner').classList.remove('visible');
+  document.getElementById('cookie-backdrop').classList.remove('visible');
   document.getElementById('cookie-prefs-overlay').classList.remove('visible');
 }
 
@@ -1374,9 +1502,8 @@ function toggleA11y() {
 function buildEventsGrid() {
   const grid = document.getElementById('events-grid');
   if (!grid) return;
-  const colours = ['c1','c2','c3'];
-  grid.innerHTML = EVENTS.map((e,i) => `
-    <div class="event-listing-card" onclick="navTo('screen-calendar')">
+  grid.innerHTML = EVENTS.map((e) => `
+    <div class="event-listing-card" onclick="navTo('${e.prod}')">
       <div class="elc-img ${e.c}"></div>
       <div class="elc-body">
         <div class="elc-title">${e.title}</div>
@@ -1387,38 +1514,84 @@ function buildEventsGrid() {
   `).join('');
 }
 
+let filterSpinnerActive = false;
 function applyFilters() {
   const btn = document.getElementById('filter-btn');
-  btn.innerHTML = '<span class="spinner-inline"></span> Applying…';
-  btn.disabled = true;
-  setTimeout(() => {
-    // Reset all filters
+
+  if (filterSpinnerActive) {
+    filterSpinnerActive = false;
+    btn.innerHTML = 'Apply filters';
+    btn.disabled = false;
+    document.getElementById('no-results-msg').style.display = 'none';
+    buildEventsGrid();
+    document.getElementById('events-grid').style.display = '';
     document.getElementById('f-genre').selectedIndex = 0;
     document.getElementById('f-date').selectedIndex = 0;
     document.getElementById('f-price').selectedIndex = 0;
     document.getElementById('f-venue').selectedIndex = 0;
-    btn.innerHTML = 'Apply filters';
-    btn.disabled = false;
+    return;
+  }
+
+  const genre = document.getElementById('f-genre').value;
+  const price = document.getElementById('f-price').value;
+  const showNoResults = genre === 'Theatre' || price === 'Under £15';
+
+  btn.innerHTML = '<span class="spinner-inline"></span> Applying…';
+  btn.disabled = true;
+
+  setTimeout(() => {
+    if (showNoResults) {
+      document.getElementById('events-grid').style.display = 'none';
+      document.getElementById('no-results-msg').style.display = 'block';
+      filterSpinnerActive = true;
+      btn.disabled = false;
+      // spinner stays on button until next click
+    } else {
+      document.getElementById('f-genre').selectedIndex = 0;
+      document.getElementById('f-date').selectedIndex = 0;
+      document.getElementById('f-price').selectedIndex = 0;
+      document.getElementById('f-venue').selectedIndex = 0;
+      document.getElementById('no-results-msg').style.display = 'none';
+      document.getElementById('events-grid').style.display = '';
+      buildEventsGrid();
+      btn.innerHTML = 'Apply filters';
+      btn.disabled = false;
+    }
   }, 1200);
 }
 
 // ── CALENDAR ───────────────────────────────────
+let calYear, calMonth; // 0-indexed month
+
+function initCalendar() {
+  const now = new Date();
+  let m = now.getMonth() - 1; // start one month back (dark pattern)
+  let y = now.getFullYear();
+  if (m < 0) { m = 11; y--; }
+  calYear = y;
+  calMonth = m;
+}
+
 function buildCalendar() {
   const grid = document.getElementById('cal-grid');
   if (!grid) return;
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('cal-month-label').textContent = `${monthNames[calMonth]} ${calYear}`;
+
   const days = ['Mo','Tu','We','Th','Fr','Sa','Su'];
   let html = days.map(d=>`<div class="cal-day-label">${d}</div>`).join('');
-  // June 2025: starts Monday (day 0 offset = 0)
-  // Actually June 1 2025 is a Sunday. In Mon-first grid, that's offset 6.
-  const offset = 6;
-  const daysInMonth = 30;
+
+  const firstDay = new Date(calYear, calMonth, 1).getDay(); // 0=Sun
+  const offset = (firstDay + 6) % 7; // Mon-first: 0=Mon, 6=Sun
+  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+
+  const today = new Date(); today.setHours(0,0,0,0);
+
   for (let i=0;i<offset;i++) html += `<div class="cal-day empty"></div>`;
   for (let d=1;d<=daysInMonth;d++) {
-    const dow = (offset + d - 1) % 7; // 0=Mon, 6=Sun
-    const isSat = dow === 5;
-    const isSun = dow === 6;
-    const isPast = d < 14;
-    const isSoldOut = [14,20,22].includes(d);
+    const thisDate = new Date(calYear, calMonth, d);
+    const isPast = thisDate < today;
+    const isSoldOut = [14,20,22].includes(d) && !isPast;
     let cls = 'limited';
     let badge = '<span class="avail-badge">LIMITED</span>';
     if (isPast) { cls = 'soldout'; badge = ''; }
@@ -1429,14 +1602,17 @@ function buildCalendar() {
 }
 
 function calPrev() {
-  // Jump back to current display month (cruel)
-  document.getElementById('cal-month-label').textContent = 'June 2025';
-  showToast('Calendar reset to current month.', 'info');
+  calMonth--;
+  if (calMonth < 0) { calMonth = 11; calYear--; }
+  buildCalendar();
+  document.getElementById('time-select-card').classList.remove('visible');
 }
+
 function calNext() {
-  // Jump back
-  document.getElementById('cal-month-label').textContent = 'June 2025';
-  showToast('Calendar reset to current month.', 'info');
+  calMonth++;
+  if (calMonth > 11) { calMonth = 0; calYear++; }
+  buildCalendar();
+  document.getElementById('time-select-card').classList.remove('visible');
 }
 
 function selectCalDay(el, day) {
@@ -1466,9 +1642,19 @@ function fluctuateViewers() {
 }
 
 // ── SEAT MAP ───────────────────────────────────
+// Available seat clusters — 1-indexed seat positions per row
+const AVAILABLE_SEATS = {
+  'B': [6, 7, 8],
+  'C': [12, 13],
+  'D': [3, 4],
+  'E': [9, 10, 11],
+  'F': [15, 16],
+};
+
 function onEnterSeatmap() {
   startTimer();
   showToast('You\'ve successfully joined our mailing list!', 'success');
+  showCookieBanner();
 }
 
 function buildSeatMap() {
@@ -1476,24 +1662,39 @@ function buildSeatMap() {
   if (!grid) return;
   const rows = ['A','B','C','D','E','F','G','H'];
   const seatsPerRow = 18;
-  const colours = ['s-a','s-b','s-c','s-d','s-e'];
-  // Pick a random pre-selected seat
-  const preRow = 3; const preCol = 8;
-  S.preselectedSeat = `${rows[preRow]}-${preCol}`;
+  // Colour bands by row section — no randomness
+  const rowColour = { 'A':'s-a','B':'s-a','C':'s-b','D':'s-b','E':'s-c','F':'s-c','G':'s-d','H':'s-d' };
+  S.preselectedSeat = 'D-10';
 
   let html = '';
-  rows.forEach((r, ri) => {
-    html += `<div class="seat-row"><div class="seat-row-label">${r}</div>`;
+  rows.forEach((r) => {
+    const avail = AVAILABLE_SEATS[r] || [];
+    html += `<div class="seat-row">`;
     for (let c=1;c<=seatsPerRow;c++) {
       const id = `${r}-${c}`;
       const isPre = id === S.preselectedSeat;
-      const col = colours[Math.floor(Math.random()*colours.length)];
-      html += `<button class="seat ${col}${isPre?' presel':''}" id="seat-${id}" onclick="clickSeat('${id}')" title="Row ${r}, Seat ${c}"></button>`;
+      if (avail.includes(c)) {
+        html += `<button class="seat ${rowColour[r]}${isPre?' presel':''}" id="seat-${id}" onclick="clickSeat('${id}')" title="Seat ${c}"></button>`;
+      } else {
+        html += `<button class="seat s-taken" id="seat-${id}" disabled title="Unavailable"></button>`;
+      }
     }
-    if (ri === 2) html += `<div style="width:20px;"></div>`; // aisle gap
     html += `</div>`;
   });
   grid.innerHTML = html;
+}
+
+function wouldIsolate(row, col) {
+  const avail = AVAILABLE_SEATS[row] || [];
+  const selectedCol = S.selectedSeat ? parseInt(S.selectedSeat.split('-')[1]) : null;
+  // remaining seats after choosing col (also exclude currently selected seat)
+  const remaining = avail.filter(c => c !== col && c !== selectedCol);
+  for (const c of remaining) {
+    const hasLeft = remaining.includes(c - 1);
+    const hasRight = remaining.includes(c + 1);
+    if (!hasLeft && !hasRight) return true;
+  }
+  return false;
 }
 
 function clickSeat(id) {
@@ -1502,6 +1703,15 @@ function clickSeat(id) {
     document.getElementById('modal-seat-taken').classList.add('visible');
     return;
   }
+  const parts = id.split('-');
+  const row = parts[0];
+  const col = parseInt(parts[1]);
+
+  if (wouldIsolate(row, col)) {
+    document.getElementById('modal-isolation').classList.add('visible');
+    return;
+  }
+
   // Deselect previous
   if (S.selectedSeat) {
     const prev = document.getElementById(`seat-${S.selectedSeat}`);
@@ -1510,8 +1720,7 @@ function clickSeat(id) {
   S.selectedSeat = id;
   const el = document.getElementById(`seat-${id}`);
   if (el) el.classList.add('selected');
-  const parts = id.split('-');
-  document.getElementById('selected-seat-info').innerHTML = `Selected: <strong>Row ${parts[0]}, Seat ${parts[1]}</strong>`;
+  document.getElementById('selected-seat-info').innerHTML = `Selected: <strong>Seat ${col}</strong>`;
   const btn = document.getElementById('btn-continue-seat');
   btn.disabled = false;
   btn.style.opacity = '1';
@@ -1758,7 +1967,6 @@ function startProcessing() {
       // After 3s auto-advance to real success
       setTimeout(() => {
         navTo('screen-confirm');
-        fireConfetti();
       }, 3500);
     }, 4000);
   }, 7500);
