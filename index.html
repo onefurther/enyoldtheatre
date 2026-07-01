@@ -1150,6 +1150,9 @@
         <hr class="section-divider">
         <p class="tiny-grey" style="margin-bottom:4px;text-align:center;">Booking reference HAW-2025-49182</p>
         <p class="tiny-grey" style="text-align:center;">Your booking was successful.</p>
+        <div style="margin-top:20px;text-align:center;">
+          <button class="btn btn-primary" onclick="navTo('screen-confirm')">Continue</button>
+        </div>
       </div>
     </div>
   </div>
@@ -1964,10 +1967,6 @@ function startProcessing() {
     setTimeout(() => {
       white.style.display = 'none';
       navTo('screen-confirm-err');
-      // After 3s auto-advance to real success
-      setTimeout(() => {
-        navTo('screen-confirm');
-      }, 3500);
     }, 4000);
   }, 7500);
 }
