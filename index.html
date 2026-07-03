@@ -12,13 +12,19 @@
   // dataLayer bootstrap — populated throughout the app via dl()
   window.dataLayer = window.dataLayer || [];
 
-  // GTM: add container ID in GTM_CONTAINER_ID constant to go live.
-  // When set (e.g. 'GTM-XXXXXXX') the standard snippet is injected automatically.
-  const GTM_CONTAINER_ID = '';
+  // GTM: live container. Clear this back to '' to disable the snippet.
+  const GTM_CONTAINER_ID = 'GTM-TDCTZVJ';
 
   // Central dataLayer push helper. event = event name, params = object of extra keys.
   function dl(event, params) {
     window.dataLayer.push(Object.assign({ event: event }, params || {}));
+  }
+
+  // GA4-ecommerce push: clears any previous ecommerce object, then pushes the
+  // event with its payload nested under `ecommerce` (standard GA4 dataLayer shape).
+  function dlEcom(event, ecommerce) {
+    window.dataLayer.push({ ecommerce: null });
+    dl(event, { ecommerce: ecommerce });
   }
 
   // Standard GTM container snippet — injected only when GTM_CONTAINER_ID is set.
@@ -1547,7 +1553,7 @@ function navTo(screenId) {
   // view_item when landing on a production detail page.
   if (screenId.indexOf('screen-prod-') === 0) {
     const ev = EVENTS.find(e => e.prod === screenId);
-    if (ev) dl('view_item', { currency: 'GBP', items: [{ item_id: screenId, item_name: ev.title }] });
+    if (ev) dlEcom('view_item', { currency: 'GBP', items: [{ item_id: screenId, item_name: ev.title }] });
   }
 
   if (screenId === 'screen-seatmap') onEnterSeatmap();
@@ -1761,7 +1767,7 @@ function buildEventsGrid() {
 // GA4 select_item on an events-listing card, then open the production page.
 function selectItem(prod) {
   const ev = EVENTS.find(e => e.prod === prod);
-  if (ev) dl('select_item', { item_list_name: "What's On", items: [{ item_id: prod, item_name: ev.title }] });
+  if (ev) dlEcom('select_item', { item_list_name: "What's On", items: [{ item_id: prod, item_name: ev.title }] });
   navTo(prod);
 }
 
@@ -1952,7 +1958,7 @@ function buildSeatMap() {
     S.selectedSeats.push(S.preselectedSeat);
     const pel = document.getElementById('seat-' + S.preselectedSeat);
     if (pel) pel.classList.add('selected');
-    dl('add_to_cart', seatEcom(S.preselectedSeat));
+    dlEcom('add_to_cart', seatEcom(S.preselectedSeat));
     dark('preselected_seat', { seat: S.preselectedSeat });
   }
   renderSelection();
@@ -1984,7 +1990,7 @@ function clickSeat(id) {
   if (idx !== -1) {
     S.selectedSeats.splice(idx, 1);
     document.getElementById('seat-' + id)?.classList.remove('selected');
-    dl('remove_from_cart', seatEcom(id));
+    dlEcom('remove_from_cart', seatEcom(id));
     renderSelection();
     return;
   }
@@ -2001,7 +2007,7 @@ function clickSeat(id) {
 
   S.selectedSeats.push(id);
   document.getElementById('seat-' + id)?.classList.add('selected');
-  dl('add_to_cart', seatEcom(id));
+  dlEcom('add_to_cart', seatEcom(id));
   renderSelection();
 }
 
@@ -2011,7 +2017,7 @@ function removeSeat(id) {
   if (idx === -1) return;
   S.selectedSeats.splice(idx, 1);
   document.getElementById('seat-' + id)?.classList.remove('selected');
-  dl('remove_from_cart', seatEcom(id));
+  dlEcom('remove_from_cart', seatEcom(id));
   renderSelection();
 }
 
@@ -2076,7 +2082,7 @@ function continueSeat() {
       el.setAttribute('onclick', '');
       el.title = 'Unavailable';
     }
-    dl('remove_from_cart', seatEcom(victim));
+    dlEcom('remove_from_cart', seatEcom(victim));
     dark('seat_taken_modal', { seat: victim });
     document.getElementById('seat-taken-msg').innerHTML =
       `Sorry — <strong>Row ${row}, Seat ${col}</strong> is no longer available. Another customer may have selected it at the same time. Please choose a different seat.`;
@@ -2138,7 +2144,7 @@ function updateTimerDisplay() {
 // ── FORM ───────────────────────────────────────
 function onEnterForm() {
   // GA4 begin_checkout — entering the details form.
-  dl('begin_checkout', { currency: 'GBP', value: +computeOrder().total.toFixed(2),
+  dlEcom('begin_checkout', { currency: 'GBP', value: +computeOrder().total.toFixed(2),
       items: S.selectedSeats.map(seatItem) });
   // Show "are you still there?" after 18s
   if (S.stillThereTimer) clearTimeout(S.stillThereTimer);
@@ -2327,7 +2333,7 @@ let sureStep = 0;
 function startPayment() {
   sureStep = 0;
   const t = '£' + S.orderTotal.toFixed(2);
-  dl('add_payment_info', { currency: 'GBP', value: +S.orderTotal.toFixed(2), payment_type: 'card',
+  dlEcom('add_payment_info', { currency: 'GBP', value: +S.orderTotal.toFixed(2), payment_type: 'card',
       items: S.selectedSeats.map(seatItem) });
   const modal = document.getElementById('modal-sure');
   document.getElementById('modal-sure-title').textContent = 'Are you sure?';
@@ -2398,14 +2404,12 @@ function onEnterConfirm() {
   const items = S.selectedSeats.map(seatItem).concat(
     S.acceptedUpsells.map(u => ({ item_id: 'upsell_' + u.title.toLowerCase().replace(/\s+/g,'_'),
       item_name: u.title, item_category: 'Add-on', price: u.amount, quantity: 1 })));
-  dl('purchase', {
-    ecommerce: {
-      transaction_id: TRANSACTION_ID,
-      value: +order.total.toFixed(2),
-      currency: 'GBP',
-      shipping: DELIVERY_FEE,
-      items: items
-    }
+  dlEcom('purchase', {
+    transaction_id: TRANSACTION_ID,
+    value: +order.total.toFixed(2),
+    currency: 'GBP',
+    shipping: DELIVERY_FEE,
+    items: items
   });
 
   // Slide-in appears ~4s after the confirmation screen shows.
