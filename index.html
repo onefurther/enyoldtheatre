@@ -111,6 +111,8 @@
   @keyframes timerFlash { 0%,100%{background:var(--red)} 50%{background:#8b1a1a} }
   #timer-display { font-variant-numeric: tabular-nums; font-weight: bold; font-size: 1.05rem; }
   #timer-viewers { opacity: 0.85; }
+  #timer-addtime { display: none; margin-left: 12px; background: #fff; color: var(--red); border: none; border-radius: 4px; padding: 5px 12px; font-size: 0.78rem; font-weight: 700; cursor: pointer; font-family: inherit; }
+  #timer-addtime.visible { display: inline-block; }
 
   /* ── TOAST ── */
   #toast {
@@ -312,20 +314,6 @@
   .carousel-dots { display: flex; gap: 8px; }
   .cdot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.35); border: none; cursor: pointer; padding: 0; }
   .cdot.active { background: rgba(255,255,255,0.9); }
-  .btn-booknow {
-    background: rgba(255,255,255,0.15); color: rgba(255,255,255,0.7);
-    border: 1px solid rgba(255,255,255,0.25); padding: 5px 11px;
-    font-size: 0.7rem; cursor: pointer; border-radius: 2px;
-    letter-spacing: 0.04em; position: relative; white-space: nowrap;
-  }
-  .btn-booknow:hover::after {
-    content: 'Clicking this button may take a moment';
-    position: absolute; bottom: 130%; right: 0; background: #fff; color: #333;
-    font-family: 'Comic Sans MS', 'Chalkboard SE', cursive; font-size: 0.72rem;
-    padding: 5px 9px; border: 1px solid #ccc; white-space: nowrap;
-    border-radius: 3px; box-shadow: 0 2px 6px rgba(0,0,0,0.12);
-    pointer-events: none;
-  }
   .home-content { max-width: 980px; margin: 0 auto; padding: 36px 20px; }
   .home-section-title { font-family: Georgia, serif; font-size: 1.2rem; color: var(--purple-dark); margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid var(--lavender); }
   .home-events { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
@@ -345,6 +333,20 @@
   .event-card-price { font-size: 0.78rem; color: var(--purple); margin-top: 6px; }
 
   /* ── EVENTS LISTING ── */
+  .brochure-banner { display: flex; align-items: center; gap: 18px; background: linear-gradient(120deg, var(--purple-dark), #7b3fa8); color: #fff; border-radius: var(--radius); padding: 20px 24px; margin-bottom: 22px; box-shadow: var(--shadow-md); }
+  .brochure-icon { font-size: 2.6rem; flex-shrink: 0; }
+  .brochure-copy { flex: 1; min-width: 0; }
+  .brochure-eyebrow { font-size: 0.66rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--lavender-mid); margin-bottom: 4px; }
+  .brochure-copy h2 { font-family: var(--font-display); font-size: 1.3rem; margin-bottom: 5px; }
+  .brochure-copy p { font-size: 0.82rem; color: rgba(255,255,255,0.82); line-height: 1.5; }
+  .brochure-btn { flex-shrink: 0; background: #fff; color: var(--purple-dark); text-decoration: none; font-weight: 700; font-size: 0.85rem; padding: 12px 20px; border-radius: 7px; white-space: nowrap; transition: transform 0.12s, box-shadow 0.15s; box-shadow: 0 2px 8px rgba(0,0,0,0.18); }
+  .brochure-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0,0,0,0.24); }
+  .free-toggle { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: #555; cursor: pointer; margin-top: 16px; user-select: none; }
+  .free-toggle input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .free-track { width: 38px; height: 20px; border-radius: 20px; background: #ccc; position: relative; transition: background 0.2s; flex-shrink: 0; }
+  .free-knob { position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+  .free-toggle input:checked + .free-track { background: var(--purple); }
+  .free-toggle input:checked + .free-track .free-knob { transform: translateX(18px); }
   .filters-bar { background: #fff; border: 1px solid var(--grey-border); border-radius: 4px; padding: 14px 16px; display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 24px; }
   .filter-group { display: flex; flex-direction: column; gap: 4px; }
   .filter-group label { font-size: 0.72rem; color: var(--grey-mid); letter-spacing: 0.04em; text-transform: uppercase; }
@@ -370,6 +372,36 @@
   .event-intro-card { background: #fff; border-radius: var(--radius); padding: 20px 24px; margin-bottom: 20px; border: 1px solid var(--grey-border); box-shadow: var(--shadow-sm); }
   .event-intro-card h2 { font-family: Georgia, serif; font-size: 1.2rem; color: #222; margin-bottom: 6px; }
   .event-intro-card p { font-size: 0.82rem; color: var(--grey-mid); line-height: 1.6; }
+
+  /* ── PRODUCTION PAGES (deliberately un-maintained) ── */
+  .prod-layout { display: flex; gap: 28px; align-items: flex-start; }
+  .prod-main { flex: 1; min-width: 0; }
+  .prod-main > p { font-size: 0.88rem; line-height: 1.8; margin-bottom: 14px; color: #333; }
+  .prod-title { font-family: var(--font-display); font-size: 1.6rem; color: var(--purple-dark); margin-bottom: 6px; }
+  .prod-meta { font-size: 0.78rem; color: var(--grey-mid); margin-bottom: 18px; }
+  /* broken images: real <img> with a missing src so the browser renders its broken-image state */
+  .prod-img-broken { display: block; width: 100%; height: 300px; object-fit: cover; border: 1px solid #e6e3ec; background: #f1eff4; color: #a99fbb; font-size: 0.78rem; margin-bottom: 20px; }
+  .prod-pullquote { font-family: 'Times New Roman', Times, serif; font-size: 0.9rem; line-height: 1.8; color: #333; background: #fffef8; border: 1px solid #eee; padding: 12px 14px; border-radius: 3px; margin-bottom: 14px; }
+  .btn-ghost { background: transparent; color: var(--purple); border: 1px solid var(--purple); padding: 10px 26px; border-radius: 6px; cursor: pointer; font-size: 0.86rem; font-family: inherit; font-weight: 600; transition: background 0.15s ease, color 0.15s ease; }
+  .btn-ghost:hover { background: var(--purple); color: #fff; }
+  .prod-section { margin-top: 30px; padding-top: 18px; border-top: 1px solid var(--grey-border); }
+  .prod-section h3 { font-family: var(--font-display); font-size: 1.15rem; color: var(--purple-dark); margin-bottom: 14px; }
+  .prod-quote { border-left: 3px solid var(--lavender-mid); padding: 4px 0 4px 16px; margin: 0 0 16px; font-style: italic; color: #555; font-size: 0.9rem; line-height: 1.6; }
+  .prod-quote .stars { color: var(--yellow); font-style: normal; letter-spacing: 2px; display: block; margin-bottom: 4px; }
+  .prod-quote cite { display: block; margin-top: 6px; font-style: normal; font-size: 0.78rem; color: #aaa; }
+  .prod-empty { min-height: 70px; border: 1px dashed #d8d3e0; border-radius: 6px; }
+  .prod-embed-broken { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #16121f; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #55506a; font-size: 2rem; }
+  .prod-embed-broken::after { content: 'video unavailable'; position: absolute; bottom: 10px; left: 12px; font-size: 0.7rem; color: #4a4560; }
+  .prod-sidebar { width: 300px; flex-shrink: 0; background: #fff; border: 1px solid var(--grey-border); border-radius: var(--radius); box-shadow: var(--shadow-md); overflow: hidden; }
+  .prod-sidebar-hd { background: var(--purple-dark); color: #fff; padding: 14px 18px; font-family: var(--font-display); font-size: 1.05rem; }
+  .prod-sidebar-body { padding: 6px 18px 18px; }
+  .prod-detail-row { display: flex; justify-content: space-between; gap: 10px; font-size: 0.82rem; padding: 9px 0; border-bottom: 1px solid #f2f0f6; }
+  .prod-detail-row:last-child { border-bottom: none; }
+  .prod-detail-row span:first-child { color: var(--grey-mid); }
+  .prod-detail-row span:last-child { color: #333; font-weight: 600; text-align: right; }
+  .prod-side-img { display: block; width: 100%; height: 120px; object-fit: cover; border-top: 1px solid #e6e3ec; background: #f1eff4; color: #a99fbb; font-size: 0.7rem; }
+  @media (max-width: 720px) { .prod-layout { flex-direction: column; } .prod-sidebar { width: 100%; } }
+
   .calendar-card { background: #fff; border-radius: var(--radius); padding: 20px 24px; border: 1px solid var(--grey-border); box-shadow: var(--shadow-sm); margin-bottom: 20px; }
   .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
   .cal-nav { background: #fff; border: 1px solid #ccc; padding: 4px 12px; cursor: pointer; border-radius: 3px; font-size: 0.9rem; }
@@ -601,6 +633,18 @@
   .guest-link-wrap a { color: #999; font-size: 0.7rem; cursor: pointer; text-decoration: underline; }
   .guest-tiny { display: none; font-size: 0.68rem; color: #bbb; margin-top: 4px; cursor: pointer; text-decoration: underline; }
 
+  /* ── VISIT PAGE ── */
+  .visit-hours-row { display: flex; justify-content: space-between; font-size: 0.85rem; color: #555; padding: 7px 0; border-bottom: 1px solid #f2f0f6; }
+  .visit-hours-row:last-child { border-bottom: none; }
+  .visit-hours-row span:last-child { color: var(--purple-dark); font-weight: 600; }
+  .visit-acc { border: 1px solid var(--grey-border); border-radius: 6px; margin-bottom: 10px; overflow: hidden; }
+  .visit-acc-hd { display: flex; justify-content: space-between; align-items: center; padding: 13px 16px; cursor: pointer; font-size: 0.9rem; font-weight: 600; color: #333; background: #faf8fc; user-select: none; }
+  .visit-acc-hd:hover { background: #f3eff9; }
+  .visit-acc-arrow { transition: transform 0.2s; color: var(--purple); }
+  .visit-acc.open .visit-acc-arrow { transform: rotate(90deg); }
+  .visit-acc-body { display: none; padding: 14px 16px; font-size: 0.85rem; line-height: 1.7; color: #555; border-top: 1px solid var(--grey-border); }
+  .visit-acc.open .visit-acc-body { display: block; }
+
   /* ── GLOBAL FOOTER (deliberately over-stuffed) ── */
   .site-footer { background: var(--purple-dark); color: #c9bde0; margin-top: 56px; padding: 44px 20px 26px; font-size: 0.8rem; }
   .footer-inner { max-width: 1080px; margin: 0 auto; }
@@ -669,7 +713,7 @@
   <div class="g-nav-links">
     <a>About Us</a>
     <a onclick="navTo('screen-events')">Discover</a>
-    <a>Visit</a>
+    <a onclick="navTo('screen-visit')">Visit</a>
     <a>Support</a>
   </div>
 </nav>
@@ -678,6 +722,7 @@
   <span>⏱ Your tickets are reserved for</span>
   <span id="timer-display">5:00</span>
   <span id="timer-viewers"> · <span id="viewer-count">12</span> people currently viewing</span>
+  <button id="timer-addtime" onclick="addTime()">+ Add 30 seconds</button>
 </div>
 
 <div id="toast"></div>
@@ -833,7 +878,6 @@
         <button class="cdot" onclick=""></button>
         <button class="cdot" onclick=""></button>
       </div>
-      <button class="btn-booknow" onclick="navTo('screen-events')">Book now</button>
     </div>
   </div>
 
@@ -850,7 +894,7 @@
 
     <h2 class="home-section-title">Featured Events</h2>
     <div class="home-events">
-      <div class="home-event-card" onclick="navTo('screen-events')">
+      <div class="home-event-card" onclick="selectItem('screen-prod-2')">
         <div class="event-card-img c1"></div>
         <div class="event-card-body">
           <div class="event-card-title">Performance (Main House)</div>
@@ -858,7 +902,7 @@
           <div class="event-card-price">From £18</div>
         </div>
       </div>
-      <div class="home-event-card" onclick="navTo('screen-events')">
+      <div class="home-event-card" onclick="selectItem('screen-prod-1')">
         <div class="event-card-img c2"></div>
         <div class="event-card-body">
           <div class="event-card-title">An Evening of Music</div>
@@ -866,7 +910,7 @@
           <div class="event-card-price">From £22</div>
         </div>
       </div>
-      <div class="home-event-card" onclick="navTo('screen-events')">
+      <div class="home-event-card" onclick="selectItem('screen-prod-3')">
         <div class="event-card-img c3"></div>
         <div class="event-card-body">
           <div class="event-card-title">Theatre – see website</div>
@@ -883,6 +927,48 @@
 
 
 <!-- ════════════════════════════════════════════
+     SCREEN: VISIT
+     ════════════════════════════════════════════ -->
+<div class="screen" id="screen-visit">
+  <div class="page-wrap narrow">
+    <p class="breadcrumbs"><span>Home</span> / <span>Visit</span></p>
+    <h1 class="page-title">Visit us</h1>
+
+    <div class="form-card" style="margin-bottom:20px;">
+      <p style="font-size:0.9rem;line-height:1.85;color:#444;">Discover a vibrant hub of creativity and community right here in your community. Whether you're joining us for a thrilling performance, an engaging workshop, or simply to enjoy a cup of coffee in our café, Enyold Theatre offer something for everyone. We pride ourselves in our explementary care to all our visitors. Our friendly team will always be on hand to guide you to your event, answer any questions, and make sure you have the best time with us. We deeply value our community and encourage all to feel welcome in our spaces.</p>
+    </div>
+
+    <div class="form-card" style="margin-bottom:20px;">
+      <h3 style="font-family:var(--font-display);font-size:1.05rem;color:var(--purple-dark);margin-bottom:12px;">Opening hours</h3>
+      <div class="visit-hours">
+        <div class="visit-hours-row"><span>Monday – Friday</span><span>9:30am – 7:30pm</span></div>
+        <div class="visit-hours-row"><span>Saturday</span><span>10am – 8:30pm</span></div>
+        <div class="visit-hours-row"><span>Sunday</span><span>12pm – 5pm</span></div>
+        <div class="visit-hours-row"><span>Bank holidays</span><span>11am – 5pm</span></div>
+        <div class="visit-hours-row"><span>Café Bar</span><span>from 9am daily</span></div>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <h3 style="font-family:var(--font-display);font-size:1.05rem;color:var(--purple-dark);margin-bottom:14px;">How to get here</h3>
+      <div class="visit-acc">
+        <div class="visit-acc-hd" onclick="toggleVisitAcc(this)"><span>Public Transport</span><span class="visit-acc-arrow">›</span></div>
+        <div class="visit-acc-body">
+          <p>We are within easy walking distance of the nearest bus and railway station and within a five minute drive of the motorway. Based in the town centre, we're just opposite the old Woolworths (you know the one — currently a mattress warehouse). For up-to-date travel information, please see local news or National Rail enquiries.</p>
+        </div>
+      </div>
+      <div class="visit-acc">
+        <div class="visit-acc-hd" onclick="toggleVisitAcc(this)"><span>By Car</span><span class="visit-acc-arrow">›</span></div>
+        <div class="visit-acc-body">
+          <p>We do not have a public car park. We recommend using town centre parking, a short walk away. Parking charges and restrictions may apply — please check before you arrive.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════
      SCREEN: EVENTS LISTING
      ════════════════════════════════════════════ -->
 <div class="screen" id="screen-events">
@@ -890,10 +976,25 @@
     <h1 class="page-title">What's On</h1>
     <p class="page-subtitle">Showing 1–4 of 4 events</p>
 
+    <!-- Brochure feature — the "download" link does nothing -->
+    <div class="brochure-banner">
+      <div class="brochure-icon">📖</div>
+      <div class="brochure-copy">
+        <div class="brochure-eyebrow">Just published</div>
+        <h2>The 2025 Season Brochure is here!</h2>
+        <p>Every show, all in one glorious place. Download the full brochure and plan your entire year at Enyold Theatre.</p>
+      </div>
+      <a class="brochure-btn" href="#" onclick="downloadBrochure(); return false;">⬇ Download brochure (PDF, 12MB)</a>
+    </div>
+
     <div class="filters-bar">
       <div class="filter-group">
         <label>Genre</label>
-        <select id="f-genre"><option>All genres</option><option>Theatre</option><option>Music</option><option>Dance</option><option>Comedy</option></select>
+        <select id="f-genre"><option>All genres</option><option>workshops</option><option>Theatre</option><option>class</option><option>Music</option><option>backstage tours</option><option>family</option><option>Comedy</option><option>season2024</option><option>Dance</option><option>classes</option><option>Talks &amp; Lectures</option><option>external</option><option>members-only</option><option>Cinema</option></select>
+      </div>
+      <div class="filter-group">
+        <label>Feeling</label>
+        <select id="f-feeling"><option>Any feeling</option><option>Uplifting</option><option>Challenging</option><option>Contemplative</option><option>Joyful</option><option>Unsettling</option><option>Bittersweet</option><option>Moved</option></select>
       </div>
       <div class="filter-group">
         <label>Date</label>
@@ -907,6 +1008,11 @@
         <label>Venue</label>
         <select id="f-venue"><option>All spaces</option><option>Main House</option><option>Studio</option><option>Courtyard</option></select>
       </div>
+      <label class="free-toggle" title="Show free events only">
+        <input type="checkbox" id="f-free" onchange="toggleFreeEvents(this)">
+        <span class="free-track"><span class="free-knob"></span></span>
+        Free events only
+      </label>
       <button class="btn-filter" id="filter-btn" onclick="applyFilters()">Apply filters</button>
     </div>
 
@@ -1102,7 +1208,7 @@
       <h3 style="font-size:0.9rem;margin-bottom:10px;color:var(--purple-dark);">Create your account password</h3>
       <div class="form-row">
         <label>Password</label>
-        <input type="password" id="f-password" placeholder="Create a password" oninput="showPassHint()">
+        <input type="password" id="f-password" placeholder="Create a password">
         <div class="pass-rules" id="pass-rules">Password must be at least 12 characters and contain at least one uppercase letter, one number, and one special character (!@#$%^&amp;*). Spaces are not permitted. Your password must not match any of your previous 8 passwords.</div>
       </div>
 
@@ -1327,11 +1433,9 @@
       <div class="confirm-err-header">
         <div style="font-size:2.5rem;margin-bottom:12px;">⚠️</div>
         <h2 style="font-family:Georgia,serif;font-size:1.3rem;color:var(--red);margin-bottom:10px;">Something went wrong</h2>
-        <p style="font-size:0.85rem;color:#666;line-height:1.7;margin-bottom:14px;">We encountered an unexpected error while processing your request. Please check your email for a confirmation. If you have not received a confirmation email within 24 hours, please contact the box office.</p>
+        <p style="font-size:0.85rem;color:#666;line-height:1.7;margin-bottom:14px;">We encountered an unexpected error while processing your request. To see if your transaction has completed, please check your email for a confirmation. If you have not received a confirmation email within 24 hours, please contact the box office.</p>
         <p style="font-family:monospace;font-size:0.72rem;color:#bbb;">Error code: TKTHSE_5504 · Session: 8f3a2c91 · Time: 19:43:22</p>
         <hr class="section-divider">
-        <p class="tiny-grey" style="margin-bottom:4px;text-align:center;">Booking reference HAW-2025-49182</p>
-        <p class="tiny-grey" style="text-align:center;">Your booking was successful.</p>
         <div style="margin-top:20px;text-align:center;">
           <button class="btn btn-primary" onclick="navTo('screen-confirm')">Continue</button>
         </div>
@@ -1348,21 +1452,18 @@
   <div class="page-wrap narrow" style="padding-top:48px;">
     <div class="confirm-card">
       <h2 style="font-family:Georgia,serif;font-size:1.3rem;color:#333;margin-bottom:16px;">Transaction complete.</h2>
-      <p style="font-size:0.88rem;color:#555;line-height:1.7;margin-bottom:12px;">Your e-tickets will arrive within 3–5 working days. A total of <strong id="confirm-total">£0.00</strong> was charged to your card. Booking reference <strong>HAW-2025-49182</strong>.</p>
-      <hr class="section-divider">
-      <p class="tiny-grey">Please note: tickets may be subject to a digital processing delay. If your tickets do not arrive within 5 working days, please allow a further 5 working days before contacting the box office. Enyold Theatre accepts no responsibility for tickets lost, delayed, or redirected in transit. For queries contact the box office during normal opening hours (Mon–Fri, 10am–4pm, excluding bank holidays). Booking reference HAW-2025-49182.</p>
+      <p style="font-size:0.88rem;color:#555;line-height:1.7;">Your e-tickets will arrive shortly before the show date.</p>
     </div>
   </div>
 
   <!-- Post-transaction One Further slide-in (fires ~4s after confirmation) -->
   <div class="of-slidein" id="of-slidein">
     <button class="of-slidein-close" onclick="dismissSlidein()" title="Dismiss">✕</button>
-    <div class="of-slidein-badge">One Further</div>
     <h3>Well done for making it through.</h3>
-    <p>How many usability issues did you notice on the way? <span class="count-big">We counted 60+.</span></p>
-    <p>If you run a ticketing system: when was the last time you actually watched a real person try to use it?</p>
+    <p>Nobody (except us, apparently) creates a poor user experience on purpose, but it happens. You might be surprised by the sorts of things that cause friction and cost you ticket sales.</p>
+    <p>If it's been a while since you've tested your website with real people, we'd be up for having a chat.</p>
     <a class="of-slidein-cta" href="https://onefurther.com/services/usability-research" target="_blank" rel="noopener" onclick="dl('of_cta_click')">See how we can help →</a>
-    <div class="of-slidein-sig">Enyold Theatre is a fiction. The frustration is real. — One Further</div>
+    <div class="of-slidein-sig">Created by One Further</div>
   </div>
 </div>
 
@@ -1371,20 +1472,46 @@
      SCREEN: PRODUCTION 1 — AN EVENING OF MUSIC & THINGS
      ════════════════════════════════════════════ -->
 <div class="screen" id="screen-prod-1">
-  <div class="page-wrap narrow">
+  <div class="page-wrap" style="max-width:1000px;">
     <p class="breadcrumbs"><span>Home</span> / <span>What's On</span> / <span>An Evening of Music &amp; Things</span></p>
-    <div class="event-intro-card">
-      <h1 style="font-family:Georgia,serif;font-size:1.5rem;color:var(--purple-dark);margin-bottom:8px;">An Evening of Music &amp; Things</h1>
-      <p style="font-size:0.78rem;color:var(--grey-mid);margin-bottom:16px;">Main House · Saturdays · From £18</p>
-      <p style="font-size:0.88rem;line-height:1.8;margin-bottom:14px;">We are delighted to present what promises to be one of the most memorable evenings in Enyold's recent programmatic history. This remarkable programme brings together a constellation of talent that, we feel, truly needs no introduction — and yet we shall provide one, in the interests of completeness.</p>
-      <p style="font-size:0.88rem;line-height:1.8;margin-bottom:14px;">The evening will comprise a carefully curated selection of musical works, interspersed with other things. The precise nature of these things has not yet been entirely confirmed at time of going to print, however audiences can expect to be moved, challenged, and on occasion surprised.</p>
-      <p style="font-family:'Times New Roman',Times,serif;font-size:0.9rem;line-height:1.8;color:#333;margin-bottom:14px;background:#fffef8;border:1px solid #eee;padding:12px 14px;border-radius:3px;">Drawing on a rich tapestry of influences that span the full breadth of the Western cannon, this evenings performances will demonstrate once again why Enyold remains at the vanguard of accessible yet uncompromising arts presentaion. We are honoured to welcome back several artists whose relationship with this building goes back many years, alongside exciting new collaboraters who bring fresh perspectives to familar forms.</p>
-      <p style="font-size:0.88rem;line-height:1.8;margin-bottom:14px;">Tickets are available at multiple price points. A booking fee applies. Latecomers will not be admitted after the performance has commenced. Please arrive early and allow time for security.</p>
+    <div class="prod-layout">
+      <div class="prod-main">
+        <img class="prod-img-broken" src="/images/productions/an-evening-of-music-hero.jpg" alt="An Evening of Music &amp; Things — production photograph">
+        <h1 class="prod-title">An Evening of Music &amp; Things</h1>
+        <p class="prod-meta">Main House · Saturdays · From £18</p>
+        <p>We are delighted to present what promises to be one of the most memorable evenings in Enyold's recent programmatic history. This remarkable programme brings together a constellation of talent that, we feel, truly needs no introduction — and yet we shall provide one, in the interests of completeness.</p>
+        <p>The evening will comprise a carefully curated selection of musical works, interspersed with other things. The precise nature of these things has not yet been entirely confirmed at time of going to print, however audiences can expect to be moved, challenged, and on occasion surprised.</p>
+        <p class="prod-pullquote">Drawing on a rich tapestry of influences that span the full breadth of the Western cannon, this evenings performances will demonstrate once again why Enyold remains at the vanguard of accessible yet uncompromising arts presentaion. We are honoured to welcome back several artists whose relationship with this building goes back many years, alongside exciting new collaboraters who bring fresh perspectives to familar forms.</p>
+        <p>Tickets are available at multiple price points. A booking fee applies. Latecomers will not be admitted after the performance has commenced. Please arrive early and allow time for security.</p>
 
-      <p style="font-size:0.88rem;line-height:1.8;margin-bottom:14px;">Running time: approx. 1hr 45min (no interval). Age guidance: 14+. Some performances may contain strong language, strobe lighting, and themes that some audience members may find challenging. Please consult the box office for further information.</p>
-      <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--grey-border);">
-        <button class="btn btn-primary" onclick="navTo('screen-calendar')">Book tickets</button>
+        <button class="btn-ghost" onclick="navTo('screen-calendar')">Book tickets</button>
+
+        <div class="prod-section">
+          <h3>Reviews</h3>
+          <blockquote class="prod-quote"><span class="stars">★★★★★</span>"[PULL QUOTE TO BE ADDED BEFORE PUBLICATION]"<cite>— Publication name TBC</cite></blockquote>
+          <blockquote class="prod-quote">"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore."<cite>— {{review_source}}</cite></blockquote>
+        </div>
+        <div class="prod-section">
+          <h3>Cast</h3>
+          <div class="prod-empty"></div>
+        </div>
+        <div class="prod-section">
+          <h3>Trailer</h3>
+          <div class="prod-embed-broken">▶</div>
+        </div>
       </div>
+
+      <aside class="prod-sidebar">
+        <div class="prod-sidebar-hd">Event Details</div>
+        <div class="prod-sidebar-body">
+          <div class="prod-detail-row"><span>Venue</span><span>Main House</span></div>
+          <div class="prod-detail-row"><span>Dates</span><span>Saturdays</span></div>
+          <div class="prod-detail-row"><span>Running time</span><span>approx. 1hr 45min (no interval)</span></div>
+          <div class="prod-detail-row"><span>Age guidance</span><span>14+</span></div>
+          <div class="prod-detail-row"><span>Prices from</span><span>£18</span></div>
+        </div>
+        <img class="prod-side-img" src="/images/productions/an-evening-of-music-thumb.jpg" alt="Venue photograph">
+      </aside>
     </div>
   </div>
 </div>
@@ -1394,20 +1521,46 @@
      SCREEN: PRODUCTION 2 — PERFORMANCE (MAIN HOUSE)
      ════════════════════════════════════════════ -->
 <div class="screen" id="screen-prod-2">
-  <div class="page-wrap narrow">
+  <div class="page-wrap" style="max-width:1000px;">
     <p class="breadcrumbs"><span>Home</span> / <span>What's On</span> / <span>Performance (Main House)</span></p>
-    <div class="event-intro-card">
-      <h1 style="font-family:Georgia,serif;font-size:1.5rem;color:var(--purple-dark);margin-bottom:8px;">Performance (Main House)</h1>
-      <p style="font-size:0.78rem;color:var(--grey-mid);margin-bottom:16px;">Main House · Various dates · From £22</p>
-      <p style="font-size:0.88rem;line-height:1.8;margin-bottom:14px;">A new work. This Performance (working title) explores themes of presence, absence, and the relationship between performer and audience in a contemporary context.</p>
-      <p style="font-family:'Times New Roman',Times,serif;font-size:0.9rem;line-height:1.8;color:#333;margin-bottom:14px;background:#fffef8;border:1px solid #eee;padding:12px 14px;border-radius:3px;">The company have been in residency at Enyold for several weeks now, developing material in response to the building and its history. What emerges is a peice that resists easy categorization — part installation, part durational performance, part something else entirely. Audiences are encouraged to move freely throught the space, although this is not mandatory.</p>
-      <p style="font-size:0.88rem;line-height:1.8;margin-bottom:14px;">Content information: this work contains extended periods of silence. It also contains sound. There may be audience participation, depending on the night.
+    <div class="prod-layout">
+      <div class="prod-main">
+        <img class="prod-img-broken" src="/images/productions/performance-hero.jpg" alt="Performance (Main House) — production photograph">
+        <h1 class="prod-title">Performance (Main House)</h1>
+        <p class="prod-meta">Main House · Various dates · From £22</p>
+        <p>A new work. This Performance (working title) explores themes of presence, absence, and the relationship between performer and audience in a contemporary context.</p>
+        <p class="prod-pullquote">The company have been in residency at Enyold for several weeks now, developing material in response to the building and its history. What emerges is a peice that resists easy categorization — part installation, part durational performance, part something else entirely. Audiences are encouraged to move freely throught the space, although this is not mandatory.</p>
+        <p>Content information: this work contains extended periods of silence. It also contains sound. There may be audience participation, depending on the night. Running time is variable. On some nights the performance may end before the advertised time. On others it may continue somewhat beyond it. There are no refunds in either eventuality.</p>
+        <p>This production is supported by Arts Council England, Enyold Borough Council, and an anonymous donor who wishes to remain anonymous.</p>
 
-Running time is variable. On some nights the performance may end before the advertised time. On others it may continue somewhat beyond it. There are no refunds in either eventuality.</p>
-      <p style="font-size:0.88rem;line-height:1.8;margin-bottom:14px;">This production is supported by Arts Council England, Enyold Borough Council, and an anonymous donor who wishes to remain anonymous.</p>
-      <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--grey-border);">
-        <button class="btn btn-primary" onclick="navTo('screen-calendar')">Book tickets</button>
+        <button class="btn-ghost" onclick="navTo('screen-calendar')">Book tickets</button>
+
+        <div class="prod-section">
+          <h3>Reviews</h3>
+          <blockquote class="prod-quote"><span class="stars">★★★★☆</span>"[AWAITING PRESS QUOTES]"<cite>— TBC</cite></blockquote>
+          <blockquote class="prod-quote">"Lorem ipsum dolor sit amet, consectetur adipiscing elit."<cite>— {{review_source}}</cite></blockquote>
+        </div>
+        <div class="prod-section">
+          <h3>Cast</h3>
+          <div class="prod-empty"></div>
+        </div>
+        <div class="prod-section">
+          <h3>Trailer</h3>
+          <div class="prod-embed-broken">▶</div>
+        </div>
       </div>
+
+      <aside class="prod-sidebar">
+        <div class="prod-sidebar-hd">Event Details</div>
+        <div class="prod-sidebar-body">
+          <div class="prod-detail-row"><span>Venue</span><span>Main House</span></div>
+          <div class="prod-detail-row"><span>Dates</span><span>Various dates</span></div>
+          <div class="prod-detail-row"><span>Running time</span><span>Variable</span></div>
+          <div class="prod-detail-row"><span>Age guidance</span><span>TBC</span></div>
+          <div class="prod-detail-row"><span>Prices from</span><span>£22</span></div>
+        </div>
+        <img class="prod-side-img" src="/images/productions/performance-thumb.jpg" alt="Venue photograph">
+      </aside>
     </div>
   </div>
 </div>
@@ -1417,20 +1570,46 @@ Running time is variable. On some nights the performance may end before the adve
      SCREEN: PRODUCTION 3 — THEATRE
      ════════════════════════════════════════════ -->
 <div class="screen" id="screen-prod-3">
-  <div class="page-wrap narrow">
+  <div class="page-wrap" style="max-width:1000px;">
     <p class="breadcrumbs"><span>Home</span> / <span>What's On</span> / <span>Theatre – see website</span></p>
-    <div class="event-intro-card">
-      <h1 style="font-family:Georgia,serif;font-size:1.5rem;color:var(--purple-dark);margin-bottom:8px;">Theatre – see website</h1>
-      <p style="font-size:0.78rem;color:var(--grey-mid);margin-bottom:16px;">Studio · Next Saturday · From £12</p>
-      <p style="font-size:0.88rem;line-height:1.8;margin-bottom:14px;">Further information about this production is available on the Enyold Theatre website. Please see the website for details.</p>
-      <p style="font-family:'Times New Roman',Times,serif;font-size:0.9rem;line-height:1.8;color:#333;margin-bottom:14px;background:#fffef8;border:1px solid #eee;padding:12px 14px;border-radius:3px;">This show has been described as "a visceral and uncompromising examination of modern life" by someone who saw it at a previous venue. We understand it is quite short. It may or may not feature a set. The director has asked us not to reveal the ending, or indeed very much else about it, as they feel that the less the audience knows in advance the better.</p>
-      <p style="font-size:0.88rem;line-height:1.8;margin-bottom:14px;">Suitable for ages 16 and over. Contains adult themes. Some audience members at previous performances have found it unexpectedly upsetting.
+    <div class="prod-layout">
+      <div class="prod-main">
+        <img class="prod-img-broken" src="/images/productions/theatre-hero.jpg" alt="Theatre – see website — production photograph">
+        <h1 class="prod-title">Theatre – see website</h1>
+        <p class="prod-meta">Studio · Next Saturday · From £12</p>
+        <p>Further information about this production is available on the Enyold Theatre website. Please see the website for details.</p>
+        <p class="prod-pullquote">This show has been described as "a visceral and uncompromising examination of modern life" by someone who saw it at a previous venue. We understand it is quite short. It may or may not feature a set. The director has asked us not to reveal the ending, or indeed very much else about it, as they feel that the less the audience knows in advance the better.</p>
+        <p>Suitable for ages 16 and over. Contains adult themes. Some audience members at previous performances have found it unexpectedly upsetting. We ask that audience members refrain from using mobile phones during the performance. We also ask that you do not eat hot food in the auditoreum. Cold food is permitted in some areas — please ask at the box office.</p>
+        <p>This is a studio production. Seating is raked and the seats are quite close together.</p>
 
-We ask that audience members refrain from using mobile phones during the performance. We also ask that you do not eat hot food in the auditoreum. Cold food is permitted in some areas — please ask at the box office.</p>
-      <p style="font-size:0.88rem;line-height:1.8;margin-bottom:14px;">This is a studio production. Seating is raked and the seats are quite close together.</p>
-      <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--grey-border);">
-        <button class="btn btn-primary" onclick="navTo('screen-calendar')">Book tickets</button>
+        <button class="btn-ghost" onclick="navTo('screen-calendar')">Book tickets</button>
+
+        <div class="prod-section">
+          <h3>Reviews</h3>
+          <blockquote class="prod-quote"><span class="stars">★★★★★</span>"xxxxx QUOTE HERE xxxxx"<cite>— [source]</cite></blockquote>
+          <blockquote class="prod-quote">"Lorem ipsum dolor sit amet."<cite>— {{review_source}}</cite></blockquote>
+        </div>
+        <div class="prod-section">
+          <h3>Cast</h3>
+          <div class="prod-empty"></div>
+        </div>
+        <div class="prod-section">
+          <h3>Trailer</h3>
+          <div class="prod-embed-broken">▶</div>
+        </div>
       </div>
+
+      <aside class="prod-sidebar">
+        <div class="prod-sidebar-hd">Event Details</div>
+        <div class="prod-sidebar-body">
+          <div class="prod-detail-row"><span>Venue</span><span>Studio</span></div>
+          <div class="prod-detail-row"><span>Dates</span><span>Next Saturday</span></div>
+          <div class="prod-detail-row"><span>Running time</span><span>Quite short</span></div>
+          <div class="prod-detail-row"><span>Age guidance</span><span>16+</span></div>
+          <div class="prod-detail-row"><span>Prices from</span><span>£12</span></div>
+        </div>
+        <img class="prod-side-img" src="/images/productions/theatre-thumb.jpg" alt="Venue photograph">
+      </aside>
     </div>
   </div>
 </div>
@@ -1440,19 +1619,45 @@ We ask that audience members refrain from using mobile phones during the perform
      SCREEN: PRODUCTION 4 — DANCE
      ════════════════════════════════════════════ -->
 <div class="screen" id="screen-prod-4">
-  <div class="page-wrap narrow">
+  <div class="page-wrap" style="max-width:1000px;">
     <p class="breadcrumbs"><span>Home</span> / <span>What's On</span> / <span>Dance</span></p>
-    <div class="event-intro-card">
-      <h1 style="font-family:Georgia,serif;font-size:1.5rem;color:var(--purple-dark);margin-bottom:8px;">Dance</h1>
-      <p style="font-size:0.78rem;color:var(--grey-mid);margin-bottom:16px;">Main House · June 28 · From £24</p>
-      <p style="font-size:0.88rem;line-height:1.8;margin-bottom:14px;">A dance production. This work brings together an ensemble of performers to explore movement, space, and — above all — the deeply human imperative to move one's body in time with, or occasionally against, music.</p>
-      <p style="font-family:'Times New Roman',Times,serif;font-size:0.9rem;line-height:1.8;color:#333;margin-bottom:14px;background:#fffef8;border:1px solid #eee;padding:12px 14px;border-radius:3px;">The choreography in this piece has been described by the choreografer themselves as "intentional". It draws on traditions of contemporary dance while simultaneously questioning those very traditions — a tension that manifests most powerfully, perhaps, in the work's extraordinary second section, during which nothing happens for approximately eleven minutes. This has divided audiences. Some have found it profound. Others have asked for a refund. Both responses, the company feel, are valid.</p>
-      <p style="font-size:0.88rem;line-height:1.8;margin-bottom:14px;">Running time: 1hr 10min approximately (no interval). Please note: there is no interval.
+    <div class="prod-layout">
+      <div class="prod-main">
+        <img class="prod-img-broken" src="/images/productions/dance-hero.jpg" alt="Dance — production photograph">
+        <h1 class="prod-title">Dance</h1>
+        <p class="prod-meta">Main House · June 28 · From £24</p>
+        <p>A dance production. This work brings together an ensemble of performers to explore movement, space, and — above all — the deeply human imperative to move one's body in time with, or occasionally against, music.</p>
+        <p class="prod-pullquote">The choreography in this piece has been described by the choreografer themselves as "intentional". It draws on traditions of contemporary dance while simultaneously questioning those very traditions — a tension that manifests most powerfully, perhaps, in the work's extraordinary second section, during which nothing happens for approximately eleven minutes. This has divided audiences. Some have found it profound. Others have asked for a refund. Both responses, the company feel, are valid.</p>
+        <p>Running time: 1hr 10min approximately (no interval). Please note: there is no interval. Age guidance: suitable for all ages, though children under 5 may find certain sections difficult to follow, as indeed may some adults. The production contains strobe lighting and a section of extremely loud noise that has been described as music.</p>
 
-Age guidance: suitable for all ages, though children under 5 may find certain sections difficult to follow, as indeed may some adults. The production contains strobe lighting and a section of extremely loud noise that has been described as music.</p>
-      <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--grey-border);">
-        <button class="btn btn-primary" onclick="navTo('screen-calendar')">Book tickets</button>
+        <button class="btn-ghost" onclick="navTo('screen-calendar')">Book tickets</button>
+
+        <div class="prod-section">
+          <h3>Reviews</h3>
+          <blockquote class="prod-quote"><span class="stars">★★★☆☆</span>"[QUOTE PENDING APPROVAL]"<cite>— Publication TBC</cite></blockquote>
+          <blockquote class="prod-quote">"Lorem ipsum dolor sit amet, consectetur adipiscing elit."<cite>— {{review_source}}</cite></blockquote>
+        </div>
+        <div class="prod-section">
+          <h3>Cast</h3>
+          <div class="prod-empty"></div>
+        </div>
+        <div class="prod-section">
+          <h3>Trailer</h3>
+          <div class="prod-embed-broken">▶</div>
+        </div>
       </div>
+
+      <aside class="prod-sidebar">
+        <div class="prod-sidebar-hd">Event Details</div>
+        <div class="prod-sidebar-body">
+          <div class="prod-detail-row"><span>Venue</span><span>Main House</span></div>
+          <div class="prod-detail-row"><span>Date</span><span>June 28</span></div>
+          <div class="prod-detail-row"><span>Running time</span><span>approx. 1hr 10min (no interval)</span></div>
+          <div class="prod-detail-row"><span>Age guidance</span><span>All ages</span></div>
+          <div class="prod-detail-row"><span>Prices from</span><span>£24</span></div>
+        </div>
+        <img class="prod-side-img" src="/images/productions/dance-thumb.jpg" alt="Venue photograph">
+      </aside>
     </div>
   </div>
 </div>
@@ -1771,6 +1976,11 @@ function selectItem(prod) {
   navTo(prod);
 }
 
+// ── VISIT PAGE ─────────────────────────────────
+function toggleVisitAcc(hd) {
+  hd.parentElement.classList.toggle('open');
+}
+
 let filterSpinnerActive = false;
 function applyFilters() {
   const btn = document.getElementById('filter-btn');
@@ -1786,6 +1996,8 @@ function applyFilters() {
     document.getElementById('f-date').selectedIndex = 0;
     document.getElementById('f-price').selectedIndex = 0;
     document.getElementById('f-venue').selectedIndex = 0;
+    document.getElementById('f-feeling').selectedIndex = 0;
+    document.getElementById('f-free').checked = false;
     dl('filter_reset');
     return;
   }
@@ -1809,6 +2021,8 @@ function applyFilters() {
       document.getElementById('f-date').selectedIndex = 0;
       document.getElementById('f-price').selectedIndex = 0;
       document.getElementById('f-venue').selectedIndex = 0;
+      document.getElementById('f-feeling').selectedIndex = 0;
+      document.getElementById('f-free').checked = false;
       dl('filter_reset');
       document.getElementById('no-results-msg').style.display = 'none';
       document.getElementById('events-grid').style.display = '';
@@ -1817,6 +2031,24 @@ function applyFilters() {
       btn.disabled = false;
     }
   }, 1200);
+}
+
+// Brochure "download" link — intentionally does nothing (just tracks the click).
+function downloadBrochure() { dl('brochure_download_click'); }
+
+// Free-events toggle — nothing is ever free, so switching it on clears the grid.
+function toggleFreeEvents(el) {
+  const grid = document.getElementById('events-grid');
+  const noRes = document.getElementById('no-results-msg');
+  dl('filter_free_toggle', { free_only: el.checked });
+  if (el.checked) {
+    grid.style.display = 'none';
+    noRes.style.display = 'block';
+  } else {
+    noRes.style.display = 'none';
+    grid.style.display = '';
+    buildEventsGrid();
+  }
 }
 
 // ── CALENDAR ───────────────────────────────────
@@ -1967,16 +2199,21 @@ function buildSeatMap() {
 // Would selecting `col` leave a single sellable seat trapped inside a run
 // (both cluster-neighbours occupied)? Keeps the isolation modal, but never
 // blocks a clean pair/edge selection.
-function wouldIsolate(row, col) {
-  const avail = availNow(row);
-  const occupied = selectedColsIn(row).concat([col]);
-  const free = avail.filter(c => occupied.indexOf(c) === -1);
-  for (const g of free) {
-    const leftExists = avail.indexOf(g - 1) !== -1;
-    const rightExists = avail.indexOf(g + 1) !== -1;
-    const leftFree = free.indexOf(g - 1) !== -1;
-    const rightFree = free.indexOf(g + 1) !== -1;
-    if (leftExists && rightExists && !leftFree && !rightFree) return true;
+// Does the CURRENT selection strand a single bookable seat inside a run
+// (both cluster-neighbours occupied)? Checked only on Continue — you can
+// freely select/deselect until then.
+function selectionIsolatesSeat() {
+  for (const row of Object.keys(AVAILABLE_SEATS)) {
+    const avail = availNow(row);
+    const sel = selectedColsIn(row);
+    const free = avail.filter(c => sel.indexOf(c) === -1);
+    for (const g of free) {
+      const leftExists = avail.indexOf(g - 1) !== -1;
+      const rightExists = avail.indexOf(g + 1) !== -1;
+      const leftFree = free.indexOf(g - 1) !== -1;
+      const rightFree = free.indexOf(g + 1) !== -1;
+      if (leftExists && rightExists && !leftFree && !rightFree) return true;
+    }
   }
   return false;
 }
@@ -1997,11 +2234,6 @@ function clickSeat(id) {
 
   if (S.selectedSeats.length >= MAX_SEATS) {
     showToast(`You can select a maximum of ${MAX_SEATS} seats.`, 'warning');
-    return;
-  }
-  if (wouldIsolate(row, col)) {
-    document.getElementById('modal-isolation').classList.add('visible');
-    dark('seat_isolation_modal', { seat: id });
     return;
   }
 
@@ -2062,19 +2294,22 @@ function closeSeatModal() {
   document.getElementById('modal-seat-taken').classList.remove('visible');
 }
 
-// Continue from the panel. FIRST press fires the "seat no longer available"
-// gotcha: strips one chosen seat and re-renders it as taken. SECOND press proceeds.
+// Continue from the panel. The gotchas fire on Continue, not on seat click:
+//  1. If the "cursed" seat (the pre-selected D-10) is still in the basket, that
+//     one turns out to be taken — stripped, marked unavailable, generic modal
+//     that never names the seat. Only fires if that seat is actually selected.
+//  2. Otherwise, if the settled selection strands a single seat, show the
+//     "can't leave a single seat" modal. Only then.
+//  3. Otherwise proceed to the form.
 function continueSeat() {
   if (S.selectedSeats.length === 0) return;
 
-  if (!S.seatTakenFired) {
+  const cursed = S.preselectedSeat;
+  if (!S.seatTakenFired && S.selectedSeats.indexOf(cursed) !== -1) {
     S.seatTakenFired = true;
-    const victim = S.selectedSeats[0];
-    const [row, col] = victim.split('-');
-    // strip it from the selection and mark it taken on the map
-    S.selectedSeats.splice(S.selectedSeats.indexOf(victim), 1);
-    S.takenSeats.push(victim);
-    const el = document.getElementById('seat-' + victim);
+    S.selectedSeats.splice(S.selectedSeats.indexOf(cursed), 1);
+    S.takenSeats.push(cursed);
+    const el = document.getElementById('seat-' + cursed);
     if (el) {
       el.classList.remove('selected');
       el.classList.add('s-taken');
@@ -2082,12 +2317,19 @@ function continueSeat() {
       el.setAttribute('onclick', '');
       el.title = 'Unavailable';
     }
-    dlEcom('remove_from_cart', seatEcom(victim));
-    dark('seat_taken_modal', { seat: victim });
+    dlEcom('remove_from_cart', seatEcom(cursed));
+    dark('seat_taken_modal', { seat: cursed });
+    // Generic message — deliberately does NOT say which seat.
     document.getElementById('seat-taken-msg').innerHTML =
-      `Sorry — <strong>Row ${row}, Seat ${col}</strong> is no longer available. Another customer may have selected it at the same time. Please choose a different seat.`;
+      'One of your selected seats is no longer available. Another customer may have selected it at the same time. Please review your selection and choose another seat.';
     document.getElementById('modal-seat-taken').classList.add('visible');
     renderSelection();
+    return;
+  }
+
+  if (selectionIsolatesSeat()) {
+    document.getElementById('modal-isolation').classList.add('visible');
+    dark('seat_isolation_modal');
     return;
   }
 
@@ -2139,6 +2381,16 @@ function updateTimerDisplay() {
   else if (S.timerSeconds < 60) bar.classList.add('t-red');
   else if (S.timerSeconds < 120) bar.classList.add('t-orange');
   else if (S.timerSeconds < 180) bar.classList.add('t-yellow');
+  // Offer the "add time" button once we drop to the final 30 seconds.
+  document.getElementById('timer-addtime').classList.toggle('visible', S.timerSeconds <= 30);
+}
+
+// Add 30 seconds per click when the timer is running low.
+function addTime() {
+  S.timerSeconds += 30;
+  showToast('30 seconds added to your session.', 'success');
+  dark('timer_extended', { method: 'manual_add' });
+  updateTimerDisplay();
 }
 
 // ── FORM ───────────────────────────────────────
@@ -2160,8 +2412,25 @@ function closeStillThere() {
   document.getElementById('modal-still-there').classList.remove('visible');
 }
 
-function showPassHint() {
-  document.getElementById('pass-rules').classList.add('visible');
+// All text-like fields are mandatory (marketing checkboxes and selects excluded).
+function formFieldNodes() {
+  return document.querySelectorAll('#screen-form .form-card input, #screen-form .form-card textarea');
+}
+function formHasEmptyField() {
+  for (const f of formFieldNodes()) {
+    if (f.type === 'checkbox') continue;      // marketing preferences — excluded
+    if (!f.value.trim()) return true;
+  }
+  return false;
+}
+function clearFormFields() {
+  for (const f of formFieldNodes()) {
+    if (f.type === 'checkbox') continue;      // don't touch marketing checkboxes here
+    f.value = '';
+  }
+  document.querySelectorAll('#screen-form .form-card select').forEach(s => s.selectedIndex = 0);
+  // re-tick every marketing preference (opt-out is wiped each time — pattern)
+  document.querySelectorAll('#screen-form .mktg-row input[type=checkbox]').forEach(c => c.checked = true);
 }
 
 function fakePostcodeLookup() {
@@ -2194,9 +2463,10 @@ function tickCaptcha(n) {
 }
 
 function submitForm() {
-  if (S.formFirstSubmit) {
-    S.formFirstSubmit = false;
-    // Scroll to top, show errors
+  // Real validation: any empty mandatory field wipes the WHOLE form and re-ticks marketing.
+  if (formHasEmptyField()) {
+    clearFormFields();
+    document.getElementById('pass-rules').classList.add('visible');  // password rules only appear now
     window.scrollTo({top:0, behavior:'smooth'});
     const errBox = document.getElementById('form-error-box');
     const errList = document.getElementById('form-error-list');
@@ -2208,7 +2478,6 @@ function submitForm() {
       '<li>Password does not meet requirements</li>',
       '<li>Please complete the address fields</li>',
       '<li>Emergency contact name is required</li>',
-      '<li>Please confirm your marketing preferences</li>',
       '<li>Please complete the security check</li>',
     ].join('');
     errBox.classList.add('visible');
@@ -2329,9 +2598,7 @@ function onEnterPayment() {
   }
 }
 
-let sureStep = 0;
 function startPayment() {
-  sureStep = 0;
   const t = '£' + S.orderTotal.toFixed(2);
   dlEcom('add_payment_info', { currency: 'GBP', value: +S.orderTotal.toFixed(2), payment_type: 'card',
       items: S.selectedSeats.map(seatItem) });
@@ -2341,16 +2608,10 @@ function startPayment() {
   modal.classList.add('visible');
 }
 
+// Single confirmation now — straight to processing (second "absolutely sure?" removed).
 function advanceAreYouSure() {
-  sureStep++;
-  const t = '£' + S.orderTotal.toFixed(2);
-  if (sureStep === 1) {
-    document.getElementById('modal-sure-title').textContent = 'Are you absolutely sure?';
-    document.getElementById('modal-sure-body').textContent = `Just to confirm — you are happy to pay ${t} in full today, including all add-ons, insurance, and any subscriptions?`;
-  } else {
-    document.getElementById('modal-sure').classList.remove('visible');
-    navTo('screen-processing');
-  }
+  document.getElementById('modal-sure').classList.remove('visible');
+  navTo('screen-processing');
 }
 
 // ── PROCESSING ─────────────────────────────────
@@ -2398,7 +2659,6 @@ function startProcessing() {
 let slideinTimer = null;
 function onEnterConfirm() {
   const order = computeOrder();
-  document.getElementById('confirm-total').textContent = '£' + order.total.toFixed(2);
 
   // GA4 purchase — seats + any accepted upsells.
   const items = S.selectedSeats.map(seatItem).concat(
@@ -2439,13 +2699,25 @@ function showToast(msg, type='info') {
 const FOOTER_COLS = [
   { h: 'About Enyold', links: ['Our Story','Our Awards','Corporate Hospitality','Board & Governance','Annual Report (PDF, 8MB)'] },
   { h: 'Your Visit', links: ['Getting Here','Venue Hire FAQs (PDF, 4MB)','Accessibility Statement (under review)','Food & Drink','Cloakroom Policy'] },
-  { h: 'Support Us', links: ['Make a Donation','Become a Member','Leave a Legacy','Volunteering','Modern Slavery Statement'] },
+  { h: 'Support', links: ['Make a Donation','Become a Member','Leave a Legacy','Volunteering','Modern Slavery Statement'] },
   { h: 'Legal & Policies', links: ['Cookie Policy','Cookie Policy (2019 archive)','Privacy Policy','Terms of Sale','Press Enquiries'] },
 ];
 
 function footerLink(text) { dl('footer_link_click', { link_text: text }); }
-// Duplicate newsletter box — gives NO indication it worked (pattern preserved).
-function footerNewsletter(ev) { if (ev) ev.preventDefault(); dl('newsletter_signup', { method: 'footer' }); return false; }
+// Duplicate newsletter box — validates the address is email-shaped, then clears
+// the field and gives NO indication anything happened (pattern preserved).
+function footerNewsletter(ev) {
+  if (ev) ev.preventDefault();
+  const input = ev && ev.target ? ev.target.querySelector('input') : null;
+  if (!input) return false;
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(input.value.trim())) {
+    if (input.reportValidity) input.reportValidity();  // native "enter an email" bubble
+    return false;
+  }
+  dl('newsletter_signup', { method: 'footer' });
+  input.value = '';  // silently clear — no confirmation, because nothing was stored
+  return false;
+}
 function ofCreditClick() { dl('of_credit_click'); }
 
 function buildFooterHTML() {
@@ -2459,7 +2731,7 @@ function buildFooterHTML() {
     `<div class="footer-col"><h4>Opening Hours</h4>
       <p class="footer-hours">Box Office: Mon–Sat 9am–8pm<br>Sunday: 11am–5pm<br>Bank Holidays: 10am–6pm<br>Café Bar: daily until late</p>
       <form class="footer-newsletter" onsubmit="return footerNewsletter(event)">
-        <input type="email" placeholder="Sign up for our newsletter">
+        <input type="email" required placeholder="Sign up for our newsletter">
         <button type="submit">Subscribe</button>
       </form>
     </div>`;
@@ -2471,8 +2743,7 @@ function buildFooterHTML() {
     <div class="footer-logos">${logos}</div>
     <!-- Read-why blog post: swap the placeholder href on .of-why for the published URL later -->
     <div class="footer-of-credit">
-      <p>This deliberately terrible website was made by the terrible people at
-        <a href="https://onefurther.com/services/usability-research" target="_blank" rel="noopener" onclick="ofCreditClick()">One Further</a>.</p>
+      <p><a href="https://onefurther.com/services/usability-research" target="_blank" rel="noopener" onclick="ofCreditClick()">One Further</a> did this on purpose. They're not sorry.</p>
       <a class="of-why" href="#" data-blog-link onclick="footerLink('Read why we built this'); return false;">Read why we built this →</a>
     </div>
     <div class="footer-smallprint">
