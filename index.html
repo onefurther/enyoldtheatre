@@ -4,6 +4,23 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Enyold Theatre – Book Tickets Online</title>
+<meta name="description" content="Book tickets for Enyold Theatre. A deliberately terrible ticketing website by One Further. How many dark patterns can you survive?">
+<meta name="theme-color" content="#3d1f63">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%233d1f63'/%3E%3Ctext x='32' y='45' text-anchor='middle' font-family='Georgia,serif' font-size='40' font-style='italic' fill='%23d4b8f0'%3EE%3C/text%3E%3C/svg%3E">
+<link rel="canonical" href="https://offcuts.onefurther.dev/terrible-ticketing/">
+<!-- Social previews (absolute URLs so LinkedIn, Slack etc. can fetch the image) -->
+<meta property="og:url" content="https://offcuts.onefurther.dev/terrible-ticketing/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Enyold Theatre">
+<meta property="og:title" content="Enyold Theatre – the worst ticketing website we could build">
+<meta property="og:description" content="Try to book a ticket. Count the dark patterns. A usability demonstration by One Further.">
+<meta property="og:image" content="https://offcuts.onefurther.dev/terrible-ticketing/images/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Enyold Theatre – the worst ticketing website we could build">
+<meta name="twitter:description" content="Try to book a ticket. Count the dark patterns. A usability demonstration by One Further.">
+<meta name="twitter:image" content="https://offcuts.onefurther.dev/terrible-ticketing/images/og-image.png">
 
 <!-- ════════════════════════════════════════════
      ANALYTICS: dataLayer + GTM-ready
@@ -78,23 +95,50 @@
   .page-title { letter-spacing: -0.01em; }
 
   /* ── SCREENS ── */
-  .screen { display: none; min-height: 100vh; padding-top: 48px; }
+  /* Header is taller on content pages; once booking starts the 48px timer bar replaces it. */
+  :root { --header-h: 98px; }
+  @media (max-width: 860px) { :root { --header-h: 60px; } }
+  .screen { display: none; min-height: 100vh; padding-top: var(--header-h); }
+  body.booking .screen { padding-top: 48px; }
   .screen.active { display: block; }
   #screen-white { background: #fff; min-height: 100vh; display: none; padding: 0; }
   #screen-white.active { display: block; }
 
-  /* ── GLOBAL NAV ── */
-  .g-nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 400;
-    background: var(--purple-dark);
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 24px; height: 48px;
+  /* ── GLOBAL HEADER ── */
+  .g-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 400; background: var(--purple-dark); box-shadow: 0 1px 0 rgba(255,255,255,0.06), 0 4px 18px rgba(20,8,40,0.25); }
+  body.booking .g-nav { display: none; }
+  .g-util { height: 32px; background: #2a1446; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; font-size: 0.72rem; color: #a99bc6; }
+  .g-util-links { display: flex; gap: 20px; }
+  .g-util a { color: #b9acd6; text-decoration: none; cursor: pointer; }
+  .g-util a:hover { color: #fff; }
+  .g-main { height: 66px; display: flex; align-items: center; gap: 28px; padding: 0 28px; }
+  .g-nav-logo { display: flex; align-items: center; gap: 10px; cursor: pointer; flex-shrink: 0; text-decoration: none; }
+  .g-logo-mark { width: 34px; height: 34px; border-radius: 8px; background: var(--lavender-mid); color: var(--purple-dark); font-family: var(--font-display); font-style: italic; font-size: 1.35rem; display: flex; align-items: center; justify-content: center; }
+  .g-logo-word { font-family: var(--font-display); color: #fff; font-size: 1.2rem; letter-spacing: 0.02em; line-height: 1; white-space: nowrap; }
+  .g-logo-word span { color: var(--lavender-mid); font-style: italic; }
+  .g-nav-links { display: flex; gap: 26px; flex: 1; }
+  .g-nav-links a { color: #ddd3ee; font-size: 0.86rem; font-weight: 500; text-decoration: none; cursor: pointer; padding: 6px 0; border-bottom: 2px solid transparent; transition: color 0.12s, border-color 0.12s; }
+  .g-nav-links a:hover { color: #fff; border-bottom-color: var(--lavender-mid); }
+  .g-actions { display: flex; align-items: center; gap: 6px; margin-left: auto; }
+  .g-icon-btn { position: relative; width: 38px; height: 38px; border-radius: 50%; background: none; border: none; color: #ddd3ee; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.12s; }
+  .g-icon-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+  .g-icon-btn svg { width: 19px; height: 19px; }
+  .g-basket-count { position: absolute; top: 3px; right: 2px; min-width: 16px; height: 16px; border-radius: 8px; background: var(--lavender-mid); color: var(--purple-dark); font-size: 0.6rem; font-weight: 800; display: flex; align-items: center; justify-content: center; padding: 0 4px; }
+  .g-book-btn { margin-left: 10px; background: #fff; color: var(--purple-dark); border: none; border-radius: 999px; padding: 10px 20px; font-family: inherit; font-size: 0.84rem; font-weight: 700; cursor: pointer; white-space: nowrap; transition: background 0.15s, transform 0.12s; }
+  .g-book-btn:hover { background: var(--lavender); transform: translateY(-1px); }
+  .g-burger { display: none; }
+  .g-mobile-menu { display: none; }
+  @media (max-width: 860px) {
+    .g-util, .g-nav-links, .g-book-btn, .g-search { display: none; }
+    .g-main { height: 60px; padding: 0 12px 0 16px; gap: 12px; }
+    .g-logo-mark { width: 30px; height: 30px; font-size: 1.15rem; }
+    .g-logo-word { font-size: 1.08rem; }
+    .g-burger { display: flex; }
+    .g-mobile-menu { position: absolute; top: 60px; left: 0; right: 0; background: var(--purple-dark); border-top: 1px solid rgba(255,255,255,0.08); padding: 8px 16px 18px; box-shadow: 0 12px 24px rgba(20,8,40,0.35); }
+    .g-mobile-menu.open { display: block; }
+    .g-mobile-menu a { display: block; color: #ece6f6; text-decoration: none; padding: 13px 4px; font-size: 1rem; border-bottom: 1px solid rgba(255,255,255,0.08); cursor: pointer; }
+    .g-mobile-menu .g-book-btn { display: block; width: 100%; margin: 16px 0 0; padding: 13px; }
   }
-  .g-nav-logo { font-family: Georgia, serif; color: #fff; font-size: 1.05rem; letter-spacing: 0.03em; }
-  .g-nav-logo span { color: var(--lavender-mid); font-style: italic; }
-  .g-nav-links { display: flex; gap: 24px; }
-  .g-nav-links a { color: #c9bde0; font-size: 0.78rem; text-decoration: none; cursor: pointer; letter-spacing: 0.04em; text-transform: uppercase; }
-  .g-nav-links a:hover { color: #fff; }
 
   /* ── TIMER BAR (replaces nav when active) ── */
   #timer-bar {
@@ -104,6 +148,7 @@
     gap: 12px; height: 48px; font-size: 0.82rem;
   }
   #timer-bar.active { display: flex; }
+  @media (max-width: 640px) { #timer-bar { font-size: 0.72rem; gap: 6px; padding: 0 10px; line-height: 1.2; text-align: center; } #timer-display { font-size: 0.95rem; } }
   #timer-bar.t-yellow { background: var(--yellow); color: #333; }
   #timer-bar.t-orange { background: var(--orange); }
   #timer-bar.t-red { background: var(--red); }
@@ -116,11 +161,12 @@
 
   /* ── TOAST ── */
   #toast {
-    position: fixed; top: 60px; right: 20px; z-index: 900;
+    position: fixed; top: calc(var(--header-h) + 12px); right: 20px; z-index: 900;
     padding: 10px 16px; border-radius: 4px; font-size: 0.83rem;
     box-shadow: 0 3px 10px rgba(0,0,0,0.2); display: none;
     max-width: 280px; line-height: 1.4;
   }
+  body.booking #toast { top: 60px; }
   #toast.visible { display: block; }
   #toast.success { background: var(--green); color: #fff; }
   #toast.info { background: var(--purple); color: #fff; }
@@ -265,7 +311,6 @@
   #modal-seat-taken h3 { color: var(--red); }
   #modal-still-there .overlay-modal { text-align: center; }
   #modal-login .overlay-modal { max-width: 420px; }
-  #modal-areyousure .overlay-modal { max-width: 380px; text-align: center; }
 
   /* ── PAGE LAYOUT ── */
   .page-wrap { max-width: 980px; margin: 0 auto; padding: 32px 20px; }
@@ -273,64 +318,114 @@
   .page-title { font-family: var(--font-display); font-size: 2rem; color: var(--purple-dark); margin-bottom: 8px; text-wrap: balance; }
   .page-subtitle { font-size: 0.85rem; color: var(--grey-mid); margin-bottom: 28px; }
 
+  /* ── STOCK IMAGE SLOTS ──
+     Each slot layers a photo from images/stock/ over a stage-lit gradient. If the
+     photo is missing the gradient shows instead, so nothing ever looks broken here
+     (the production pages are where images are broken on purpose). */
+  .ph { background-color: #2a1446; background-size: cover; background-position: center; }
+  .ph-music       { background-image: url(images/stock/music.jpg),       radial-gradient(60% 80% at 30% 10%, rgba(255,190,90,0.55), transparent 60%), linear-gradient(160deg, #2b0f4d, #5b2d8e 60%, #8a3d7a); }
+  .ph-performance { background-image: url(images/stock/performance.jpg), radial-gradient(55% 75% at 70% 0%, rgba(150,200,255,0.5), transparent 60%), linear-gradient(160deg, #0e1838, #22427a 60%, #3a2d7a); }
+  .ph-theatre     { background-image: url(images/stock/theatre.jpg),     radial-gradient(50% 70% at 50% 0%, rgba(255,220,170,0.45), transparent 60%), linear-gradient(160deg, #3a0a12, #7a1626 55%, #3d1f63); }
+  .ph-dance       { background-image: url(images/stock/dance.jpg),       radial-gradient(55% 75% at 40% 5%, rgba(255,140,210,0.5), transparent 60%), linear-gradient(160deg, #2a0b3d, #7a2a8a 55%, #c04f8a); }
+  .ph-comedy      { background-image: url(images/stock/comedy.jpg),      radial-gradient(45% 70% at 50% 10%, rgba(255,230,140,0.6), transparent 60%), linear-gradient(160deg, #3a1a08, #9a4a14 60%, #5b2d8e); }
+  .ph-family      { background-image: url(images/stock/family.jpg),      radial-gradient(60% 80% at 30% 0%, rgba(180,255,220,0.45), transparent 60%), linear-gradient(160deg, #0b2b2a, #1d6b5e 60%, #3d1f63); }
+  .ph-talks       { background-image: url(images/stock/talks.jpg),       radial-gradient(50% 70% at 60% 0%, rgba(220,220,255,0.4), transparent 60%), linear-gradient(160deg, #1a1d2b, #3a4060 60%, #3d1f63); }
+  .ph-auditorium  { background-image: url(images/stock/auditorium.jpg),  radial-gradient(70% 60% at 50% 0%, rgba(255,200,140,0.35), transparent 60%), linear-gradient(170deg, #2a0a14, #6a1424 50%, #2a1446); }
+
   /* ── HOMEPAGE ── */
-  #screen-home { padding-top: 48px; }
-  .hero {
-    position: relative; height: 440px;
-    background:
-      radial-gradient(1200px 380px at 15% -10%, rgba(139,92,246,0.55), transparent 60%),
-      radial-gradient(900px 500px at 92% 120%, rgba(212,184,240,0.30), transparent 55%),
-      linear-gradient(155deg, var(--purple-dark) 0%, #5B2D8E 48%, #7b3fa8 100%);
-    overflow: hidden;
-  }
-  .hero::after {
-    content: ''; position: absolute; inset: 0; pointer-events: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='30' cy='30' r='1' fill='%23ffffff' opacity='0.05'/%3E%3C/svg%3E");
-    mix-blend-mode: overlay;
-  }
-  .hero-overlay-video {
-    position: absolute; top: 0; right: 0; width: 55%; height: 100%;
-    background: rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center;
-    color: rgba(255,255,255,0.2); font-size: 3rem;
-  }
-  .hero-img-placeholder {
-    position: absolute; inset: 0;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='800' height='420'%3E%3Crect fill='%233d1f63' width='800' height='420'/%3E%3Ccircle cx='400' cy='200' r='120' fill='%235B2D8E' opacity='0.4'/%3E%3C/svg%3E") center/cover;
-    filter: blur(14px);
-    transition: filter 14s ease;
-  }
-  .hero-img-placeholder.loaded { filter: blur(0); }
-  .hero-content {
-    position: absolute; left: 48px; bottom: 84px; color: #fff; max-width: 500px; z-index: 2;
-  }
-  .hero-eyebrow { font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--lavender-mid); margin-bottom: 12px; }
-  .hero-title { font-family: var(--font-display); font-size: 2.6rem; line-height: 1.15; text-wrap: balance; text-shadow: 0 2px 12px rgba(0,0,0,0.45); }
-  .hero-sub { font-size: 0.92rem; color: rgba(255,255,255,0.78); margin-top: 12px; }
-  .hero-cta-zone {
-    position: absolute; bottom: 22px; left: 0; right: 0; z-index: 2;
-    display: flex; align-items: center; justify-content: flex-end;
-    padding: 0 44px; gap: 12px;
-  }
+  .hero { position: relative; height: 520px; background: #1a0b2e; overflow: hidden; }
+  /* slow "loading" blur on the whole carousel (pattern preserved) */
+  .hero-slides { position: absolute; inset: 0; filter: blur(14px); transition: filter 14s ease; }
+  .hero-slides.loaded { filter: blur(0); }
+  .hero-slide { position: absolute; inset: 0; opacity: 0; transition: opacity 0.9s ease; cursor: pointer; }
+  .hero-slide.active { opacity: 1; z-index: 1; }
+  .hero-slide::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(14,6,26,0.82) 0%, rgba(14,6,26,0.45) 45%, rgba(14,6,26,0.05) 75%), linear-gradient(0deg, rgba(14,6,26,0.6), transparent 45%); }
+  .hero-content { position: absolute; left: max(28px, calc((100vw - 1180px) / 2)); bottom: 88px; color: #fff; max-width: 560px; z-index: 2; }
+  .hero-eyebrow { display: inline-block; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--purple-dark); background: var(--lavender-mid); padding: 5px 10px; border-radius: 3px; margin-bottom: 16px; }
+  .hero-title { font-family: var(--font-display); font-size: 3.4rem; line-height: 1.05; letter-spacing: -0.01em; text-wrap: balance; text-shadow: 0 2px 16px rgba(0,0,0,0.4); }
+  .hero-sub { font-size: 1rem; color: rgba(255,255,255,0.85); margin-top: 14px; }
+  .hero-cta-zone { position: absolute; bottom: 28px; left: 0; right: 0; z-index: 3; display: flex; align-items: center; justify-content: flex-end; padding: 0 max(28px, calc((100vw - 1180px) / 2)); gap: 12px; }
   .carousel-dots { display: flex; gap: 8px; }
-  .cdot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.35); border: none; cursor: pointer; padding: 0; }
-  .cdot.active { background: rgba(255,255,255,0.9); }
-  .home-content { max-width: 980px; margin: 0 auto; padding: 36px 20px; }
-  .home-section-title { font-family: Georgia, serif; font-size: 1.2rem; color: var(--purple-dark); margin-bottom: 20px; padding-bottom: 8px; border-bottom: 2px solid var(--lavender); }
-  .home-events { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
-  .home-event-card {
-    background: #fff; border-radius: var(--radius); overflow: hidden;
-    box-shadow: var(--shadow-sm); cursor: pointer;
-    transition: box-shadow 0.2s ease, transform 0.2s ease; border: 1px solid var(--grey-border);
+  .cdot { width: 28px; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.35); border: none; cursor: pointer; padding: 0; }
+  .cdot.active { background: #fff; }
+
+  .home-wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+  .home-section { padding: 44px 0 8px; }
+  .home-section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+  .home-section-title { font-family: var(--font-display); font-size: 1.75rem; color: var(--purple-dark); letter-spacing: -0.01em; }
+  .home-section-link { font-size: 0.86rem; font-weight: 600; color: var(--purple); cursor: pointer; white-space: nowrap; }
+  .home-section-link:hover { text-decoration: underline; }
+
+  /* "This week" date strip — every day leads to the same unfiltered listing */
+  .week-strip { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; }
+  .week-day { background: #fff; border: 1px solid var(--grey-border); border-radius: var(--radius); padding: 14px 10px; text-align: center; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s; }
+  .week-day:hover { border-color: var(--purple-light); box-shadow: var(--shadow-md); transform: translateY(-2px); }
+  .week-day-name { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--grey-mid); }
+  .week-day-num { font-family: var(--font-display); font-size: 1.7rem; color: var(--purple-dark); line-height: 1.2; }
+  .week-day-count { font-size: 0.72rem; color: var(--purple); font-weight: 600; }
+  .week-day.today { background: var(--purple-dark); border-color: var(--purple-dark); }
+  .week-day.today .week-day-name, .week-day.today .week-day-count { color: var(--lavender-mid); }
+  .week-day.today .week-day-num { color: #fff; }
+
+  .home-events { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  .home-event-card, .event-listing-card {
+    background: #fff; border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column;
+    box-shadow: var(--shadow-sm); cursor: pointer; border: 1px solid var(--grey-border);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
   }
-  .home-event-card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); }
-  .event-card-img { height: 100px; }
-  .event-card-img.c1 { background: linear-gradient(135deg, #4a1a7a, #9b3fc8); }
-  .event-card-img.c2 { background: linear-gradient(135deg, #1a3a7a, #3f7ac8); }
-  .event-card-img.c3 { background: linear-gradient(135deg, #1a5a3a, #3fa878); }
-  .event-card-body { padding: 12px 14px; }
-  .event-card-title { font-family: Georgia, serif; font-size: 0.9rem; color: #222; margin-bottom: 3px; }
-  .event-card-date { font-size: 0.72rem; color: var(--grey-mid); }
-  .event-card-price { font-size: 0.78rem; color: var(--purple); margin-top: 6px; }
+  .home-event-card:hover, .event-listing-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); }
+  .event-card-img, .elc-img { position: relative; aspect-ratio: 3 / 2; }
+  .event-tag { position: absolute; top: 12px; left: 12px; background: #fff; color: var(--purple-dark); font-size: 0.66rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 8px; border-radius: 3px; }
+  .event-card-body, .elc-body { padding: 16px 18px 18px; display: flex; flex-direction: column; flex: 1; }
+  .event-card-venue { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--purple-light); margin-bottom: 6px; }
+  .event-card-title, .elc-title { font-family: var(--font-display); font-size: 1.25rem; color: #1f1430; line-height: 1.2; margin-bottom: 6px; }
+  .event-card-date, .elc-date { font-size: 0.84rem; color: #6a6178; }
+  .event-card-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: auto; padding-top: 16px; }
+  .event-card-price, .elc-price { font-size: 0.86rem; color: var(--purple-dark); font-weight: 700; }
+  .event-card-cta { font-size: 0.8rem; font-weight: 700; color: var(--purple); border: 1px solid var(--lavender-mid); border-radius: 999px; padding: 6px 14px; transition: background 0.15s, color 0.15s; }
+  .home-event-card:hover .event-card-cta, .event-listing-card:hover .event-card-cta { background: var(--purple); color: #fff; border-color: var(--purple); }
+
+  .genre-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+  .genre-tile { position: relative; aspect-ratio: 4 / 5; border-radius: var(--radius); overflow: hidden; cursor: pointer; display: flex; align-items: flex-end; padding: 14px; color: #fff; font-family: var(--font-display); font-size: 1.15rem; }
+  .genre-tile::after { content: ''; position: absolute; inset: 0; background: linear-gradient(0deg, rgba(14,6,26,0.75), transparent 60%); transition: background 0.2s; }
+  .genre-tile:hover::after { background: linear-gradient(0deg, rgba(61,31,99,0.85), rgba(61,31,99,0.15) 70%); }
+  .genre-tile span { position: relative; z-index: 1; }
+
+  .director-card { background: #fff; border: 1px solid var(--grey-border); border-radius: var(--radius); padding: 30px 34px; box-shadow: var(--shadow-sm); }
+  .director-card h2 { font-family: var(--font-display); font-size: 1.15rem; color: var(--purple-dark); margin-bottom: 18px; padding-bottom: 10px; border-bottom: 2px solid var(--lavender); }
+  .director-card p { font-size: 0.88rem; line-height: 1.85; color: #444; margin-bottom: 14px; }
+  .director-card .sig { margin: 20px 0 0; font-size: 0.82rem; color: var(--grey-mid); font-style: italic; }
+
+  .support-band { position: relative; border-radius: 12px; overflow: hidden; margin-top: 52px; min-height: 300px; display: flex; align-items: center; }
+  .support-band::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(42,20,70,0.95) 0%, rgba(42,20,70,0.8) 45%, rgba(42,20,70,0.2) 100%); }
+  .support-copy { position: relative; z-index: 1; max-width: 520px; padding: 40px 44px; color: #fff; }
+  .support-copy .eyebrow { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--lavender-mid); margin-bottom: 10px; }
+  .support-copy h2 { font-family: var(--font-display); font-size: 2rem; line-height: 1.15; margin-bottom: 12px; }
+  .support-copy p { font-size: 0.95rem; color: rgba(255,255,255,0.82); line-height: 1.6; margin-bottom: 22px; }
+  .support-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn-light { background: #fff; color: var(--purple-dark); }
+  .btn-light:hover { background: var(--lavender); }
+  .btn-outline-light { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,0.6); }
+  .btn-outline-light:hover { background: rgba(255,255,255,0.1); }
+
+  @media (max-width: 860px) {
+    .hero { height: 440px; }
+    .hero-title { font-size: 2.3rem; }
+    .hero-content { left: 20px; right: 20px; bottom: 64px; }
+    .hero-cta-zone { padding: 0 20px; }
+    .home-wrap { padding: 0 16px; }
+    .week-strip { grid-template-columns: repeat(7, 74px); overflow-x: auto; padding-bottom: 6px; }
+    .home-events { grid-template-columns: 1fr 1fr; }
+    .genre-grid { grid-template-columns: repeat(3, 1fr); }
+    .director-card { padding: 22px 20px; }
+    .support-copy { padding: 30px 22px; }
+    .support-band::after { background: rgba(42,20,70,0.86); }
+  }
+  @media (max-width: 560px) {
+    .home-events { grid-template-columns: 1fr; }
+    .genre-grid { grid-template-columns: repeat(2, 1fr); }
+    .home-section-title { font-size: 1.45rem; }
+  }
 
   /* ── EVENTS LISTING ── */
   .brochure-banner { display: flex; align-items: center; gap: 18px; background: linear-gradient(120deg, var(--purple-dark), #7b3fa8); color: #fff; border-radius: var(--radius); padding: 20px 24px; margin-bottom: 22px; box-shadow: var(--shadow-md); }
@@ -352,18 +447,8 @@
   .filter-group label { font-size: 0.72rem; color: var(--grey-mid); letter-spacing: 0.04em; text-transform: uppercase; }
   .filter-group select { padding: 6px 10px; border: 1px solid #ccc; border-radius: 3px; font-size: 0.83rem; min-width: 140px; }
   .btn-filter { background: var(--purple); color: #fff; border: none; padding: 8px 18px; border-radius: 3px; cursor: pointer; font-size: 0.83rem; margin-top: 16px; }
-  .events-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-  .event-listing-card {
-    background: #fff; border-radius: var(--radius); border: 1px solid var(--grey-border);
-    overflow: hidden; cursor: pointer; box-shadow: var(--shadow-sm);
-    transition: box-shadow 0.2s ease, transform 0.2s ease;
-  }
-  .event-listing-card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); }
-  .elc-img { height: 90px; }
-  .elc-body { padding: 12px; }
-  .elc-title { font-family: Georgia, serif; font-size: 0.88rem; color: #222; margin-bottom: 4px; }
-  .elc-date { font-size: 0.7rem; color: #bbb; }
-  .elc-price { font-size: 0.78rem; color: var(--purple); margin-top: 6px; font-weight: bold; }
+  .events-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  @media (max-width: 860px) { .events-grid { grid-template-columns: 1fr 1fr; } }
   .pagination { display: flex; justify-content: center; gap: 5px; margin-top: 28px; }
   .pg-dot { width: 9px; height: 9px; border-radius: 50%; background: #ccc; cursor: pointer; border: none; padding: 0; }
   .pg-dot.active { background: var(--purple); }
@@ -564,7 +649,6 @@
   .btn-primary:active { transform: translateY(0); }
   .btn-cancel { background: #eee; color: #555; }
   .btn-cancel:hover { background: #e4e4e4; }
-  .btn-danger { background: var(--red); color: #fff; }
   .no-thanks { background: none; border: none; color: #c0b4cc; font-size: 0.72rem; cursor: pointer; text-decoration: underline; display: block; text-align: center; margin-top: 14px; padding: 4px; }
   .no-thanks:hover { color: #888; }
   .btn-row { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
@@ -615,9 +699,6 @@
   .confirm-card { background: #fff; border-radius: var(--radius); padding: 36px 28px; border: 1px solid var(--grey-border); box-shadow: var(--shadow-sm); }
   .confirm-err-header { border-bottom: none; }
   .confirm-err-header h2 { font-family: Georgia, serif; font-size: 1.4rem; color: var(--red); margin-bottom: 8px; }
-  .confirm-success-header h2 { font-family: Georgia, serif; font-size: 1.5rem; color: var(--green); margin-bottom: 8px; }
-  .ref-code { font-family: monospace; font-size: 0.88rem; background: #f9f9f9; padding: 8px 14px; border-radius: 3px; display: inline-block; margin: 10px 0; border: 1px solid #eee; }
-  .confirm-detail { font-size: 0.82rem; color: var(--grey-mid); line-height: 1.7; margin-top: 12px; }
 
   /* ── CONFETTI ── */
   .confetti-bit { position: fixed; top: -12px; border-radius: 2px; z-index: 1000; pointer-events: none; animation: confettiFall linear forwards; }
@@ -627,8 +708,6 @@
   .spinner-inline { display: inline-block; width: 14px; height: 14px; border: 2px solid #e0d8eb; border-top-color: var(--purple); border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; }
   .all-caps-warning { font-size: 0.72rem; font-weight: bold; letter-spacing: 0.08em; color: var(--red); text-transform: uppercase; }
   .tiny-grey { font-size: 0.68rem; color: #c0b8cc; }
-  .login-prompt-card { background: #fff8ff; border: 1px solid var(--lavender-mid); border-radius: var(--radius); padding: 24px; }
-  .login-prompt-card h3 { font-family: Georgia, serif; font-size: 1.1rem; margin-bottom: 10px; }
   .guest-link-wrap { margin-top: 10px; font-size: 0.78rem; color: var(--grey-mid); }
   .guest-link-wrap a { color: #999; font-size: 0.7rem; cursor: pointer; text-decoration: underline; }
   .guest-tiny { display: none; font-size: 0.68rem; color: #bbb; margin-top: 4px; cursor: pointer; text-decoration: underline; }
@@ -680,19 +759,89 @@
   .of-slidein.visible { transform: translateX(0); }
   .of-slidein-close { position: absolute; top: 14px; right: 16px; background: none; border: none; font-size: 1.4rem; color: #b7aec6; cursor: pointer; line-height: 1; padding: 4px; }
   .of-slidein-close:hover { color: #555; }
-  .of-slidein-badge { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--purple-light); font-weight: 700; margin-bottom: 12px; }
   .of-slidein h3 { font-family: var(--font-display); font-size: 1.5rem; color: var(--purple-dark); line-height: 1.2; margin-bottom: 14px; }
   .of-slidein p { font-size: 0.9rem; color: #555; line-height: 1.65; margin-bottom: 14px; }
-  .of-slidein .count-big { color: var(--purple); font-weight: 700; }
   .of-slidein-cta { display: inline-block; margin-top: 8px; background: var(--purple); color: #fff; text-decoration: none; text-align: center; padding: 13px 20px; border-radius: 7px; font-size: 0.92rem; font-weight: 700; transition: background 0.15s, transform 0.1s; }
   .of-slidein-cta:hover { background: var(--purple-dark); transform: translateY(-1px); }
+  .of-slidein-score { display: block; margin-top: 10px; background: none; border: 1px solid var(--lavender-mid); color: var(--purple); border-radius: 7px; padding: 11px 20px; font-family: inherit; font-size: 0.88rem; font-weight: 700; cursor: pointer; }
+  .of-slidein-score:hover { background: var(--lavender); }
+
+  /* ── END-OF-JOURNEY REVEAL (One Further's voice, deliberately not Enyold's) ── */
+  #screen-confirm .site-footer { margin-top: 0; }
+  .reveal { background: #130b1f; color: #ece6f6; margin-top: 48px; padding: 64px 20px 72px; }
+  .reveal-inner { max-width: 880px; margin: 0 auto; }
+  .reveal-kicker { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: #b99cf0; margin-bottom: 14px; }
+  .reveal-title { font-family: var(--font-display); font-size: 3rem; line-height: 1.08; color: #fff; letter-spacing: -0.015em; text-wrap: balance; margin-bottom: 18px; }
+  .reveal-title em { font-style: normal; color: #c9a8ff; }
+  .reveal-lede { font-size: 1.05rem; line-height: 1.65; color: #c8bcdc; max-width: 680px; }
+  .reveal-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 36px 0; }
+  .reveal-stat { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 20px 22px; }
+  .reveal-stat b { display: block; font-family: var(--font-display); font-size: 2.2rem; color: #fff; font-weight: normal; line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .reveal-stat span { display: block; font-size: 0.82rem; color: #a99bc2; margin-top: 6px; line-height: 1.4; }
+  .reveal-cta { background: linear-gradient(135deg, #5B2D8E, #3d1f63); border-radius: 16px; padding: 34px 36px; margin-bottom: 44px; box-shadow: 0 20px 50px rgba(0,0,0,0.35); }
+  .reveal-cta h3 { font-family: var(--font-display); font-size: 1.7rem; color: #fff; line-height: 1.2; margin-bottom: 12px; text-wrap: balance; }
+  .reveal-cta p { font-size: 0.98rem; line-height: 1.65; color: #e1d7f2; margin-bottom: 22px; max-width: 620px; }
+  .btn-reveal-primary { display: inline-block; background: #fff; color: var(--purple-dark); text-decoration: none; font-weight: 800; font-size: 1rem; padding: 15px 26px; border-radius: 999px; transition: transform 0.12s, box-shadow 0.15s; box-shadow: 0 6px 18px rgba(0,0,0,0.25); }
+  .btn-reveal-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(0,0,0,0.3); }
+  .reveal-secondary { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; margin-top: 18px; }
+  .reveal-secondary a, .reveal-secondary button { background: none; border: none; color: #e1d7f2; font-family: inherit; font-size: 0.88rem; font-weight: 600; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; padding: 0; }
+  .reveal-secondary a:hover, .reveal-secondary button:hover { color: #fff; }
+  .reveal-list-title { font-family: var(--font-display); font-size: 1.5rem; color: #fff; margin-bottom: 6px; }
+  .reveal-list-sub { font-size: 0.88rem; color: #a99bc2; margin-bottom: 22px; }
+  .reveal-group { margin-bottom: 26px; }
+  .reveal-group h4 { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #b99cf0; margin-bottom: 10px; }
+  .reveal-items { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .reveal-item { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 13px 15px 13px 42px; position: relative; }
+  .reveal-item::before { content: '✓'; position: absolute; left: 14px; top: 12px; width: 18px; height: 18px; border-radius: 50%; background: #c9a8ff; color: #130b1f; font-size: 0.7rem; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+  .reveal-item b { display: block; font-size: 0.9rem; color: #fff; margin-bottom: 3px; }
+  .reveal-item span { font-size: 0.8rem; color: #b3a7c9; line-height: 1.5; }
+  .reveal-missed { margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 18px; }
+  .reveal-missed summary { cursor: pointer; font-weight: 700; color: #e1d7f2; font-size: 0.95rem; }
+  .reveal-missed .reveal-items { margin-top: 14px; }
+  .reveal-missed .reveal-item::before { content: ''; background: transparent; border: 1.5px solid #6c5d86; }
+  .reveal-missed .reveal-item b { color: #cfc5e0; }
+  .reveal-foot { margin-top: 44px; text-align: center; font-size: 0.95rem; color: #c8bcdc; }
+  .reveal-foot a { color: #fff; font-weight: 700; }
+  @media (max-width: 700px) {
+    .reveal { padding: 44px 16px 56px; }
+    .reveal-title { font-size: 2.1rem; }
+    .reveal-stats { grid-template-columns: 1fr; }
+    .reveal-stat b { font-size: 1.8rem; }
+    .reveal-cta { padding: 26px 22px; }
+    .reveal-items { grid-template-columns: 1fr; }
+  }
+
+  /* ── SKIP TO THE END (works first time, like the slide-in) ── */
+  .skip-pill { position: fixed; left: 20px; bottom: 20px; z-index: 610; background: #130b1f; color: #fff; border: none; border-radius: 999px; padding: 10px 16px; font-family: inherit; font-size: 0.8rem; font-weight: 600; cursor: pointer; box-shadow: 0 6px 18px rgba(20,8,40,0.35); opacity: 0.88; transition: opacity 0.15s, transform 0.15s; }
+  .skip-pill:hover { opacity: 1; transform: translateY(-1px); }
+  .skip-pill b { color: #c9a8ff; }
+  body.at-end .skip-pill, body.facilitator .skip-pill, .g-nav:has(.g-mobile-menu.open) ~ .skip-pill { display: none; }
+  /* On phones the pill becomes a slim strip under the header, so it never covers content */
+  @media (max-width: 640px) {
+    .skip-pill { bottom: auto; top: var(--header-h); left: 0; right: 0; border-radius: 0; padding: 7px 12px; font-size: 0.74rem; opacity: 1; box-shadow: none; }
+    .skip-pill:hover { transform: none; }
+    body.booking .skip-pill { top: 48px; }
+    body:not(.at-end):not(.facilitator) .screen { padding-top: calc(var(--header-h) + 31px); }
+    body.booking:not(.at-end):not(.facilitator) .screen { padding-top: 79px; }
+    body:not(.at-end):not(.facilitator) #toast { top: calc(var(--header-h) + 42px); }
+    body.booking:not(.at-end):not(.facilitator) #toast { top: 90px; }
+  }
+
+  /* ── FACILITATOR MODE (?facilitator) — discreet controls for moderated sessions ── */
+  .fac-bar { display: none; position: fixed; left: 12px; bottom: 12px; z-index: 990; background: rgba(19,11,31,0.92); color: #fff; border-radius: 999px; padding: 5px; align-items: center; gap: 4px; font-size: 0.74rem; box-shadow: 0 6px 18px rgba(0,0,0,0.3); opacity: 0.25; transition: opacity 0.2s; }
+  .fac-bar:hover, .fac-bar:focus-within { opacity: 1; }
+  body.facilitator .fac-bar { display: flex; }
+  .fac-bar button { background: rgba(255,255,255,0.12); color: #fff; border: none; border-radius: 999px; width: 30px; height: 30px; cursor: pointer; font-size: 0.9rem; }
+  .fac-bar button:hover { background: rgba(255,255,255,0.25); }
+  .fac-label { padding: 0 8px; white-space: nowrap; color: #d9cdee; }
+  body.facilitator .footer-of-credit { display: none; }
   .of-slidein-sig { margin-top: auto; padding-top: 20px; font-size: 0.74rem; color: #9a8fb0; }
 
   @media (max-width: 640px) {
-    .home-events, .events-grid { grid-template-columns: 1fr; }
-    .hero { height: 300px; }
-    .hero-title { font-size: 1.6rem; }
-    .hero-content { left: 20px; bottom: 60px; }
+    .events-grid { grid-template-columns: 1fr; }
+    .hero { height: 420px; }
+    .hero-title { font-size: 2rem; }
+    .brochure-banner { flex-wrap: wrap; }
     .filters-bar { flex-direction: column; }
     .seat { width: 12px; height: 10px; } /* deliberately small tap targets on mobile (pattern preserved) */
     .seat-row { gap: 2px; }
@@ -709,12 +858,45 @@
      GLOBAL FIXED UI
      ════════════════════════════════════════════ -->
 <nav class="g-nav" id="g-nav">
-  <div class="g-nav-logo">Enyold <span>Theatre</span></div>
-  <div class="g-nav-links">
-    <a>About Us</a>
-    <a onclick="navTo('screen-events')">Discover</a>
-    <a onclick="navTo('screen-visit')">Visit</a>
-    <a>Support</a>
+  <div class="g-util">
+    <span>Box office 01234 567890 · Lines open Mon–Fri, 10am–4pm</span>
+    <div class="g-util-links">
+      <a onclick="footerLink('Access')">Access</a>
+      <a onclick="footerLink('Membership')">Membership</a>
+      <a onclick="footerLink('Gift vouchers')">Gift vouchers</a>
+      <a onclick="footerLink('Donate')">Donate</a>
+      <a onclick="footerLink('Sign in')">Sign in / Register</a>
+    </div>
+  </div>
+  <div class="g-main">
+    <a class="g-nav-logo" onclick="navTo('screen-home')">
+      <span class="g-logo-mark">E</span>
+      <span class="g-logo-word">Enyold <span>Theatre</span></span>
+    </a>
+    <!-- "What's On" lives under "Discover" (pattern preserved) -->
+    <div class="g-nav-links">
+      <a onclick="navTo('screen-events')">Discover</a>
+      <a onclick="navTo('screen-visit')">Visit</a>
+      <a onclick="footerLink('Get involved')">Get involved</a>
+      <a onclick="footerLink('Support us')">Support us</a>
+      <a onclick="footerLink('About us')">About us</a>
+    </div>
+    <div class="g-actions">
+      <button class="g-icon-btn g-search" title="Search" onclick="fakeSearch()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></button>
+      <button class="g-icon-btn" title="Your account" onclick="footerLink('Account icon')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></button>
+      <button class="g-icon-btn" title="Basket" onclick="footerLink('Basket icon')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span class="g-basket-count">0</span></button>
+      <button class="g-book-btn" onclick="navTo('screen-events')">Book tickets</button>
+      <button class="g-icon-btn g-burger" title="Menu" onclick="toggleMobileMenu()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    </div>
+  </div>
+  <div class="g-mobile-menu" id="g-mobile-menu">
+    <a onclick="mobileNav('screen-events')">Discover</a>
+    <a onclick="mobileNav('screen-visit')">Visit</a>
+    <a onclick="footerLink('Get involved')">Get involved</a>
+    <a onclick="footerLink('Support us')">Support us</a>
+    <a onclick="footerLink('About us')">About us</a>
+    <a onclick="footerLink('Sign in')">Sign in / Register</a>
+    <button class="g-book-btn" onclick="mobileNav('screen-events')">Book tickets</button>
   </div>
 </nav>
 
@@ -726,6 +908,14 @@
 </div>
 
 <div id="toast"></div>
+
+<button class="skip-pill" id="skip-pill" onclick="skipToEnd()">Had enough? <b>Skip to the end →</b></button>
+
+<div class="fac-bar" id="fac-bar">
+  <button onclick="facStep(-1)" title="Previous screen ( [ )">‹</button>
+  <span class="fac-label" id="fac-label">Home</span>
+  <button onclick="facStep(1)" title="Next screen ( ] )">›</button>
+</div>
 
 <!-- Newsletter Popup -->
 <div id="newsletter-popup">
@@ -864,12 +1054,36 @@
      ════════════════════════════════════════════ -->
 <div class="screen active" id="screen-home">
   <div class="hero">
-    <div class="hero-img-placeholder" id="hero-img"></div>
-    <div class="hero-overlay-video">▶</div>
-    <div class="hero-content">
-      <div class="hero-eyebrow">Now booking</div>
-      <h1 class="hero-title">An Evening of<br>Something Wonderful</h1>
-      <p class="hero-sub">Main House · Various Dates · Tickets from £14</p>
+    <!-- Carousel advances every 3s; the dots look clickable but do nothing (pattern preserved) -->
+    <div class="hero-slides" id="hero-img">
+      <div class="hero-slide ph ph-music active" onclick="selectItem('screen-prod-1')">
+        <div class="hero-content">
+          <div class="hero-eyebrow">Now booking</div>
+          <h1 class="hero-title">An Evening of Something Wonderful</h1>
+          <p class="hero-sub">Main House · Various Dates · Tickets from £14</p>
+        </div>
+      </div>
+      <div class="hero-slide ph ph-performance" onclick="selectItem('screen-prod-2')">
+        <div class="hero-content">
+          <div class="hero-eyebrow">Returning by popular demand</div>
+          <h2 class="hero-title">Performance</h2>
+          <p class="hero-sub">Main House · 06/21/2025 · Tickets from £22</p>
+        </div>
+      </div>
+      <div class="hero-slide ph ph-theatre" onclick="selectItem('screen-prod-3')">
+        <div class="hero-content">
+          <div class="hero-eyebrow">In the Studio</div>
+          <h2 class="hero-title">Theatre – see website</h2>
+          <p class="hero-sub">Studio · Next Saturday · Tickets from £12</p>
+        </div>
+      </div>
+      <div class="hero-slide ph ph-dance" onclick="selectItem('screen-prod-4')">
+        <div class="hero-content">
+          <div class="hero-eyebrow">Last chance to book</div>
+          <h2 class="hero-title">Dance</h2>
+          <p class="hero-sub">Main House · June 28 · Tickets from £24</p>
+        </div>
+      </div>
     </div>
     <div class="hero-cta-zone">
       <div class="carousel-dots">
@@ -881,46 +1095,89 @@
     </div>
   </div>
 
-  <div class="home-content">
-    <div style="background:#fff;border:1px solid var(--grey-border);border-radius:5px;padding:28px 32px;margin-bottom:36px;box-shadow:0 1px 3px rgba(0,0,0,0.06);">
-      <h2 style="font-family:Georgia,serif;font-size:1.15rem;color:var(--purple-dark);margin-bottom:18px;padding-bottom:10px;border-bottom:2px solid var(--lavender);">A Welcome from our Artistic Director</h2>
-      <p style="font-size:0.88rem;line-height:1.85;color:#444;margin-bottom:14px;">It is with an immense sense of privilege, and indeed humility, that I take this opportunity to welcome you — each and every one of you — to what promises to be yet another extraordinary season here at Enyold Theatre. As an institution, we have always believed — and I think this is something that sets us apart — that the arts are not merely a luxury, nor simply an entertainment, but rather a fundamental and irreducible component of a truly flourishing civic life. That is the animating conviction behind everything we do here.</p>
-      <p style="font-size:0.88rem;line-height:1.85;color:#444;margin-bottom:14px;">This season, more than any other, we are delighted to be presenting a programme that reflects the full breadth and diversity of what it means to live, to feel, and to experience the world in all its complexity. From the intimate and the personal to the epic and the transformational, our stages will once again play host to work that challenges, that moves, that provokes, and — yes — that sometimes simply delights. Because delight, too, has its place in the artistic canon.</p>
-      <p style="font-size:0.88rem;line-height:1.85;color:#444;margin-bottom:14px;">I am particularly excited — and I say this with full awareness of how often artistic directors claim to be excited about things — to introduce a cohort of new voices and emerging practitioners alongside our established relationships with makers of genuine and lasting significance. The dialogue between the new and the known is, I believe, one of the most generative tensions available to a producing house such as ours, and this season we lean into it with, I hope, some courage.</p>
-      <p style="font-size:0.88rem;line-height:1.85;color:#444;margin-bottom:14px;">I want also to take this moment to thank you personally. Your continued support — whether you are joining us for the first time or returning for the twentieth consecutive season — is quite literally what makes all of this possible. The arts do not exist in a vacuum. They exist because people choose to show up, to be present, to give their attention. And your attention — in an age so aggressively competing for it — is genuinely the most generous gift you can give.</p>
-      <p style="font-size:0.88rem;line-height:1.85;color:#444;margin-bottom:0;">I look forward enormously to welcoming you into our spaces over the coming months. Do feel free to share your thoughts and reflections with us — we are, as ever, listening. Until then, I hope this season brings you something you were not expecting. That is, after all, what the best art always does.</p>
-      <p style="margin-top:20px;font-size:0.82rem;color:var(--grey-mid);font-style:italic;">— Rosalind Hatherley-Vane, Artistic Director, Enyold Theatre</p>
-    </div>
+  <div class="home-wrap">
+    <section class="home-section">
+      <div class="home-section-head">
+        <h2 class="home-section-title">This week at Enyold</h2>
+        <a class="home-section-link" onclick="navTo('screen-events')">Full calendar →</a>
+      </div>
+      <!-- Built by buildWeekStrip(); every day opens the same unfiltered listing -->
+      <div class="week-strip" id="week-strip"></div>
+    </section>
 
-    <h2 class="home-section-title">Featured Events</h2>
-    <div class="home-events">
-      <div class="home-event-card" onclick="selectItem('screen-prod-2')">
-        <div class="event-card-img c1"></div>
-        <div class="event-card-body">
-          <div class="event-card-title">Performance (Main House)</div>
-          <div class="event-card-date">Sat 14th Jun</div>
-          <div class="event-card-price">From £18</div>
+    <section class="home-section">
+      <div class="home-section-head">
+        <h2 class="home-section-title">Featured events</h2>
+        <a class="home-section-link" onclick="navTo('screen-events')">See everything on →</a>
+      </div>
+      <div class="home-events">
+        <div class="home-event-card" onclick="selectItem('screen-prod-2')">
+          <div class="event-card-img ph ph-performance"><span class="event-tag">Performance</span></div>
+          <div class="event-card-body">
+            <div class="event-card-venue">Main House</div>
+            <div class="event-card-title">Performance (Main House)</div>
+            <div class="event-card-date">Sat 14th Jun</div>
+            <div class="event-card-foot"><span class="event-card-price">From £18</span><span class="event-card-cta">More info</span></div>
+          </div>
+        </div>
+        <div class="home-event-card" onclick="selectItem('screen-prod-1')">
+          <div class="event-card-img ph ph-music"><span class="event-tag">Music</span></div>
+          <div class="event-card-body">
+            <div class="event-card-venue">Main House</div>
+            <div class="event-card-title">An Evening of Music</div>
+            <div class="event-card-date">06/21/2025</div>
+            <div class="event-card-foot"><span class="event-card-price">From £22</span><span class="event-card-cta">More info</span></div>
+          </div>
+        </div>
+        <div class="home-event-card" onclick="selectItem('screen-prod-3')">
+          <div class="event-card-img ph ph-theatre"><span class="event-tag">Theatre</span></div>
+          <div class="event-card-body">
+            <div class="event-card-venue">Studio</div>
+            <div class="event-card-title">Theatre – see website</div>
+            <div class="event-card-date">Next Saturday</div>
+            <div class="event-card-foot"><span class="event-card-price">From £12</span><span class="event-card-cta">More info</span></div>
+          </div>
         </div>
       </div>
-      <div class="home-event-card" onclick="selectItem('screen-prod-1')">
-        <div class="event-card-img c2"></div>
-        <div class="event-card-body">
-          <div class="event-card-title">An Evening of Music</div>
-          <div class="event-card-date">06/21/2025</div>
-          <div class="event-card-price">From £22</div>
+    </section>
+
+    <section class="home-section">
+      <div class="director-card">
+        <h2>A Welcome from our Artistic Director</h2>
+        <p>It is with an immense sense of privilege, and indeed humility, that I take this opportunity to welcome you — each and every one of you — to what promises to be yet another extraordinary season here at Enyold Theatre. As an institution, we have always believed — and I think this is something that sets us apart — that the arts are not merely a luxury, nor simply an entertainment, but rather a fundamental and irreducible component of a truly flourishing civic life. That is the animating conviction behind everything we do here.</p>
+        <p>This season, more than any other, we are delighted to be presenting a programme that reflects the full breadth and diversity of what it means to live, to feel, and to experience the world in all its complexity. From the intimate and the personal to the epic and the transformational, our stages will once again play host to work that challenges, that moves, that provokes, and — yes — that sometimes simply delights. Because delight, too, has its place in the artistic canon.</p>
+        <p>I am particularly excited — and I say this with full awareness of how often artistic directors claim to be excited about things — to introduce a cohort of new voices and emerging practitioners alongside our established relationships with makers of genuine and lasting significance. The dialogue between the new and the known is, I believe, one of the most generative tensions available to a producing house such as ours, and this season we lean into it with, I hope, some courage.</p>
+        <p>I want also to take this moment to thank you personally. Your continued support — whether you are joining us for the first time or returning for the twentieth consecutive season — is quite literally what makes all of this possible. The arts do not exist in a vacuum. They exist because people choose to show up, to be present, to give their attention. And your attention — in an age so aggressively competing for it — is genuinely the most generous gift you can give.</p>
+        <p style="margin-bottom:0;">I look forward enormously to welcoming you into our spaces over the coming months. Do feel free to share your thoughts and reflections with us — we are, as ever, listening. Until then, I hope this season brings you something you were not expecting. That is, after all, what the best art always does.</p>
+        <p class="sig">— Rosalind Hatherley-Vane, Artistic Director, Enyold Theatre</p>
+      </div>
+    </section>
+
+    <section class="home-section">
+      <div class="home-section-head">
+        <h2 class="home-section-title">Explore by genre</h2>
+      </div>
+      <!-- Every genre tile opens the same unfiltered listing -->
+      <div class="genre-grid">
+        <div class="genre-tile ph ph-theatre" onclick="genreTile('Theatre')"><span>Theatre</span></div>
+        <div class="genre-tile ph ph-music" onclick="genreTile('Music')"><span>Music</span></div>
+        <div class="genre-tile ph ph-dance" onclick="genreTile('Dance')"><span>Dance</span></div>
+        <div class="genre-tile ph ph-comedy" onclick="genreTile('Comedy')"><span>Comedy</span></div>
+        <div class="genre-tile ph ph-family" onclick="genreTile('Family')"><span>Family</span></div>
+        <div class="genre-tile ph ph-talks" onclick="genreTile('Talks')"><span>Talks</span></div>
+      </div>
+    </section>
+
+    <div class="support-band ph ph-auditorium">
+      <div class="support-copy">
+        <div class="eyebrow">Support Enyold</div>
+        <h2>Become part of the Enyold family</h2>
+        <p>Members get priority booking, exclusive discounts and the warm feeling of keeping the lights on. From just £4.99 a month.</p>
+        <div class="support-btns">
+          <button class="btn btn-light" onclick="footerLink('Become a member (home)')">Become a member</button>
+          <button class="btn btn-outline-light" onclick="footerLink('Make a donation (home)')">Make a donation</button>
         </div>
       </div>
-      <div class="home-event-card" onclick="selectItem('screen-prod-3')">
-        <div class="event-card-img c3"></div>
-        <div class="event-card-body">
-          <div class="event-card-title">Theatre – see website</div>
-          <div class="event-card-date">Next Saturday</div>
-          <div class="event-card-price">From £12</div>
-        </div>
-      </div>
-    </div>
-    <div style="text-align:center;margin-top:24px;">
-      <button class="btn btn-primary" onclick="navTo('screen-events')">Browse all events</button>
     </div>
   </div>
 </div>
@@ -1456,13 +1713,51 @@
     </div>
   </div>
 
+  <!-- End-of-journey reveal: filled in by renderReveal() from the patterns this visitor hit -->
+  <section class="reveal" id="reveal">
+    <div class="reveal-inner">
+      <div class="reveal-kicker">Behind the curtain</div>
+      <h2 class="reveal-title" id="reveal-title">You survived <em>0</em> dark patterns.</h2>
+      <p class="reveal-lede" id="reveal-lede"></p>
+
+      <div class="reveal-stats">
+        <div class="reveal-stat"><b id="rs-found">0</b><span>dark patterns you ran into</span></div>
+        <div class="reveal-stat"><b id="rs-time">0:00</b><span>spent trying to book</span></div>
+        <div class="reveal-stat"><b id="rs-extra">£0.00</b><span id="rs-extra-label">added on top of your ticket price</span></div>
+      </div>
+
+      <div class="reveal-cta">
+        <h3>Real ticketing websites do this too. Usually by accident.</h3>
+        <p>Nobody sets out to frustrate their audience, but small bits of friction add up to abandoned baskets and lost bookings. We test websites with real people, find what's getting in their way, and help you fix it.</p>
+        <a class="btn-reveal-primary" href="https://onefurther.com/services/usability-research" target="_blank" rel="noopener" onclick="dl('of_cta_click', { cta_location: 'reveal' })">Talk to us about usability testing →</a>
+        <div class="reveal-secondary">
+          <!-- Read-why blog post: swap the placeholder href for the published URL later -->
+          <a href="#" data-blog-link onclick="footerLink('Read why we built this (reveal)'); return false;">Read why we built this</a>
+          <button onclick="shareScore()">Share your score</button>
+          <button onclick="tryAgain()">Try again</button>
+        </div>
+      </div>
+
+      <h3 class="reveal-list-title">What we did to you</h3>
+      <p class="reveal-list-sub" id="reveal-list-sub"></p>
+      <div id="reveal-list"></div>
+      <details class="reveal-missed" id="reveal-missed">
+        <summary id="reveal-missed-summary">The ones you missed</summary>
+        <div class="reveal-items" id="reveal-missed-list"></div>
+      </details>
+
+      <p class="reveal-foot">Made on purpose by <a href="https://onefurther.com/services/usability-research" target="_blank" rel="noopener" onclick="dl('of_cta_click', { cta_location: 'reveal_footer' })">One Further</a>. We're not sorry, but we can help.</p>
+    </div>
+  </section>
+
   <!-- Post-transaction One Further slide-in (fires ~4s after confirmation) -->
   <div class="of-slidein" id="of-slidein">
     <button class="of-slidein-close" onclick="dismissSlidein()" title="Dismiss">✕</button>
     <h3>Well done for making it through.</h3>
     <p>Nobody (except us, apparently) creates a poor user experience on purpose, but it happens. You might be surprised by the sorts of things that cause friction and cost you ticket sales.</p>
     <p>If it's been a while since you've tested your website with real people, we'd be up for having a chat.</p>
-    <a class="of-slidein-cta" href="https://onefurther.com/services/usability-research" target="_blank" rel="noopener" onclick="dl('of_cta_click')">See how we can help →</a>
+    <a class="of-slidein-cta" href="https://onefurther.com/services/usability-research" target="_blank" rel="noopener" onclick="dl('of_cta_click', { cta_location: 'slidein' })">See how we can help →</a>
+    <button class="of-slidein-score" onclick="scrollToReveal()">See your score ↓</button>
     <div class="of-slidein-sig">Created by One Further</div>
   </div>
 </div>
@@ -1669,13 +1964,10 @@
 <script>
 // ── STATE ──────────────────────────────────────
 const S = {
-  navCount: 0,
-  seatAttempts: 0,
   upsellIndex: 0,
   timerSeconds: 300,
   timerInterval: null,
   timerStarted: false,
-  formFirstSubmit: true,
   captcha1Done: false,
   captcha2Done: false,
   captcha2Shown: false,
@@ -1687,27 +1979,30 @@ const S = {
   acceptedUpsells: [],      // {title, amount} for upsells the user accepted
   orderTotal: 0,
   viewerCount: 12,
-  cookieSections: [false,false,false,false,false],
   cookieSavedStep: 0,
   cookieBannerShown: false,
-  sureStep: 0,
   a11yDismissCount: 0,
   swapPayBtns: Math.random() < 0.25,
   stillThereTimer: null,
   sessionResetDone: false,
+  seen: new Set(),          // dark pattern names this visitor has run into (for the reveal)
+  startedAt: Date.now(),
+  skippedFrom: null,        // screen id the visitor skipped to the end from, if they did
+  procTimers: [],           // processing-screen timeouts/intervals (cleared on skip)
+  facilitator: /[?&]facilitator\b/.test(location.search),
 };
 
 const EVENT_NAME = 'An Evening of Music & Things';
-const TRANSACTION_ID = 'HAW-2025-49182';
+const TRANSACTION_ID = 'ENY-2025-49182';
 const BOOKING_FEE_PER_TICKET = 3.50;
 const DELIVERY_FEE = 1.25;
 
 // ── EVENTS DATA ────────────────────────────────
 const EVENTS = [
-  {title:'An Evening of Music & Things',   date:'Sat 14th Jun',    price:'From £18', c:'c1', prod:'screen-prod-1'},
-  {title:'Performance (Main House)',        date:'06/21/2025',      price:'From £22', c:'c2', prod:'screen-prod-2'},
-  {title:'Theatre – see website',           date:'Next Saturday',   price:'From £12', c:'c3', prod:'screen-prod-3'},
-  {title:'Dance',                           date:'June 28',         price:'From £24', c:'c1', prod:'screen-prod-4'},
+  {title:'An Evening of Music & Things',   date:'Sat 14th Jun',    price:'From £18', img:'ph-music',       genre:'Music',       venue:'Main House', prod:'screen-prod-1'},
+  {title:'Performance (Main House)',        date:'06/21/2025',      price:'From £22', img:'ph-performance', genre:'Performance', venue:'Main House', prod:'screen-prod-2'},
+  {title:'Theatre – see website',           date:'Next Saturday',   price:'From £12', img:'ph-theatre',     genre:'Theatre',     venue:'Studio',     prod:'screen-prod-3'},
+  {title:'Dance',                           date:'June 28',         price:'From £24', img:'ph-dance',       genre:'Dance',       venue:'Main House', prod:'screen-prod-4'},
 ];
 
 const UPSELLS = [
@@ -1728,8 +2023,64 @@ function currentScreen() {
 }
 // Fire a consistent dark_pattern event tagged with the pattern name + current screen.
 function dark(pattern_name, extra) {
+  S.seen.add(pattern_name);
   dl('dark_pattern', Object.assign({ pattern_name: pattern_name, screen_name: currentScreen() }, extra || {}));
 }
+// Like dark(), but only counts/pushes the first time (for passive, per-visit patterns).
+function darkOnce(pattern_name, extra) {
+  if (!S.seen.has(pattern_name)) dark(pattern_name, extra);
+}
+
+// ── DARK PATTERN CATALOGUE (for the end-of-journey reveal) ──
+// Keys match the pattern_name sent with each dark_pattern event.
+const PATTERN_GROUPS = [
+  ['interrupt', 'Interruptions'],
+  ['urgency',   'False urgency and scarcity'],
+  ['defaults',  'Sneaky defaults'],
+  ['obstruct',  'Obstruction'],
+  ['misdirect', 'Misdirection'],
+  ['cost',      'Hidden costs and data grabs'],
+];
+const PATTERNS = {
+  newsletter_popup:            ['interrupt', 'Uninvited newsletter pop-up', 'A full-screen sign-up five seconds in, before you had seen anything. Escape doesn\'t close it.'],
+  cookie_banner_shown:         ['interrupt', 'Cookie wall with 847 partners', '"Accept all" is the only option that looks like a button.'],
+  cookie_banner_reshown:       ['interrupt', 'The cookie banner came back', 'Already answered it? It asks again when you start booking.'],
+  are_you_still_there:         ['interrupt', '"Are you still there?"', 'Asked 18 seconds into a very long form.'],
+  login_interrupt:             ['interrupt', 'Forced account creation', 'Guest checkout hidden behind a "Sign in" link.'],
+  countdown_started:           ['urgency',   'Countdown timer', 'Five minutes to finish a booking that takes much longer than that.'],
+  timer_extended:              ['urgency',   'Your session was "extended"', 'The clock moves whenever it suits us.'],
+  fake_scarcity:               ['urgency',   'Fake scarcity', '"LIMITED" on almost every date and a viewer count that just wobbles.'],
+  seat_taken_modal:            ['urgency',   'Your seat "was taken"', 'The seat we chose for you vanished the moment you tried to continue.'],
+  preselected_seat:            ['defaults',  'A seat already in your basket', 'We picked a seat for you. You had to notice and bin it.'],
+  misleading_newsletter_toast: ['defaults',  'You "joined our mailing list"', 'A success message for something you never agreed to.'],
+  prechecked_marketing:        ['defaults',  'Marketing consent ticked for you', 'Five boxes, all ticked, including sharing your data with third parties.'],
+  upsell_shown:                ['defaults',  'Six pre-ticked upsells', 'Membership, donation, programme, insurance, parking and carbon offset, each ticked by default.'],
+  newsletter_resignup:         ['defaults',  'The newsletter, again', 'Pre-ticked, with someone else\'s email address filled in.'],
+  carousel_autoplay:           ['obstruct',  'A carousel you can\'t read', 'Slides change every three seconds and the dots do nothing.'],
+  a11y_reopen:                 ['obstruct',  'An accessibility panel that won\'t close', 'Dismiss it three times. None of the options work.'],
+  cookie_double_save:          ['obstruct',  'Two saves for one choice', '"Preferences saved. Please also confirm your choices."'],
+  search_unavailable:          ['obstruct',  'Search that never works', 'Temporarily unavailable, permanently.'],
+  filter_no_results:           ['obstruct',  'Filters that hide everything', 'Some choices empty the page, then the filters reset themselves.'],
+  broken_production_page:      ['obstruct',  'An event page that hides the booking button', 'Broken images, placeholder reviews and a faint ghost button.'],
+  calendar_past_month:         ['obstruct',  'A calendar that opens on last month', 'Every date greyed out until you find the arrow.'],
+  zoom_unavailable:            ['obstruct',  'Zoom buttons that don\'t zoom', '"Zoom is not available on this device."'],
+  seat_isolation_modal:        ['obstruct',  'The single-seat rule', 'A rule you only find out about after choosing.'],
+  form_error_wall:             ['obstruct',  'A form that wipes itself', 'Miss one field and everything you typed is cleared, and the marketing boxes tick themselves again.'],
+  postcode_lookup_fail:        ['obstruct',  'Postcode lookup that never finds you', 'Type your address in by hand anyway.'],
+  second_captcha:              ['obstruct',  'A second "I\'m not a robot"', 'Because one is never enough.'],
+  live_chat_autoreply:         ['misdirect', '"Live" chat that replies in 2–3 days', 'Green dot, friendly name, no one there.'],
+  brochure_dead_link:          ['misdirect', 'A download button that downloads nothing', 'The season brochure, 12MB of nothing.'],
+  free_events_empty:           ['misdirect', 'A "free events" toggle with no free events', 'It exists only to empty the page.'],
+  false_progress:              ['misdirect', '"Step 2 of 3"', 'There were about eleven steps.'],
+  pay_buttons_swapped:         ['misdirect', 'Pay and Cancel swapped places', 'One visit in four, the buttons trade sides.'],
+  slow_processing:             ['misdirect', 'A progress bar that never finishes', 'Stuck at 90% while warning you not to refresh.'],
+  white_screen:                ['misdirect', 'A blank white screen mid-payment', 'Four seconds of wondering whether you\'ve been charged.'],
+  fake_error_confirmation:     ['misdirect', 'Success dressed up as an error', 'Red header, warning icon, "Something went wrong". It went fine.'],
+  hidden_seat_prices:          ['cost',      'A seat map with no prices', 'Colour bands that never say what they cost.'],
+  drip_pricing:                ['cost',      'Fees revealed at the last step', 'A booking fee per ticket, plus delivery on an e-ticket.'],
+  intrusive_survey:            ['cost',      'A survey asking your household income', '"Less than 30 seconds", in the middle of checkout.'],
+  emergency_contact:           ['cost',      'Emergency contact required', 'To watch a show. In a theatre.'],
+};
 // Price band by row: A–B £32, C–E £28, F–H £22 (pattern: never shown on the map).
 function seatPrice(row) {
   if (row === 'A' || row === 'B') return 32;
@@ -1747,7 +2098,6 @@ function seatEcom(id) { return { currency: 'GBP', value: seatPrice(id.split('-')
 
 // ── NAVIGATION ─────────────────────────────────
 function navTo(screenId) {
-  S.navCount++;
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const t = document.getElementById(screenId);
   if (t) { t.classList.add('active'); window.scrollTo(0,0); }
@@ -1761,12 +2111,24 @@ function navTo(screenId) {
     if (ev) dlEcom('view_item', { currency: 'GBP', items: [{ item_id: screenId, item_name: ev.title }] });
   }
 
+  document.getElementById('g-mobile-menu')?.classList.remove('open');
+  // Hide the skip pill once there's nothing left to skip.
+  document.body.classList.toggle('at-end', ['screen-processing','screen-confirm-err','screen-confirm'].indexOf(screenId) !== -1);
+  updateFacLabel(screenId);
+
+  // Passive patterns: counted (once) just for landing on the screen.
+  if (screenId.indexOf('screen-prod-') === 0) darkOnce('broken_production_page');
+  if (screenId === 'screen-calendar') { darkOnce('calendar_past_month'); darkOnce('fake_scarcity'); }
+  if (screenId === 'screen-form') { darkOnce('prechecked_marketing'); darkOnce('emergency_contact'); }
+  if (screenId === 'screen-survey') darkOnce('intrusive_survey');
+  if (screenId === 'screen-newsletter2') darkOnce('newsletter_resignup');
+
   if (screenId === 'screen-seatmap') onEnterSeatmap();
   if (screenId === 'screen-form') onEnterForm();
   if (screenId === 'screen-upsell') showUpsell();
   if (screenId === 'screen-payment') onEnterPayment();
   if (screenId === 'screen-processing') startProcessing();
-  if (screenId === 'screen-confirm-err') dark('fake_error_confirmation');
+  if (screenId === 'screen-confirm-err') { stopTimer(); dark('fake_error_confirmation'); }
   if (screenId === 'screen-confirm') onEnterConfirm();
 }
 
@@ -1777,19 +2139,24 @@ window.addEventListener('load', () => {
 
   // Newsletter popup delay
   setTimeout(() => {
+    if (document.body.classList.contains('at-end')) return;  // don't bury the reveal for people who skip fast
     document.getElementById('newsletter-popup').classList.add('visible');
     dark('newsletter_popup');
   }, 5000);
 
   // Show cookie banner after newsletter dismissal opportunity
-  setTimeout(() => showCookieBanner(), 1800);
+  setTimeout(() => { if (!document.body.classList.contains('at-end')) showCookieBanner(); }, 1800);
 
-  // Carousel auto-advance
+  // Carousel auto-advance — every 3s, too quick to read a slide (pattern preserved)
   let ci = 0;
   setInterval(() => {
-    document.querySelectorAll('.cdot').forEach((d,i) => d.classList.toggle('active', i===ci));
     ci = (ci + 1) % 4;
+    document.querySelectorAll('.cdot').forEach((d,i) => d.classList.toggle('active', i===ci));
+    document.querySelectorAll('.hero-slide').forEach((d,i) => d.classList.toggle('active', i===ci));
   }, 3000);
+
+  buildWeekStrip();
+  darkOnce('carousel_autoplay');
 
   // Build events grid
   buildEventsGrid();
@@ -1810,6 +2177,46 @@ window.addEventListener('load', () => {
   // Inject the (deliberately over-stuffed) global footer into every content screen
   injectFooters();
 });
+
+// ── HEADER + HOME HELPERS ──────────────────────
+function toggleMobileMenu() {
+  document.getElementById('g-mobile-menu').classList.toggle('open');
+}
+function mobileNav(screenId) {
+  document.getElementById('g-mobile-menu').classList.remove('open');
+  navTo(screenId);
+}
+// Search icon looks real but is never available.
+function fakeSearch() {
+  dl('search_click');
+  darkOnce('search_unavailable');
+  showToast('Search is temporarily unavailable. Please browse our full listings instead.', 'info');
+}
+// Genre tiles all lead to the same unfiltered listing.
+function genreTile(name) {
+  dl('genre_tile_click', { link_text: name });
+  navTo('screen-events');
+}
+// "This week" strip from today's date. Counts are invented; every day opens the
+// same unfiltered listing.
+function buildWeekStrip() {
+  const el = document.getElementById('week-strip');
+  if (!el) return;
+  const names = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const counts = [2, 0, 1, 3, 2, 4, 1];
+  const d = new Date();
+  let html = '';
+  for (let i = 0; i < 7; i++) {
+    const n = counts[(d.getDay() + i) % 7];
+    html += `<div class="week-day ${i === 0 ? 'today' : ''}" onclick="navTo('screen-events')">
+      <div class="week-day-name">${i === 0 ? 'Today' : names[d.getDay()]}</div>
+      <div class="week-day-num">${d.getDate()}</div>
+      <div class="week-day-count">${n === 0 ? 'Nothing on' : n + (n === 1 ? ' event' : ' events')}</div>
+    </div>`;
+    d.setDate(d.getDate() + 1);
+  }
+  el.innerHTML = html;
+}
 
 // ── NEWSLETTER ─────────────────────────────────
 function closeNewsletter() {
@@ -1834,17 +2241,6 @@ function fireNlConfetti() {
     b.style.cssText = `left:${Math.random()*100}%;width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;background:${colours[Math.floor(Math.random()*colours.length)]};animation-duration:${1.5+Math.random()*1.5}s;animation-delay:${Math.random()*0.5}s;`;
     wrap.appendChild(b);
     setTimeout(() => b.remove(), 3000);
-  }
-}
-
-function fireConfetti() {
-  const colours = ['#f1c40f','#e74c3c','#9b59b6','#3498db','#2ecc71','#e67e22','#ff69b4'];
-  for (let i=0;i<100;i++) {
-    const b = document.createElement('div');
-    b.className = 'confetti-bit';
-    b.style.cssText = `left:${Math.random()*100}%;width:${7+Math.random()*9}px;height:${7+Math.random()*9}px;background:${colours[Math.floor(Math.random()*colours.length)]};animation-duration:${2+Math.random()*2}s;animation-delay:${Math.random()*0.8}s;`;
-    document.body.appendChild(b);
-    setTimeout(() => b.remove(), 4500);
   }
 }
 
@@ -1893,7 +2289,6 @@ function toggleCookieSection(i) {
   const open = bd.classList.contains('visible');
   bd.classList.toggle('visible', !open);
   hd.classList.toggle('open', !open);
-  S.cookieSections[i] = !open;
 }
 
 function openCookiePrefs() {
@@ -1908,6 +2303,7 @@ function saveCookiePrefs() {
   S.cookieSavedStep++;
   const msg = document.getElementById('cookie-confirm-msg');
   if (S.cookieSavedStep === 1) {
+    darkOnce('cookie_double_save');
     msg.style.display = 'block';
     msg.textContent = '✓ Preferences saved. Please also confirm your choices on the previous screen.';
     document.getElementById('cookie-save-btn').textContent = 'Confirm and close';
@@ -1932,6 +2328,7 @@ function sendChat() {
   const inp = document.getElementById('chat-input');
   if (!inp.value.trim()) return;
   inp.value = '';
+  darkOnce('live_chat_autoreply');
   setTimeout(() => {
     const body = document.getElementById('chat-body');
     const msg = document.createElement('div');
@@ -1949,6 +2346,7 @@ function toggleA11y() {
     S.a11yDismissCount++;
     if (S.a11yDismissCount < 3) {
       setTimeout(() => panel.classList.add('open'), 200);
+      darkOnce('a11y_reopen');
     }
   }
 }
@@ -1959,11 +2357,12 @@ function buildEventsGrid() {
   if (!grid) return;
   grid.innerHTML = EVENTS.map((e) => `
     <div class="event-listing-card" onclick="selectItem('${e.prod}')">
-      <div class="elc-img ${e.c}"></div>
+      <div class="elc-img ph ${e.img}"><span class="event-tag">${e.genre}</span></div>
       <div class="elc-body">
+        <div class="event-card-venue">${e.venue}</div>
         <div class="elc-title">${e.title}</div>
         <div class="elc-date">${e.date}</div>
-        <div class="elc-price">${e.price}</div>
+        <div class="event-card-foot"><span class="elc-price">${e.price}</span><span class="event-card-cta">More info</span></div>
       </div>
     </div>
   `).join('');
@@ -2010,6 +2409,7 @@ function applyFilters() {
   btn.disabled = true;
 
   setTimeout(() => {
+    darkOnce('filter_no_results');
     if (showNoResults) {
       document.getElementById('events-grid').style.display = 'none';
       document.getElementById('no-results-msg').style.display = 'block';
@@ -2034,7 +2434,7 @@ function applyFilters() {
 }
 
 // Brochure "download" link — intentionally does nothing (just tracks the click).
-function downloadBrochure() { dl('brochure_download_click'); }
+function downloadBrochure() { dl('brochure_download_click'); darkOnce('brochure_dead_link'); }
 
 // Free-events toggle — nothing is ever free, so switching it on clears the grid.
 function toggleFreeEvents(el) {
@@ -2042,6 +2442,7 @@ function toggleFreeEvents(el) {
   const noRes = document.getElementById('no-results-msg');
   dl('filter_free_toggle', { free_only: el.checked });
   if (el.checked) {
+    darkOnce('free_events_empty');
     grid.style.display = 'none';
     noRes.style.display = 'block';
   } else {
@@ -2152,6 +2553,9 @@ const MAX_SEATS = 6;
 function onEnterSeatmap() {
   startTimer();
   showToast('You\'ve successfully joined our mailing list!', 'success');
+  darkOnce('misleading_newsletter_toast');
+  darkOnce('hidden_seat_prices');
+  darkOnce('false_progress');
   showCookieBanner();
 }
 
@@ -2338,6 +2742,7 @@ function continueSeat() {
 
 function fakeZoom() {
   showToast('Zoom is not available on this device.', 'info');
+  darkOnce('zoom_unavailable');
 }
 
 // ── TIMER ──────────────────────────────────────
@@ -2345,12 +2750,18 @@ function startTimer() {
   if (S.timerStarted) return;
   S.timerStarted = true;
   S.timerSeconds = 300;
-  const bar = document.getElementById('timer-bar');
-  const gNav = document.getElementById('g-nav');
-  bar.classList.add('active');
-  gNav.style.display = 'none';
+  document.getElementById('timer-bar').classList.add('active');
+  document.body.classList.add('booking');  // timer bar replaces the header
   S.timerInterval = setInterval(tickTimer, 1000);
   dark('countdown_started');
+}
+
+// Booking is over (or skipped): stop the clock and give the header back.
+function stopTimer() {
+  clearInterval(S.timerInterval);
+  S.timerInterval = null;
+  document.getElementById('timer-bar').classList.remove('active');
+  document.body.classList.remove('booking');
 }
 
 function tickTimer() {
@@ -2436,6 +2847,7 @@ function clearFormFields() {
 function fakePostcodeLookup() {
   const el = document.getElementById('postcode-error');
   el.style.display = 'block';
+  darkOnce('postcode_lookup_fail');
   setTimeout(() => { el.style.display = 'none'; }, 4000);
 }
 
@@ -2592,6 +3004,7 @@ function renderPaymentSummary() {
 
 function onEnterPayment() {
   renderPaymentSummary();
+  darkOnce('drip_pricing');
   if (S.swapPayBtns) {
     document.getElementById('pay-btn-row').classList.add('reversed');
     dark('pay_buttons_swapped');
@@ -2616,9 +3029,13 @@ function advanceAreYouSure() {
 
 // ── PROCESSING ─────────────────────────────────
 function startProcessing() {
+  cancelProcessing();
   const fill = document.getElementById('proc-fill');
   const stage = document.getElementById('proc-stage');
   const warning = document.getElementById('proc-warning');
+  fill.style.width = '0%';
+  warning.style.display = 'none';
+  darkOnce('slow_processing');
   let pct = 0;
   const stages = [
     [0,   'Contacting payment provider…'],
@@ -2636,23 +3053,30 @@ function startProcessing() {
       si++;
     }
   }, 300);
+  S.procTimers.push(interval);
 
-  setTimeout(() => warning.style.display = 'block', 5000);
+  S.procTimers.push(setTimeout(() => warning.style.display = 'block', 5000));
 
-  setTimeout(() => {
+  S.procTimers.push(setTimeout(() => {
     clearInterval(interval);
     // White screen
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     const white = document.getElementById('screen-white');
     white.style.display = 'block';
-    S.navCount++; // count as nav for cookie check
     dark('white_screen');
     // After 4s show error-styled confirm
-    setTimeout(() => {
+    S.procTimers.push(setTimeout(() => {
       white.style.display = 'none';
       navTo('screen-confirm-err');
-    }, 4000);
-  }, 7500);
+    }, 4000));
+  }, 7500));
+}
+
+// Stop any in-flight processing sequence (used when skipping or stepping screens).
+function cancelProcessing() {
+  S.procTimers.forEach(t => { clearTimeout(t); clearInterval(t); });
+  S.procTimers = [];
+  document.getElementById('screen-white').style.display = 'none';
 }
 
 // ── CONFIRMATION + POST-TRANSACTION SLIDE-IN ────
@@ -2660,17 +3084,24 @@ let slideinTimer = null;
 function onEnterConfirm() {
   const order = computeOrder();
 
-  // GA4 purchase — seats + any accepted upsells.
-  const items = S.selectedSeats.map(seatItem).concat(
-    S.acceptedUpsells.map(u => ({ item_id: 'upsell_' + u.title.toLowerCase().replace(/\s+/g,'_'),
-      item_name: u.title, item_category: 'Add-on', price: u.amount, quantity: 1 })));
-  dlEcom('purchase', {
-    transaction_id: TRANSACTION_ID,
-    value: +order.total.toFixed(2),
-    currency: 'GBP',
-    shipping: DELIVERY_FEE,
-    items: items
-  });
+  // GA4 purchase — seats + any accepted upsells. Not sent when the visitor skipped
+  // to the end, so skips don't show up as sales.
+  if (!S.skippedFrom) {
+    const items = S.selectedSeats.map(seatItem).concat(
+      S.acceptedUpsells.map(u => ({ item_id: 'upsell_' + u.title.toLowerCase().replace(/\s+/g,'_'),
+        item_name: u.title, item_category: 'Add-on', price: u.amount, quantity: 1 })));
+    dlEcom('purchase', {
+      transaction_id: TRANSACTION_ID,
+      value: +order.total.toFixed(2),
+      currency: 'GBP',
+      shipping: DELIVERY_FEE,
+      items: items
+    });
+  }
+
+  renderReveal(order);
+  dl('reveal_shown', { patterns_found: S.seen.size, patterns_total: Object.keys(PATTERNS).length,
+      skipped_from: S.skippedFrom || '' });
 
   // Slide-in appears ~4s after the confirmation screen shows.
   if (slideinTimer) clearTimeout(slideinTimer);
@@ -2683,6 +3114,147 @@ function onEnterConfirm() {
 
 function dismissSlidein() {
   document.getElementById('of-slidein').classList.remove('visible');
+}
+
+// ── END-OF-JOURNEY REVEAL ──────────────────────
+const SCREEN_LABELS = {
+  'screen-home': 'the home page', 'screen-visit': 'the Visit page', 'screen-events': 'the listings',
+  'screen-prod-1': 'an event page', 'screen-prod-2': 'an event page', 'screen-prod-3': 'an event page',
+  'screen-prod-4': 'an event page', 'screen-calendar': 'the calendar', 'screen-seatmap': 'the seat map',
+  'screen-form': 'the details form', 'screen-upsell': 'the upsells', 'screen-survey': 'the survey',
+  'screen-newsletter2': 'the second newsletter sign-up', 'screen-payment': 'the payment page',
+};
+
+function revealItemHTML(key) {
+  const p = PATTERNS[key];
+  return `<div class="reveal-item"><b>${p[1]}</b><span>${p[2]}</span></div>`;
+}
+
+function renderReveal(order) {
+  const keys = Object.keys(PATTERNS);
+  const found = keys.filter(k => S.seen.has(k));
+  const missed = keys.filter(k => !S.seen.has(k));
+  const secs = Math.max(0, Math.round((Date.now() - S.startedAt) / 1000));
+  const n = found.length;
+
+  document.getElementById('reveal-title').innerHTML = S.skippedFrom
+    ? `You gave up after <em>${n}</em> dark pattern${n === 1 ? '' : 's'}.`
+    : `You survived <em>${n}</em> dark pattern${n === 1 ? '' : 's'}.`;
+  document.getElementById('reveal-lede').textContent = (S.skippedFrom
+    ? `Fair enough. You bailed out on ${SCREEN_LABELS[S.skippedFrom] || 'the way through'}, which is exactly what real customers do. `
+    : '') + 'Enyold Theatre isn\'t real. It\'s a deliberately terrible ticketing website made by One Further to show how small bits of friction stack up into a booking nobody would finish.';
+
+  document.getElementById('rs-found').textContent = `${n} of ${keys.length}`;
+  document.getElementById('rs-time').textContent = `${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, '0')}`;
+  const seatTotal = S.selectedSeats.reduce((t, id) => t + seatPrice(id.split('-')[0]), 0);
+  const extra = order.total - seatTotal;
+  document.getElementById('rs-extra').textContent = S.skippedFrom ? '–' : '+£' + extra.toFixed(2);
+  document.getElementById('rs-extra-label').textContent = S.skippedFrom
+    ? 'added to your ticket price (you got out before we could)'
+    : `added on top of £${seatTotal.toFixed(2)} of tickets, in fees and add-ons`;
+
+  document.getElementById('reveal-list-sub').textContent = n
+    ? 'Every one of these was deliberate. Most of them turn up on real websites, by accident.'
+    : 'You skipped straight past all of them. Have a look at what you missed below.';
+  document.getElementById('reveal-list').innerHTML = PATTERN_GROUPS.map(([g, label]) => {
+    const items = found.filter(k => PATTERNS[k][0] === g);
+    return items.length ? `<div class="reveal-group"><h4>${label}</h4><div class="reveal-items">${items.map(revealItemHTML).join('')}</div></div>` : '';
+  }).join('');
+  document.getElementById('reveal-missed').style.display = missed.length ? '' : 'none';
+  document.getElementById('reveal-missed-summary').textContent = `The ${missed.length} you didn't run into`;
+  document.getElementById('reveal-missed-list').innerHTML = missed.map(revealItemHTML).join('');
+}
+
+function scrollToReveal() {
+  dismissSlidein();
+  dl('reveal_scroll_click');
+  document.getElementById('reveal').scrollIntoView({ behavior: 'smooth' });
+}
+
+function shareScore() {
+  const url = location.origin + location.pathname;
+  const text = `I ran into ${S.seen.size} dark patterns trying to book a ticket at Enyold Theatre, a deliberately terrible ticketing website by One Further. How many can you find?`;
+  if (navigator.share) {
+    dl('reveal_share', { method: 'native' });
+    navigator.share({ title: 'Enyold Theatre', text: text, url: url }).catch(() => {});
+    return;
+  }
+  dl('reveal_share', { method: 'clipboard' });
+  const done = () => showToast('Copied to your clipboard. Go on, share it.', 'success');
+  if (navigator.clipboard) navigator.clipboard.writeText(text + ' ' + url).then(done, () => window.prompt('Copy this:', text + ' ' + url));
+  else window.prompt('Copy this:', text + ' ' + url);
+}
+
+function tryAgain() {
+  dl('reveal_try_again');
+  location.reload();
+}
+
+// ── SKIP TO THE END ────────────────────────────
+// Closes everything, fills in whatever later screens need, and jumps to the
+// error-styled confirmation so the visitor still gets the punchline.
+function closeAllOverlays() {
+  document.querySelectorAll('.overlay-bg.visible').forEach(o => o.classList.remove('visible'));
+  ['newsletter-popup','cookie-banner','cookie-backdrop'].forEach(id => document.getElementById(id).classList.remove('visible'));
+  document.getElementById('a11y-panel').classList.remove('open');
+  if (S.stillThereTimer) clearTimeout(S.stillThereTimer);
+}
+
+// Later screens assume a seat is in the basket; add one if the visitor never got that far.
+function ensureSeat() {
+  if (S.selectedSeats.length === 0) {
+    S.selectedSeats.push('C-6');
+    document.getElementById('seat-C-6')?.classList.add('selected');
+    renderSelection();
+  }
+}
+
+function skipToEnd() {
+  const from = currentScreen();
+  S.skippedFrom = from;
+  dl('skip_to_end', { screen_name: from, patterns_found: S.seen.size });
+  closeAllOverlays();
+  cancelProcessing();
+  ensureSeat();
+  navTo('screen-confirm-err');
+}
+
+// ── FACILITATOR MODE (?facilitator) ────────────
+// Prev/next controls (and [ / ] keys) for moderated sessions. Also hides the
+// One Further footer credit so participants don't get the joke too early.
+const FAC_FLOW = ['screen-home','screen-events','screen-prod-1','screen-calendar','screen-seatmap',
+  'screen-form','screen-upsell','screen-survey','screen-newsletter2','screen-payment',
+  'screen-processing','screen-confirm-err','screen-confirm'];
+const FAC_NAMES = ['Home','What\'s On','Event page','Calendar','Seat map','Your details','Upsells',
+  'Survey','Newsletter','Payment','Processing','Error-styled confirmation','Confirmation'];
+
+function updateFacLabel(screenId) {
+  if (!S.facilitator) return;
+  const i = FAC_FLOW.indexOf(screenId);
+  document.getElementById('fac-label').textContent = i === -1 ? '(off-route)' : `${i + 1}/${FAC_FLOW.length} · ${FAC_NAMES[i]}`;
+}
+
+function facStep(dir) {
+  const cur = FAC_FLOW.indexOf(currentScreen());
+  const next = Math.min(FAC_FLOW.length - 1, Math.max(0, (cur === -1 ? 0 : cur + dir)));
+  closeAllOverlays();
+  cancelProcessing();
+  const id = FAC_FLOW[next];
+  if (next >= FAC_FLOW.indexOf('screen-form')) ensureSeat();
+  if (id === 'screen-upsell') S.upsellIndex = 0;
+  dl('facilitator_step', { screen_name: id, direction: dir > 0 ? 'next' : 'previous' });
+  navTo(id);
+}
+
+if (S.facilitator) {
+  document.body.classList.add('facilitator');
+  document.addEventListener('keydown', e => {
+    const t = e.target;
+    if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT')) return;
+    if (e.key === ']') facStep(1);
+    if (e.key === '[') facStep(-1);
+  });
+  updateFacLabel('screen-home');
 }
 
 // ── TOAST ──────────────────────────────────────

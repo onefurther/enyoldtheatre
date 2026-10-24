@@ -2,7 +2,7 @@
 
 ## Context
 
-The repo `~/code/enyoldtheatre` (github.com/onefurther/enyoldtheatre, deployed on Vercel) is a deliberately terrible arts-centre ticketing prototype — a single `index.html` (~2,000 lines) with all screens, CSS and JS inline. It's a deadpan showcase of dark patterns, ultimately promoting One Further's usability services. This round of work: visual polish, a Ticketmaster-style seat-selection experience (with the "seat taken" gotcha moved to the Continue click), more purchasable seats, a dataLayer/analytics layer ready for a future GTM container, an over-stuffed footer with a One Further credit, a post-transaction slide-in CTA, and a CLAUDE.md documenting every dark pattern per screen.
+The repo `~/code/enyoldtheatre` (github.com/onefurther/enyoldtheatre, now deployed on Cloudflare at https://offcuts.onefurther.dev/terrible-ticketing/) is a deliberately terrible arts-centre ticketing prototype — a single `index.html` (~2,000 lines) with all screens, CSS and JS inline. It's a deadpan showcase of dark patterns, ultimately promoting One Further's usability services. This round of work: visual polish, a Ticketmaster-style seat-selection experience (with the "seat taken" gotcha moved to the Continue click), more purchasable seats, a dataLayer/analytics layer ready for a future GTM container, an over-stuffed footer with a One Further credit, a post-transaction slide-in CTA, and a CLAUDE.md documenting every dark pattern per screen.
 
 **Guiding principle: polish the *visuals*, preserve the *behavioural* awfulness.** The joke lands harder when the site looks like a credible arts-centre website but behaves terribly. No dark pattern gets removed unless explicitly asked (the only behaviour change requested is *when* the seat-taken modal fires).
 
@@ -61,4 +61,4 @@ All work is in `index.html` plus a new `CLAUDE.md`.
 - Screenshots of key screens.
 
 ## Ship
-- Commit to `main`, push to onefurther/enyoldtheatre (Vercel auto-deploys). Flagged for later: create GTM container + drop ID, write/link blog post.
+- Commit to `main`, push to onefurther/enyoldtheatre (deployed on Cloudflare; originally Vercel). Flagged for later: create GTM container + drop ID, write/link blog post.
