@@ -368,22 +368,27 @@
   .week-day.today .week-day-num { color: #fff; }
 
   .home-events { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
-  .home-event-card, .event-listing-card {
-    background: #fff; border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column;
-    box-shadow: var(--shadow-sm); cursor: pointer; border: 1px solid var(--grey-border);
-    transition: box-shadow 0.2s ease, transform 0.2s ease;
-  }
-  .home-event-card:hover, .event-listing-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-3px); }
-  .event-card-img, .elc-img { position: relative; aspect-ratio: 3 / 2; }
-  .event-tag { position: absolute; top: 12px; left: 12px; background: #fff; color: var(--purple-dark); font-size: 0.66rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 8px; border-radius: 3px; }
-  .event-card-body, .elc-body { padding: 16px 18px 18px; display: flex; flex-direction: column; flex: 1; }
-  .event-card-venue { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--purple-light); margin-bottom: 6px; }
-  .event-card-title, .elc-title { font-family: var(--font-display); font-size: 1.25rem; color: #1f1430; line-height: 1.2; margin-bottom: 6px; }
-  .event-card-date, .elc-date { font-size: 0.84rem; color: #6a6178; }
-  .event-card-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: auto; padding-top: 16px; }
-  .event-card-price, .elc-price { font-size: 0.86rem; color: var(--purple-dark); font-weight: 700; }
-  .event-card-cta { font-size: 0.8rem; font-weight: 700; color: var(--purple); border: 1px solid var(--lavender-mid); border-radius: 999px; padding: 6px 14px; transition: background 0.15s, color 0.15s; }
-  .home-event-card:hover .event-card-cta, .event-listing-card:hover .event-card-cta { background: var(--purple); color: #fff; border-color: var(--purple); }
+  /* Show cards (home + What's On). Photo-led: the title sits on the image and the
+     details slide up from the bottom on hover. Only the title links to the show page;
+     the rest of the card looks clickable but isn't (pattern). */
+  .show-card { position: relative; aspect-ratio: 4 / 5; border-radius: var(--radius); overflow: hidden; color: #fff; box-shadow: var(--shadow-sm); transition: box-shadow 0.25s ease, transform 0.25s ease; }
+  .show-card:hover, .show-card:focus-within { box-shadow: var(--shadow-lg); transform: translateY(-3px); }
+  .event-tag { position: absolute; top: 12px; left: 12px; z-index: 2; background: #fff; color: var(--purple-dark); font-size: 0.66rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 8px; border-radius: 3px; }
+  .show-card-body { position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; padding: 64px 20px 20px; background: linear-gradient(180deg, transparent 0%, rgba(14,6,26,0.78) 38%, rgba(14,6,26,0.94) 100%); }
+  .show-card-title { display: block; font-family: var(--font-display); font-size: 1.4rem; line-height: 1.15; color: #fff; text-decoration: none; text-wrap: balance; cursor: pointer; }
+  .show-card-title:hover { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
+  .show-card-reveal { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows 0.35s cubic-bezier(0.22,1,0.36,1), opacity 0.25s ease; }
+  .show-card-reveal > div { overflow: hidden; }
+  .show-card:hover .show-card-reveal, .show-card:focus-within .show-card-reveal { grid-template-rows: 1fr; opacity: 1; }
+  .show-card-venue { margin-top: 12px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--lavender-mid); }
+  .show-card-date { margin-top: 4px; font-size: 0.9rem; color: rgba(255,255,255,0.88); }
+  .show-card-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 14px; }
+  .show-card-price { font-size: 0.9rem; font-weight: 700; }
+  .show-card-book { background: #fff; color: var(--purple-dark); border: none; border-radius: 999px; padding: 9px 16px; font-family: inherit; font-size: 0.82rem; font-weight: 800; cursor: pointer; white-space: nowrap; transition: background 0.15s, transform 0.12s; }
+  .show-card-book:hover { background: var(--lavender); transform: translateY(-1px); }
+  /* Touch screens can't hover, so show the details there */
+  @media (hover: none) { .show-card-reveal { grid-template-rows: 1fr; opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { .show-card, .show-card-reveal { transition: none; } }
 
   .genre-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
   .genre-tile { position: relative; aspect-ratio: 4 / 5; border-radius: var(--radius); overflow: hidden; cursor: pointer; display: flex; align-items: flex-end; padding: 14px; color: #fff; font-family: var(--font-display); font-size: 1.15rem; }
@@ -395,6 +400,15 @@
   .director-card h2 { font-family: var(--font-display); font-size: 1.15rem; color: var(--purple-dark); margin-bottom: 18px; padding-bottom: 10px; border-bottom: 2px solid var(--lavender); }
   .director-card p { font-size: 0.88rem; line-height: 1.85; color: #444; margin-bottom: 14px; }
   .director-card .sig { margin: 20px 0 0; font-size: 0.82rem; color: var(--grey-mid); font-style: italic; }
+
+  .supporters { padding-top: 52px; }
+  .supporters-title { font-size: 0.74rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--grey-mid); text-align: center; margin-bottom: 22px; }
+  .supporters-row { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 18px 34px; padding: 26px 12px; border-top: 1px solid var(--grey-border); border-bottom: 1px solid var(--grey-border); }
+  .supporter { color: #8a8199; transition: color 0.2s; }
+  .supporter:hover { color: var(--purple-dark); }
+  .supporter svg { display: block; height: 38px; width: auto; }
+  .supporter svg path[fill="#fff"] { fill: var(--grey-light); }
+  @media (max-width: 560px) { .supporters-row { gap: 16px 28px; } .supporter svg { height: 34px; } }
 
   .support-band { position: relative; border-radius: 12px; overflow: hidden; margin-top: 52px; min-height: 300px; display: flex; align-items: center; }
   .support-band::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(42,20,70,0.95) 0%, rgba(42,20,70,0.8) 45%, rgba(42,20,70,0.2) 100%); }
@@ -1110,35 +1124,8 @@
         <h2 class="home-section-title">Featured events</h2>
         <a class="home-section-link" onclick="navTo('screen-events')">See everything on →</a>
       </div>
-      <div class="home-events">
-        <div class="home-event-card" onclick="selectItem('screen-prod-2')">
-          <div class="event-card-img ph ph-performance"><span class="event-tag">Performance</span></div>
-          <div class="event-card-body">
-            <div class="event-card-venue">Main House</div>
-            <div class="event-card-title">Performance (Main House)</div>
-            <div class="event-card-date">Sat 14th Jun</div>
-            <div class="event-card-foot"><span class="event-card-price">From £18</span><span class="event-card-cta">More info</span></div>
-          </div>
-        </div>
-        <div class="home-event-card" onclick="selectItem('screen-prod-1')">
-          <div class="event-card-img ph ph-music"><span class="event-tag">Music</span></div>
-          <div class="event-card-body">
-            <div class="event-card-venue">Main House</div>
-            <div class="event-card-title">An Evening of Music</div>
-            <div class="event-card-date">06/21/2025</div>
-            <div class="event-card-foot"><span class="event-card-price">From £22</span><span class="event-card-cta">More info</span></div>
-          </div>
-        </div>
-        <div class="home-event-card" onclick="selectItem('screen-prod-3')">
-          <div class="event-card-img ph ph-theatre"><span class="event-tag">Theatre</span></div>
-          <div class="event-card-body">
-            <div class="event-card-venue">Studio</div>
-            <div class="event-card-title">Theatre – see website</div>
-            <div class="event-card-date">Next Saturday</div>
-            <div class="event-card-foot"><span class="event-card-price">From £12</span><span class="event-card-cta">More info</span></div>
-          </div>
-        </div>
-      </div>
+      <!-- Built by buildHomeCards() (same card as What's On, with its own mismatched data) -->
+      <div class="home-events" id="home-events"></div>
     </section>
 
     <section class="home-section">
@@ -1179,6 +1166,31 @@
         </div>
       </div>
     </div>
+
+    <!-- Supporters strip: invented organisations, drawn as inline SVG (no real logos) -->
+    <section class="home-section supporters">
+      <h2 class="supporters-title">Enyold Theatre is proudly supported by</h2>
+      <div class="supporters-row">
+        <div class="supporter" title="The Halden Trust">
+          <svg viewBox="0 0 190 56" role="img" aria-label="The Halden Trust"><path d="M24 8 40 16v12c0 10-7 17-16 20C15 45 8 38 8 28V16z" fill="none" stroke="currentColor" stroke-width="2.5"/><path d="M17 22h14M17 29h14M24 22v14" stroke="currentColor" stroke-width="2.5"/><text x="52" y="25" font-family="Georgia,serif" font-size="11" letter-spacing="2.5" fill="currentColor">THE</text><text x="52" y="43" font-family="Georgia,serif" font-size="19" fill="currentColor">Halden Trust</text></svg>
+        </div>
+        <div class="supporter" title="Ashcombe Borough Council">
+          <svg viewBox="0 0 210 56" role="img" aria-label="Ashcombe Borough Council"><path d="M8 46V20h6v-6h6v6h6v-6h6v6h6v-6h6v6h4v26z" fill="currentColor"/><path d="M24 46v-10a5 5 0 0 1 10 0v10z" fill="#fff"/><text x="60" y="27" font-family="Arial,sans-serif" font-weight="700" font-size="16" fill="currentColor">Ashcombe</text><text x="60" y="44" font-family="Arial,sans-serif" font-size="12" letter-spacing="1" fill="currentColor">BOROUGH COUNCIL</text></svg>
+        </div>
+        <div class="supporter" title="Northlight Arts Fund">
+          <svg viewBox="0 0 200 56" role="img" aria-label="Northlight Arts Fund"><circle cx="26" cy="34" r="9" fill="currentColor"/><g stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M26 6v10M8 13l6 7M44 13l-6 7M2 30h9M41 30h9"/></g><text x="60" y="30" font-family="Arial,sans-serif" font-weight="800" font-size="17" letter-spacing="0.5" fill="currentColor">northlight</text><text x="60" y="46" font-family="Arial,sans-serif" font-size="11" letter-spacing="3" fill="currentColor">ARTS FUND</text></svg>
+        </div>
+        <div class="supporter" title="Brightwater Building Society">
+          <svg viewBox="0 0 220 56" role="img" aria-label="Brightwater Building Society"><path d="M6 32c6-8 12-8 18 0s12 8 18 0" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/><path d="M6 42c6-8 12-8 18 0s12 8 18 0" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" opacity="0.55"/><text x="54" y="31" font-family="Georgia,serif" font-style="italic" font-size="20" fill="currentColor">Brightwater</text><text x="55" y="46" font-family="Arial,sans-serif" font-size="9.5" letter-spacing="2" fill="currentColor">BUILDING SOCIETY</text></svg>
+        </div>
+        <div class="supporter" title="Pellman's Brewery">
+          <svg viewBox="0 0 208 56" role="img" aria-label="Pellman's Brewery"><circle cx="26" cy="28" r="20" fill="none" stroke="currentColor" stroke-width="2.5"/><text x="26" y="35" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="20" fill="currentColor">P</text><text x="56" y="30" font-family="Georgia,serif" font-weight="700" font-size="19" fill="currentColor">Pellman's</text><text x="57" y="45" font-family="Arial,sans-serif" font-size="9.5" letter-spacing="2.5" fill="currentColor">BREWERY · EST. 1891</text></svg>
+        </div>
+        <div class="supporter" title="Regional Stage Awards 2024">
+          <svg viewBox="0 0 232 56" role="img" aria-label="Regional Stage Awards 2024 winner"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M16 46C6 38 6 20 14 10M36 46c10-8 10-26 2-36"/><path d="M11 38l-5 1M9 30l-5-1M10 22l-4-3M30 38l5 1M42 30l5-1M41 22l4-3" /></g><text x="26" y="34" text-anchor="middle" font-family="Georgia,serif" font-size="15" fill="currentColor">★</text><text x="58" y="25" font-family="Arial,sans-serif" font-size="10" letter-spacing="2" fill="currentColor">WINNER 2024</text><text x="58" y="43" font-family="Georgia,serif" font-size="16" fill="currentColor">Regional Stage Awards</text></svg>
+        </div>
+      </div>
+    </section>
   </div>
 </div>
 
@@ -1202,7 +1214,7 @@
         <div class="visit-hours-row"><span>Saturday</span><span>10am – 8:30pm</span></div>
         <div class="visit-hours-row"><span>Sunday</span><span>12pm – 5pm</span></div>
         <div class="visit-hours-row"><span>Bank holidays</span><span>11am – 5pm</span></div>
-        <div class="visit-hours-row"><span>Café Bar</span><span>from 9am daily</span></div>
+        <div class="visit-hours-row"><span>Café Bar</span><span>Around 2 hours before the show, on show days</span></div>
       </div>
     </div>
 
@@ -2061,6 +2073,7 @@ const PATTERNS = {
   cookie_double_save:          ['obstruct',  'Two saves for one choice', '"Preferences saved. Please also confirm your choices."'],
   search_unavailable:          ['obstruct',  'Search that never works', 'Temporarily unavailable, permanently.'],
   filter_no_results:           ['obstruct',  'Filters that hide everything', 'Some choices empty the page, then the filters reset themselves.'],
+  dead_card_click:             ['obstruct',  'Cards you can\'t click', 'The whole card looks like a link. Only the title is.'],
   broken_production_page:      ['obstruct',  'An event page that hides the booking button', 'Broken images, placeholder reviews and a faint ghost button.'],
   calendar_past_month:         ['obstruct',  'A calendar that opens on last month', 'Every date greyed out until you find the arrow.'],
   zoom_unavailable:            ['obstruct',  'Zoom buttons that don\'t zoom', '"Zoom is not available on this device."'],
@@ -2156,6 +2169,7 @@ window.addEventListener('load', () => {
   }, 3000);
 
   buildWeekStrip();
+  buildHomeCards();
   darkOnce('carousel_autoplay');
 
   // Build events grid
@@ -2351,27 +2365,63 @@ function toggleA11y() {
   }
 }
 
+// ── SHOW CARDS (home + What's On) ──────────────
+// Home page "featured" data deliberately disagrees with EVENTS on prices and dates.
+const HOME_FEATURED = [
+  {title:'Performance (Main House)', date:'Sat 14th Jun',  price:'From £18', img:'ph-performance', genre:'Performance', venue:'Main House', prod:'screen-prod-2'},
+  {title:'An Evening of Music',      date:'06/21/2025',    price:'From £22', img:'ph-music',       genre:'Music',       venue:'Main House', prod:'screen-prod-1'},
+  {title:'Theatre – see website',    date:'Next Saturday', price:'From £12', img:'ph-theatre',     genre:'Theatre',     venue:'Studio',     prod:'screen-prod-3'},
+];
+
+// Only the title links to the show page. The rest of the card looks clickable but isn't.
+function showCardHTML(e, list) {
+  return `<article class="show-card ph ${e.img}" onclick="deadCardClick(event)">
+    <span class="event-tag">${e.genre}</span>
+    <div class="show-card-body">
+      <a class="show-card-title" href="#" onclick="selectItem('${e.prod}', '${list.replace(/'/g, "\\'")}'); return false;">${e.title}</a>
+      <div class="show-card-reveal"><div>
+        <div class="show-card-venue">${e.venue}</div>
+        <div class="show-card-date">${e.date}</div>
+        <div class="show-card-foot">
+          <span class="show-card-price">${e.price}</span>
+          <button class="show-card-book" onclick="bookFromCard('${e.prod}', '${list.replace(/'/g, "\\'")}')">Book tickets</button>
+        </div>
+      </div></div>
+    </div>
+  </article>`;
+}
+
+function buildHomeCards() {
+  const el = document.getElementById('home-events');
+  if (el) el.innerHTML = HOME_FEATURED.map(e => showCardHTML(e, 'Featured events')).join('');
+}
+
+// "Book tickets" skips the show page and goes straight to the (only) calendar,
+// which is always for An Evening of Music & Things, whichever show you picked.
+function bookFromCard(prod, list) {
+  const ev = EVENTS.find(e => e.prod === prod);
+  if (ev) dlEcom('select_item', { item_list_name: list, items: [{ item_id: prod, item_name: ev.title }] });
+  dl('card_book_click', { link_text: ev ? ev.title : prod });
+  navTo('screen-calendar');
+}
+
+// Clicks anywhere on a card other than the title or button do nothing.
+function deadCardClick(ev) {
+  if (ev.target.closest('.show-card-title, .show-card-book')) return;
+  darkOnce('dead_card_click');
+}
+
 // ── EVENTS GRID ────────────────────────────────
 function buildEventsGrid() {
   const grid = document.getElementById('events-grid');
   if (!grid) return;
-  grid.innerHTML = EVENTS.map((e) => `
-    <div class="event-listing-card" onclick="selectItem('${e.prod}')">
-      <div class="elc-img ph ${e.img}"><span class="event-tag">${e.genre}</span></div>
-      <div class="elc-body">
-        <div class="event-card-venue">${e.venue}</div>
-        <div class="elc-title">${e.title}</div>
-        <div class="elc-date">${e.date}</div>
-        <div class="event-card-foot"><span class="elc-price">${e.price}</span><span class="event-card-cta">More info</span></div>
-      </div>
-    </div>
-  `).join('');
+  grid.innerHTML = EVENTS.map(e => showCardHTML(e, "What's On")).join('');
 }
 
 // GA4 select_item on an events-listing card, then open the production page.
-function selectItem(prod) {
+function selectItem(prod, list) {
   const ev = EVENTS.find(e => e.prod === prod);
-  if (ev) dlEcom('select_item', { item_list_name: "What's On", items: [{ item_id: prod, item_name: ev.title }] });
+  if (ev) dlEcom('select_item', { item_list_name: list || "What's On", items: [{ item_id: prod, item_name: ev.title }] });
   navTo(prod);
 }
 
@@ -3301,7 +3351,7 @@ function buildFooterHTML() {
   // 5th column: opening hours (deliberately contradicting the live-chat hours) + a duplicate newsletter box.
   const hoursCol =
     `<div class="footer-col"><h4>Opening Hours</h4>
-      <p class="footer-hours">Box Office: Mon–Sat 9am–8pm<br>Sunday: 11am–5pm<br>Bank Holidays: 10am–6pm<br>Café Bar: daily until late</p>
+      <p class="footer-hours">Box Office: Mon–Sat 9am–8pm<br>Sunday: 11am–5pm<br>Bank Holidays: 10am–6pm<br>Café Bar: opens approx. 2 hours before curtain up on performance days</p>
       <form class="footer-newsletter" onsubmit="return footerNewsletter(event)">
         <input type="email" required placeholder="Sign up for our newsletter">
         <button type="submit">Subscribe</button>

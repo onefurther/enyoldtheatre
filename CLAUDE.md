@@ -91,8 +91,15 @@ These elements persist across all screens:
 - **Explore by genre tiles** — six tiles, all open the same unfiltered listing
 - **Inconsistent data** — home cards swap the prices and dates shown on What's On; 2025 dates kept as an "unmaintained site" gag (do not update)
 - **"A Welcome from our Artistic Director"** — long, deliberately verbose wall of text with self-important language; no option to skip (now sits below the featured events)
-- **Featured events cards** — photo cards with genre tag, venue and "More info"; click anywhere to open the production
+- **Featured events cards** — built by `buildHomeCards()` from `HOME_FEATURED` (deliberately mismatched data). Same card as What's On, see below
+- **Supporters strip** — six invented organisations (The Halden Trust, Ashcombe Borough Council, Northlight Arts Fund, Brightwater Building Society, Pellman's Brewery, Regional Stage Awards) drawn as inline SVG. Never use real logos
 - **"Support Enyold" band** — Become a member / Make a donation buttons that go nowhere
+
+### **Screen: Visit** (`#screen-visit`)
+
+**Dark Patterns:**
+- **Opening hours that disagree with the footer**, and a Café Bar that opens "around 2 hours before the show, on show days" (deliberately vague)
+- **No address or map**; directions refer to "the old Woolworths"
 
 ### **Screen: Events Listing** (`#screen-events`)
 **URL Path:** "What's On"
@@ -104,7 +111,7 @@ These elements persist across all screens:
 - **Pagination dots** — five dots shown for four events; clicking dots does nothing
 - **Brochure banner** — "Download brochure (PDF, 12MB)" does nothing
 - **Feeling filter and "Free events only" toggle** — the toggle empties the grid (nothing is free)
-- **Cards** — same photo card design as the home page, built from `EVENTS[]` (`img`, `genre`, `venue` fields)
+- **Show cards** (`showCardHTML()`, home and What's On) — photo card with the title always visible; venue, date, price and "Book tickets" slide up from the bottom on hover (always shown on touch screens). **Only the title links to the show page**; clicking elsewhere on the card does nothing (`deadCardClick()`, pattern `dead_card_click`). "Book tickets" skips the show page and goes straight to the calendar, which is always for An Evening of Music & Things (`bookFromCard()`)
 
 ### **Screen: Calendar / Date Selection** (`#screen-calendar`)
 **URL Path:** Event production page → "Book tickets"
@@ -314,7 +321,7 @@ These elements persist across all screens:
   - "Your Visit" (Getting Here, Venue Hire FAQs, Accessibility Statement, Food & Drink, Cloakroom)
   - "Support Us" (Donation, Member, Legacy, Volunteering, Modern Slavery)
   - "Legal & Policies" (Cookie Policy, Privacy Policy, Terms of Sale, Press Enquiries)
-  - "Opening Hours" (contradicts live-chat hours: "Mon–Sat 9am–8pm, Sun 11am–5pm", plus duplicate newsletter box)
+  - "Opening Hours" (contradicts live-chat hours: "Mon–Sat 9am–8pm, Sun 11am–5pm"; Café Bar "opens approx. 2 hours before curtain up on performance days"; plus duplicate newsletter box)
 - **Award/funder logo placeholders** (6 placeholder boxes)
 - **VAT/company small print** — "Enyold Theatre is a trading name of TicketHouse Ltd…"
 - **One Further credit** — "One Further did this on purpose. They're not sorry." (links to onefurther.com/services/usability-research; hidden in facilitator mode)
@@ -402,9 +409,9 @@ These elements persist across all screens:
 - Meta description, theme colour, inline SVG favicon, Open Graph and Twitter card tags, `images/og-image.png` (1200×630). Social image and URL tags are absolute (live domain, see Hosting)
 
 ### New analytics events
-- `skip_to_end` (`screen_name`, `patterns_found`), `reveal_shown` (`patterns_found`, `patterns_total`, `skipped_from`), `reveal_share` (`method`), `reveal_try_again`, `reveal_scroll_click`, `facilitator_step` (`screen_name`, `direction`), `search_click`, `genre_tile_click` (`link_text`), `brochure_download_click`, `filter_free_toggle`
+- `card_book_click` (`link_text`), `skip_to_end` (`screen_name`, `patterns_found`), `reveal_shown` (`patterns_found`, `patterns_total`, `skipped_from`), `reveal_share` (`method`), `reveal_try_again`, `reveal_scroll_click`, `facilitator_step` (`screen_name`, `direction`), `search_click`, `genre_tile_click` (`link_text`), `brochure_download_click`, `filter_free_toggle`
 - `of_cta_click` now carries `cta_location` (`reveal`, `reveal_footer`, `slidein`)
-- New `dark_pattern` names: `carousel_autoplay`, `a11y_reopen`, `cookie_double_save`, `search_unavailable`, `filter_no_results`, `free_events_empty`, `brochure_dead_link`, `broken_production_page`, `calendar_past_month`, `fake_scarcity`, `misleading_newsletter_toast`, `hidden_seat_prices`, `false_progress`, `zoom_unavailable`, `prechecked_marketing`, `emergency_contact`, `postcode_lookup_fail`, `live_chat_autoreply`, `intrusive_survey`, `newsletter_resignup`, `drip_pricing`, `slow_processing`
+- New `dark_pattern` names: `carousel_autoplay`, `a11y_reopen`, `cookie_double_save`, `search_unavailable`, `filter_no_results`, `free_events_empty`, `brochure_dead_link`, `broken_production_page`, `calendar_past_month`, `fake_scarcity`, `misleading_newsletter_toast`, `dead_card_click`, `hidden_seat_prices`, `false_progress`, `zoom_unavailable`, `prechecked_marketing`, `emergency_contact`, `postcode_lookup_fail`, `live_chat_autoreply`, `intrusive_survey`, `newsletter_resignup`, `drip_pricing`, `slow_processing`
 - GTM: the existing `dark pattern` trigger picks up the new pattern names automatically; the new non-dark-pattern events need adding to the `engagement events` trigger if they should reach GA4
 
 ---
