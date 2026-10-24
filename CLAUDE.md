@@ -16,6 +16,11 @@ This is **Enyold Theatre** — a satirical, single-file HTML prototype of a user
 - **All content:** HTML, CSS, and JavaScript are inline in one file
 - **No external dependencies** — fully self-contained, mockup-only (no real backend)
 
+### Hosting
+- **Live:** https://offcuts.onefurther.dev/terrible-ticketing/ (Cloudflare; previously Vercel). Served under a sub-path, so keep asset paths relative (`images/...`, never `/images/...`) and keep the trailing slash on the URL
+- **Repo:** github.com/onefurther/enyoldtheatre
+- Canonical, `og:url`, `og:image` and `twitter:image` use the absolute live URL; update them if the site moves
+
 ### Navigation Model
 The site is a **screen-based single-page application (SPA)**:
 - Each screen is a `<div class="screen" id="screen-...">` container
@@ -33,7 +38,6 @@ Core variables track journey frustrations:
 - `orderTotal` — computed total from `computeOrder()`
 - `upsellIndex` — current upsell position (0–5 in the array)
 - `timerSeconds` — countdown timer (starts at 300 = 5 minutes)
-- `formFirstSubmit` — shows fake validation errors on first form submission
 - `captcha1Done`, `captcha2Done` — tracks two-CAPTCHA dark pattern
 - `a11yDismissCount` — counts accessibility widget dismissals
 - `swapPayBtns` — 25% chance of swapping "Pay" and "Cancel" button positions
@@ -110,8 +114,7 @@ These elements persist across all screens:
 - **Past dates greyed out** — all past date cells are styled as "soldout"
 - **Limited availability badges** — "LIMITED" and "LIMITED AVAILABILITY" badges on most available dates, creating false scarcity
 - **"12 people currently viewing" notice** — fake viewer count with pulsing red dot, fluctuates every 4 seconds
-- **Newsletter popup appears again** — shown on entry to seatmap screen
-- **Cookie banner appears again** — shown on entry to seatmap screen
+- **Misleading newsletter toast and cookie banner again** — both shown on entry to the seat map
 
 ### **Screen: Seat Map** (`#screen-seatmap`)
 **URL Path:** Event date/time selected → "Seat selection"
@@ -128,9 +131,7 @@ These elements persist across all screens:
 - Rows F–H: £22
 
 **Seat state colours:**
-- `.s-a` / `.s-b` (rows A–B) — purple shades
-- `.s-c` / `.s-d` (rows C–E) — purple/blue blends
-- `.s-e` (rows F–H) — green blend
+- Colour classes by row (`ROW_COLOUR`): A–B `.s-a`, C–D `.s-b`, E–F `.s-c`, G `.s-d`, H `.s-e`. They don't line up with the price bands (pattern)
 - `.s-taken` — greyed out (unavailable)
 - `.presel` — golden outline (pre-selected D-10)
 - `.selected` — green outline (user-selected)
@@ -138,7 +139,7 @@ These elements persist across all screens:
 **Selection Panel ("Your Selection"):**
 - Sticky header: "Your Selection" title + count indicator (6 pips)
 - Each selected seat is a card: `SECTION · Row X · Seat Y | Full Price Ticket | £XX | 🗑`
-- Footer shows subtotal, booking fee, delivery, and total
+- Footer shows ticket subtotal, "eTicket delivery FREE" and total (the booking fee and £1.25 delivery only appear at payment)
 - Green "Continue" button (disabled if no seats)
 - At 640px: fixed bottom sheet, rounded corners, flex layout
 
@@ -259,7 +260,7 @@ These elements persist across all screens:
 
 ### **Global UI: Cookie Banner** (`#cookie-banner`)
 **Behaviour:**
-- Appears ~30 seconds after page load
+- Appears ~1.8 seconds after page load
 - States "We and our **847 trusted partners**" use cookies (absurd number to seem authoritative)
 - Offers three buttons: "Reject non-essential", "Manage preferences", "Accept all"
 - "Accept all" button is purple (primary colour), others are subtle grey
@@ -324,16 +325,16 @@ These elements persist across all screens:
 - Appears ~4 seconds after the real confirmation screen (screen-confirm) shows
 - Panel slides in from the right edge (transform translateX)
 - ~380px width, max-width 92vw on mobile
-- Content: "Well done for making it through… We counted 60+ [dark patterns]"
-- One Further usability-research CTA button
+- Content: "Well done for making it through." plus two short paragraphs about friction costing ticket sales
+- One Further usability-research CTA button and "See your score ↓" (scrolls to the reveal)
 - Close button (✕) in top-right — **works first time** (unlike everything else; the joke)
 - After dismissal, stays dismissed
 
 ### **Global Modals**
 
 **Modal: Seat Taken** (`#modal-seat-taken`)
-- Triggers on FIRST "Continue" button press from seat panel (not on seat click)
-- Shows the seat that was stripped and explains it's no longer available
+- Triggers on Continue from the seat panel, only if the pre-selected D-10 is still in the basket
+- Generic message that never says which seat was stripped
 - Dismissed via "Choose another seat" button
 - User must re-select to reach the form
 
@@ -344,7 +345,7 @@ These elements persist across all screens:
 - Both buttons dismiss the modal (no functional difference)
 
 **Modal: Login Interrupt** (`#modal-login`)
-- Appears after form submission (second submit, after fake validation errors)
+- Appears the first time the form is submitted with every field filled and both CAPTCHAs ticked
 - "Create an account to continue"
 - Requires email and password (12+ chars, etc.)
 - Button: "Create account & continue"
@@ -352,16 +353,14 @@ These elements persist across all screens:
 - Clicking either leads to upsell screen
 
 **Modal: Isolation** (`#modal-isolation`)
-- Appears if selected seat would isolate another seat in the row
+- Appears on Continue if the selection would leave a single seat stranded in a row
 - Orange header: "Unable to select this seat"
 - Button: "OK" dismisses it
 - User must re-select different seat
 
 **Modal: Are You Sure** (`#modal-sure`)
-- Two-step confirmation before payment:
-  1. "You are about to be charged £X. This action cannot be undone."
-  2. "Are you absolutely sure? Just to confirm — you are happy to pay £X in full today, including all add-ons, insurance, and any subscriptions?"
-- Button: "Yes, continue" advances step; "Cancel" closes modal
+- One confirmation before payment: "You are about to be charged £X. This action cannot be undone."
+- "Yes, continue" goes to processing; "Cancel" closes the modal
 
 ### **Global UI: Keyboard Trap** (Escape Key Behaviour)
 - Escape key closes accessibility panel (if open)
@@ -400,7 +399,7 @@ These elements persist across all screens:
 - `.ph` + `.ph-music / -performance / -theatre / -dance / -comedy / -family / -talks / -auditorium` layer `images/stock/<name>.jpg` over a stage-lit gradient. Missing file → gradient shows. See `images/stock/README.md` for the shot list
 
 ### Sharing and meta
-- Meta description, theme colour, inline SVG favicon, Open Graph and Twitter card tags, `images/og-image.png` (1200×630). `og:image` is currently relative; make it absolute once the live domain is confirmed
+- Meta description, theme colour, inline SVG favicon, Open Graph and Twitter card tags, `images/og-image.png` (1200×630). Social image and URL tags are absolute (live domain, see Hosting)
 
 ### New analytics events
 - `skip_to_end` (`screen_name`, `patterns_found`), `reveal_shown` (`patterns_found`, `patterns_total`, `skipped_from`), `reveal_share` (`method`), `reveal_try_again`, `reveal_scroll_click`, `facilitator_step` (`screen_name`, `direction`), `search_click`, `genre_tile_click` (`link_text`), `brochure_download_click`, `filter_free_toggle`
@@ -429,7 +428,7 @@ All nest under `ecommerce` object (GA4 shape):
 - `purchase` — on confirmation screen, with `transaction_id: 'ENY-2025-49182'` (not sent when the visitor skipped to the end), all seats + accepted upsells, order total
 
 ### Custom Dark Pattern Event
-- `dark_pattern` event (params: `pattern_name`, `screen_name`) fires from ~15 moments:
+- `dark_pattern` event (params: `pattern_name`, `screen_name`) fires from ~38 moments (full list in `PATTERNS`, see Launch features). The originals:
   - `newsletter_popup` — on home page 5s delay
   - `cookie_banner_shown` / `cookie_banner_reshown` — first time / subsequent times
   - `preselected_seat` — when D-10 is added to basket on seatmap load
@@ -440,7 +439,7 @@ All nest under `ecommerce` object (GA4 shape):
   - `are_you_still_there` — "Are you still there?" modal fires
   - `login_interrupt` — login modal appears after form
   - `second_captcha` — second CAPTCHA appears
-  - `form_error_wall` — fake validation errors on first form submit
+  - `form_error_wall` — an empty field wipes the form and shows the error wall
   - `upsell_shown` — each upsell screen (with `upsell`, `upsell_index`)
   - `upsell_response` — accepted/declined (with `upsell`, `upsell_response`)
   - `white_screen` — white screen pause in processing
@@ -486,12 +485,12 @@ All nest under `ecommerce` object (GA4 shape):
 3. Toast message appears: "You've successfully joined our mailing list!" (misleading; user may not have signed up)
 4. Cookie banner shown again
 5. Calendar loads in **previous month** (dark pattern)
-6. First "Continue" button press triggers "Seat Taken" modal (fake)
-7. Second "Continue" button press proceeds to form
+6. Continue with D-10 still selected triggers the "Seat Taken" modal (D-10 is stripped)
+7. Continue again (or first time, if D-10 was binned) checks for a stranded single seat, then proceeds to the form
 
 ### **Seat Map → Form → Upsells → Survey → Newsletter2 → Payment → Processing → Confirmation**
-1. Form submit shows fake validation errors (9 errors) on first attempt
-2. Second form submit shows "Create account to continue" modal (login interrupt)
+1. Submitting with any empty field wipes the whole form and shows the error wall
+2. The first complete submit (with both CAPTCHAs) shows the "Create account to continue" modal (login interrupt)
 3. After dismissing login modal, enters upsell carousel (6 screens)
 4. Each upsell pre-checked; user must uncheck to skip
 5. After 6 upsells, survey appears
@@ -509,9 +508,9 @@ All nest under `ecommerce` object (GA4 shape):
 ## Key Functions & Logic
 
 ### State Management
-- `S` object (lines 1466–1493) — global mutable state
-- `EVENTS` array (lines 1501–1506) — four production objects
-- `UPSELLS` array (lines 1508–1515) — six upsell objects with icon, title, desc, price, amount, check label
+- `S` object — global mutable state (top of the main `<script>`)
+- `EVENTS` array — four production objects
+- `UPSELLS` array — six upsell objects with icon, title, desc, price, amount, check label
 
 ### Navigation
 - `navTo(screenId)` — toggles `.active` class, scrolls to top, fires GA4 `screen_view`, calls hooks for specific screens
@@ -521,13 +520,11 @@ All nest under `ecommerce` object (GA4 shape):
 - `AVAILABLE_SEATS` object — defines which columns are available in each row
 - `SEATS_PER_ROW = 18` — total columns per row
 - `MAX_SEATS = 6` — maximum seats per selection
-- `wouldIsolate(row, col)` — checks if selecting a seat would leave a single seat isolated
-- `clickSeat(id)` — handles seat click; toggles on/off; fires `add_to_cart` / `remove_from_cart`; checks isolation
+- `selectionIsolatesSeat()` — on Continue, checks whether the selection strands a single seat
+- `clickSeat(id)` — handles seat click; toggles on/off; fires `add_to_cart` / `remove_from_cart`
 - `removeSeat(id)` — removes from selection (bin icon in panel)
 - `renderSelection()` — renders the "Your Selection" side panel from `S.selectedSeats`
-- `continueSeat()` — TWO-STEP button:
-  1. First press: fires "seat no longer available" gotcha (strips first seat, marks taken, shows modal)
-  2. Second press: proceeds to form
+- `continueSeat()` — strips D-10 with the seat-taken modal if it's still selected, else shows the isolation modal if needed, else goes to the form
 
 ### Pricing & Order Logic
 - `seatPrice(row)` — returns price per row (A/B=32, C/D/E=28, F/G/H=22)
@@ -538,20 +535,21 @@ All nest under `ecommerce` object (GA4 shape):
 - `renderPaymentSummary()` — renders order summary and updates "Pay £X" button text
 
 ### Timer Logic
-- `startTimer()` — starts countdown from 300 seconds
+- `startTimer()` — starts countdown from 300 seconds and adds `body.booking`
+- `stopTimer()` — stops the countdown and removes `body.booking` (called on the error-styled confirmation)
 - `tickTimer()` — decrements every second; extends by 60s at 180s remaining if on form; updates colour
 - `updateTimerDisplay()` — updates timer bar display and colours (yellow/orange/red/flash)
 
 ### Form Logic
 - `onEnterForm()` — fires GA4 `begin_checkout`, sets "are you still there?" timer (18s)
-- `submitForm()` — shows fake errors on first click; shows login interrupt on second click
+- `submitForm()` — any empty field: `clearFormFields()` wipes everything and re-ticks marketing, error wall and password rules appear; otherwise requires both CAPTCHAs, then the login interrupt, then upsells
 - `tickCaptcha(n)` — first captcha triggers second captcha after 1.2s
-- Password validation message shows when user types in password field
 
 ### Payment Logic
 - `onEnterPayment()` — renders order summary, applies button swap if needed
 - `startPayment()` — triggers first "Are you sure?" modal, fires GA4 `add_payment_info`
-- `advanceAreYouSure()` — two-step confirmation sequence
+- `advanceAreYouSure()` — closes the modal and goes to processing
+- `startProcessing()` / `cancelProcessing()` — timers are kept in `S.procTimers` so skip and facilitator mode can cancel them
 
 ### Cookie Logic
 - `buildCookieSections()` — generates 5 cookie type sections, all enabled by default
@@ -569,7 +567,7 @@ All nest under `ecommerce` object (GA4 shape):
 - `footerNewsletter(ev)` — fires GA4 `newsletter_signup` with method "footer" (duplicate, gives no feedback)
 
 ### Post-Transaction Slide-in Logic
-- `onEnterConfirm()` — fires GA4 `purchase`, sets timer for slide-in (4s delay)
+- `onEnterConfirm()` — fires GA4 `purchase` (unless skipped), renders the reveal, sets timer for slide-in (4s delay)
 - `dismissSlidein()` — closes slide-in panel (works first time, unlike everything else)
 
 ### Accessibility Widget
@@ -613,7 +611,7 @@ All nest under `ecommerce` object (GA4 shape):
 
 **Do NOT remove these dark patterns unless explicitly asked:**
 
-1. ✅ Seat-taken modal fires on FIRST "Continue" button (not seat click); strips a seat
+1. ✅ Seat-taken modal fires on Continue (not seat click) when D-10 is still selected; strips it
 2. ✅ Pre-selected seat D-10 arrives ALREADY in basket (user must manually bin)
 3. ✅ Multi-seat selection (up to 6) with dynamic pricing per row
 4. ✅ Two CAPTCHAs instead of one
@@ -629,19 +627,18 @@ All nest under `ecommerce` object (GA4 shape):
 14. ✅ Cookie preferences require two saves
 15. ✅ Filter spinner trap
 16. ✅ "847 trusted partners" wording
-17. ✅ 10-day wait for e-tickets (3–5 + 5 more)
-18. ✅ Timer bar with artificial urgency
-19. ✅ Fake "Harriet" live chat with 2–3 business day response time
-20. ✅ Fake postcode lookup error
-21. ✅ Seat isolation validation modal
-22. ✅ Misleading newsletter toast on seatmap entry
-23. ✅ Keyboard trap: Escape doesn't close newsletter
-24. ✅ Global footer on every screen (over-stuffed, contradictory hours)
-25. ✅ Post-transaction slide-in (works, unlike everything else)
-26. ✅ Dynamic order computation (not hardcoded £64.19)
-27. ✅ GA4 ecommerce tracking + dark pattern events
-28. ✅ "Skip to the end" works first time (like the slide-in); it's the visitor's honest exit
-29. ✅ Every dark pattern has a `PATTERNS` entry so it shows in the end-of-journey reveal
+17. ✅ Timer bar with artificial urgency
+18. ✅ Fake "Harriet" live chat with 2–3 business day response time
+19. ✅ Fake postcode lookup error
+20. ✅ Seat isolation validation modal
+21. ✅ Misleading newsletter toast on seatmap entry
+22. ✅ Keyboard trap: Escape doesn't close newsletter
+23. ✅ Global footer on every screen (over-stuffed, contradictory hours)
+24. ✅ Post-transaction slide-in (works, unlike everything else)
+25. ✅ Dynamic order computation (not hardcoded £64.19)
+26. ✅ GA4 ecommerce tracking + dark pattern events
+27. ✅ "Skip to the end" works first time (like the slide-in); it's the visitor's honest exit
+28. ✅ Every dark pattern has a `PATTERNS` entry so it shows in the end-of-journey reveal
 
 ---
 
@@ -695,11 +692,9 @@ Participants' frustration demonstrates why UX research and testing are critical.
 
 ## File Size & Performance Notes
 
-- ~2500 lines of HTML (all inline)
-- ~660 lines of CSS (in `<style>` tag)
-- ~1000 lines of JavaScript (in `<script>` tag)
-- No external assets except CSS colour variables
-- Hero image is inline SVG placeholder (no image file)
+- ~3300 lines in `index.html` (CSS and JavaScript inline)
+- External assets: `images/og-image.png` and optional `images/stock/*.jpg` (gradient fallbacks when missing); GTM loads from Google
+- Favicon is an inline SVG data URI
 - Confetti is dynamically generated (no sprite sheets)
 - Works fully in modern browsers (no IE support needed)
 
@@ -726,4 +721,4 @@ Participants' frustration demonstrates why UX research and testing are critical.
 **Built by:** One Further (digital agency)  
 **Purpose:** Usability research demonstration tool  
 **Target Audience:** UX researchers, designers, product managers attending usability testing sessions  
-**Current Version:** Enyold Theatre (updated venue name, multi-seat selection, dynamic pricing, GA4 analytics, global footer, post-transaction slide-in)
+**Current Version:** Enyold Theatre (multi-seat selection, dynamic pricing, GA4 analytics, global footer, redesigned header and home page, end-of-journey reveal, skip to the end, facilitator mode)
